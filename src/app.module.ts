@@ -20,9 +20,6 @@ import { ProductModule } from './module/production/product.module';
       `mongodb+srv://hodiencong2000:diencong12c5@tc-store-admin.mpkyxqj.mongodb.net/?retryWrites=true&w=majority&appName=tc-store-admin`,
       {
         dbName: DataBaseName,
-        enableUtf8Validation: true,
-        pass: process.env.PASSWORD_MONGO,
-        user: process.env.USER_NAME_MONGO,
       },
     ),
   ],
