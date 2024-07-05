@@ -1,23 +1,47 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CarateUserLoginDto } from './dto';
+import { User } from './schemas/user.schema';
+import { formatRes } from 'src/utils/function';
+import { CreateUserDto } from './dto';
 
 @Controller()
 export class UserController {
-  constructor(private readonly appService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('/all-user')
-  getAllUser(): string {
-    return this.appService.getAllUser();
+  async getAllUser(@Res() response): Promise<User[]> {
+    try {
+      const data = await this.userService.getAllUser();
+      return formatRes(response, data);
+    } catch (error) {
+      return formatRes(response, null, true);
+    }
+  }
+
+  @Get('/list-user')
+  async getUserByLimit(@Res() response, @Query() query): Promise<User[]> {
+    try {
+      const page = query?.page || 1;
+      const limit = query?.limit || 1;
+      const data = await this.userService.getUserByLimit(page, limit);
+      return formatRes(response, data);
+    } catch (error) {
+      return formatRes(response, null, true);
+    }
+  }
+
+  @Post('/createUser-user')
+  async createUser(@Res() response, @Body() userData: User): Promise<User> {
+    try {
+      const data = await this.userService.createUser(userData);
+      return formatRes(response, data);
+    } catch (error) {
+      return formatRes(response, null, true);
+    }
   }
 
   @Post('/user-login')
-  async login(
-    @Body() carateUserLoginDto: CarateUserLoginDto,
-  ): Promise<Array<Record<string, any>>> {
-    return await this.appService.login(
-      carateUserLoginDto.sdt,
-      carateUserLoginDto.pass,
-    );
+  async login(@Body() createUserDto: CreateUserDto): Promise<User | null> {
+    return await this.userService.login(createUserDto.sdt, createUserDto.pass);
   }
 }
