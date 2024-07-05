@@ -8,6 +8,11 @@ import { CreateUserDto } from './dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('')
+  async hello(@Res() response): Promise<User[]> {
+    return formatRes(response, 'hello');
+  }
+
   @Get('/all-user')
   async getAllUser(@Res() response): Promise<User[]> {
     try {
