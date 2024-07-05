@@ -13,21 +13,8 @@ export class UserService {
   }
 
   async getUserByLimit(page: number, limit: number): Promise<User[]> {
-    const data = await this.userModel
-      .aggregate([
-        {
-          $lookup: {
-            from: 'date',
-            foreignField: '_id',
-            as: 'date',
-          },
-        },
-      ])
-      .exec();
-    console.log('====================================');
-    console.log({ data });
-    console.log('====================================');
-
+    const skip = (page - 1) * limit;
+    const data = await this.userModel.find().skip(skip).limit(limit).exec();
     return data;
   }
 

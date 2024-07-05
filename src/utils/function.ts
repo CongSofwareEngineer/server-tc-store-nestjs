@@ -7,14 +7,21 @@ export function delayTime(ms = 500) {
 }
 
 export function formatRes(response: any, data: any, isError?: boolean) {
-  if (isError) {
+  try {
+    if (isError) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        data: null,
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return response.status(HttpStatus.OK).json({
+      data,
+      status: HttpStatus.OK,
+    });
+  } catch (error) {
     return response.status(HttpStatus.BAD_REQUEST).json({
       data: null,
       status: HttpStatus.BAD_REQUEST,
     });
   }
-  return response.status(HttpStatus.OK).json({
-    data,
-    status: HttpStatus.OK,
-  });
 }
