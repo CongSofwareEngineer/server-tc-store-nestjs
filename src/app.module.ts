@@ -20,7 +20,7 @@ import { DataBaseName } from './common/mongoDB';
     MongooseModule.forRoot(
       `mongodb+srv://hodiencong2000:diencong12c5@tc-store-admin.mpkyxqj.mongodb.net/?retryWrites=true&w=majority&appName=tc-store-admin`,
       {
-        dbName: 'tc-store',
+        dbName: DataBaseName,
         enableUtf8Validation: true,
       },
     ),
