@@ -4,16 +4,16 @@ import { CarModule } from './module/cartUser/cart.module';
 
 import { MongooseModule } from '@nestjs/mongoose';
 import { DataBaseName } from './common/mongoDB';
-// import { UserModule } from './module/user/user.module';
-// import { TypeProductModule } from './module/typeProduct/typeProduct.module';
-// import { ProductModule } from './module/production/product.module';
+import { UserModule } from './module/user/user.module';
+import { TypeProductModule } from './module/typeProduct/typeProduct.module';
+import { ProductModule } from './module/production/product.module';
 
 @Module({
   imports: [
     CarModule,
-    // ProductModule,
-    // UserModule,
-    // TypeProductModule,
+    ProductModule,
+    UserModule,
+    TypeProductModule,
     ConfigModule.forRoot({
       envFilePath: '.env.local',
     }),

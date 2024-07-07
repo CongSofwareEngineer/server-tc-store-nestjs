@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('')
+  @Get('/check')
   async hello(@Res() response): Promise<User[]> {
     console.log({ snv: process.env.PASSWORD_MONGO });
     console.log({ snv: process.env.USER_NAME_MONGO });
