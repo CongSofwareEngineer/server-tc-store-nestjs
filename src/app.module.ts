@@ -11,7 +11,7 @@ import { ProductModule } from './module/production/product.module';
 @Module({
   imports: [
     CarModule,
-    ProductModule,
+    // ProductModule,
     // UserModule,
     // TypeProductModule,
     ConfigModule.forRoot({
