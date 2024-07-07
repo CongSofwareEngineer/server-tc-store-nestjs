@@ -13,13 +13,12 @@ import { ProductModule } from './module/production/product.module';
     TypeProductModule,
     ConfigModule.forRoot({
       envFilePath: '.env.local',
-      isGlobal: true,
-      ignoreEnvFile: true,
     }),
     MongooseModule.forRoot(
-      `mongodb+srv://hodiencong2000:diencong12c5@tc-store-admin.mpkyxqj.mongodb.net/?retryWrites=true&w=majority&appName=tc-store-admin`,
+      `mongodb+srv://${process.env.USER_NAME_MONGO}:${process.env.PASSWORD_MONGO}@tc-store-admin.mpkyxqj.mongodb.net/?retryWrites=true&w=majority&appName=tc-store-admin`,
       {
         dbName: DataBaseName,
+        enableUtf8Validation: true,
       },
     ),
   ],

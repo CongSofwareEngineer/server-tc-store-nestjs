@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
@@ -10,7 +10,15 @@ export class UserController {
 
   @Get('')
   async hello(@Res() response): Promise<User[]> {
+    console.log({ snv: process.env.PASSWORD_MONGO });
+    console.log({ snv: process.env.USER_NAME_MONGO });
     return formatRes(response, 'hello');
+  }
+
+  @Get('/user/:id')
+  async getUserByID(@Res() response, @Param() params): Promise<User> {
+    const data = await this.userService.getUserByID(params);
+    return formatRes(response, data);
   }
 
   @Get('/all-user')

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Param } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -7,6 +7,10 @@ import { CreateUserDto } from './dto';
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  async getUserByID(@Param() params): Promise<User> {
+    return this.userModel.findById(params.id).exec();
+  }
 
   async getAllUser(): Promise<User[]> {
     return this.userModel.find().exec();
