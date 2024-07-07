@@ -7,10 +7,16 @@ import { TypeProductController } from './typeProduct.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
+    MongooseModule.forFeatureAsync([
       {
         name: TypeProduct.name,
-        schema: TypeProductSchema,
+        useFactory: () => {
+          const schema = TypeProductSchema;
+          schema.pre('save', function () {
+            console.log('Hello from pre save');
+          });
+          return schema;
+        },
         collection: BDCollection.TypeProduct,
       },
     ]),
