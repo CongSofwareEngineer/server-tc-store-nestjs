@@ -13,7 +13,7 @@ import { ProductModule } from './module/production/product.module';
     CarModule,
     // ProductModule,
     // UserModule,
-    TypeProductModule,
+    // TypeProductModule,
     ConfigModule.forRoot({
       envFilePath: '.env.local',
     }),
