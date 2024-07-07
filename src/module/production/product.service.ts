@@ -9,11 +9,14 @@ export class ProductService {
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
   ) {}
 
+  async create(body: Product): Promise<Product> {
+    const data = await this.productModel.create(body);
+    return data;
+  }
+
   async getProductByLimit(@Query() query): Promise<Product[]> {
     const { page = 1, limit = 1 } = query;
     const skip = (page - 1) * limit;
-    console.log({ skip });
-
     const data = await this.productModel.find().skip(skip).limit(limit).exec();
     return data;
   }

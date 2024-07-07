@@ -32,6 +32,9 @@ export class User {
 
   @Prop()
   address?: string;
+
+  @Prop()
+  auth?: string;
 }
 export type UserDocument = HydratedDocument<User>;
 export const UserSchema = SchemaFactory.createForClass(User);

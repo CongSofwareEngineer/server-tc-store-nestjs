@@ -4,7 +4,7 @@ import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
 import { CreateUserDto } from './dto';
 
-@Controller()
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -15,13 +15,13 @@ export class UserController {
     return formatRes(response, 'hello');
   }
 
-  @Get('/user/:id')
+  @Get('/:id')
   async getUserByID(@Res() response, @Param() params): Promise<User> {
     const data = await this.userService.getUserByID(params);
     return formatRes(response, data);
   }
 
-  @Get('/all-user')
+  @Get('/all')
   async getAllUser(@Res() response): Promise<User[]> {
     try {
       const data = await this.userService.getAllUser();
@@ -31,7 +31,7 @@ export class UserController {
     }
   }
 
-  @Get('/list-user')
+  @Get('/list')
   async getUserByLimit(@Res() response, @Query() query): Promise<User[]> {
     try {
       const page = query?.page || 1;
@@ -43,7 +43,7 @@ export class UserController {
     }
   }
 
-  @Post('/createUser-user')
+  @Post('/create')
   async createUser(@Res() response, @Body() userData: User): Promise<User> {
     try {
       const data = await this.userService.createUser(userData);
@@ -53,7 +53,7 @@ export class UserController {
     }
   }
 
-  @Post('/user-login')
+  @Post('/login')
   async login(@Body() createUserDto: CreateUserDto): Promise<User | null> {
     return await this.userService.login(createUserDto.sdt, createUserDto.pass);
   }

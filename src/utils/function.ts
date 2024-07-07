@@ -8,7 +8,7 @@ export function delayTime(ms = 500) {
 
 export function formatRes(response: any, data: any, isError?: boolean) {
   try {
-    if (isError) {
+    if (isError || !data) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         data: null,
         status: HttpStatus.BAD_REQUEST,

@@ -3,11 +3,17 @@ import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
+  async findOne(sdt: string) {
+    return this.userModel.findOne({
+      sdt: sdt,
+    });
+  }
   async getUserByID(@Param() params): Promise<User> {
     return this.userModel.findById(params.id).exec();
   }
@@ -27,6 +33,10 @@ export class UserService {
       sdt: sdt,
       pass: pass,
     });
+
+    const auth = AuthService.generateAth(dataUser.id, dataUser.sdt);
+    dataUser.auth = auth;
+
     return dataUser;
   }
 

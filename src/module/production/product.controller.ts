@@ -13,6 +13,18 @@ export class ProductionController {
     return formatRes(res, data);
   }
 
+  @Get('/:id')
+  async getProductByID(@Res() res, @Param() param) {
+    const data = await this.productService.getProductByID(param.id);
+    return formatRes(res, data);
+  }
+
+  @Post('/create')
+  async create(@Res() res, @Body() body) {
+    const data = await this.productService.create(body);
+    return formatRes(res, data);
+  }
+
   @Post('/list-product/:id')
   async updateProduct(@Res() res, @Body() body, @Param() param) {
     const data = await this.productService.updateProduct(param.id, body);

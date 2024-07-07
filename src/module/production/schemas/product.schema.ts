@@ -13,13 +13,19 @@ export class Product {
   disCount?: number;
 
   @Prop()
-  dateEndSale?: Date;
+  dateEndSale?: string;
+
+  @Prop()
+  dateSale?: string;
+
+  @Prop()
+  nsx?: string;
 
   @Prop()
   hsd?: string;
 
   @Prop()
-  imageOther?: string[];
+  imageMore?: string[];
 
   @Prop()
   imageMain?: string;
@@ -40,10 +46,10 @@ export class Product {
   linkShoppe?: string;
 
   @Prop()
-  name2?: string;
+  linkFacebook?: string;
 
   @Prop()
-  nsx?: Date;
+  name2?: string;
 
   @Prop()
   numberChildren?: number;
