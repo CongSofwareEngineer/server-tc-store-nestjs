@@ -12,8 +12,8 @@ import { ProductModule } from './module/production/product.module';
   imports: [
     CarModule,
     ProductModule,
-    UserModule,
-    TypeProductModule,
+    // UserModule,
+    // TypeProductModule,
     ConfigModule.forRoot({
       envFilePath: '.env.local',
     }),
