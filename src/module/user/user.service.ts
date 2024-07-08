@@ -15,11 +15,15 @@ export class UserService {
     });
   }
   async getUserByID(@Param() params): Promise<User> {
-    return this.userModel.findById(params.id).exec();
+    const data = await this.userModel.findById(params._id).exec();
+    console.log({ data });
+
+    return data;
   }
 
   async getAllUser(): Promise<User[]> {
-    return this.userModel.find().exec();
+    const data = await this.userModel.find().exec();
+    return data;
   }
 
   async getUserByLimit(page: number, limit: number): Promise<User[]> {
