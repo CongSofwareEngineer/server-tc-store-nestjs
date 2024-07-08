@@ -7,9 +7,11 @@ import { DataBaseName } from './common/mongoDB';
 import { UserModule } from './module/user/user.module';
 import { TypeProductModule } from './module/typeProduct/typeProduct.module';
 import { ProductModule } from './module/production/product.module';
+import { AuthModule } from './module/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     CarModule,
     ProductModule,
     UserModule,

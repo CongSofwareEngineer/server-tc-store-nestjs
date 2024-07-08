@@ -34,8 +34,9 @@ export class UserService {
       pass: pass,
     });
 
-    const auth = AuthService.generateAth(dataUser.id, dataUser.sdt);
-    dataUser.auth = auth;
+    const auth = AuthService.generateAuth(dataUser.id, dataUser.sdt);
+    dataUser.auth = auth.tokenAccess;
+    dataUser.tokenRefresh = auth.tokenRefresh;
 
     return dataUser;
   }

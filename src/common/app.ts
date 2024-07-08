@@ -1,5 +1,5 @@
 export const JwtConstants = {
   secret: 'Diencong12@5',
-  expiredAccess: '10hours',
-  expiredRefresh: '7day',
+  expiredAccess: '1hours',
+  expiredRefresh: '15day',
 };
