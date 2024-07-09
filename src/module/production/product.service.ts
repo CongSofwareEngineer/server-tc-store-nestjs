@@ -1,8 +1,9 @@
 import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { FunService } from 'src/common/funcService';
+import { LIMIT_DATA } from 'src/common/app';
 
 @Injectable()
 export class ProductService {
@@ -15,22 +16,17 @@ export class ProductService {
   }
 
   async getProductByLimit(@Query() query): Promise<Product[]> {
-    const { page = 1, limit = 10 } = query;
-    return FunService.getDataByLimit(this.productModel, page, Number(limit));
+    return FunService.getDataByLimit(this.productModel, query);
   }
 
   async getProductByID(id: string): Promise<Product> {
     return FunService.findDataByID(this.productModel, id);
   }
 
-  async getProductByListID(listId: Types.ObjectId[]): Promise<Product[]> {
-    const data = await this.productModel.aggregate([
-      {
-        $match: {
-          _id: listId,
-        },
-      },
-    ]);
+  async getProductByListID(listId: string[]): Promise<Product[]> {
+    const data = await this.productModel.find({
+      _id: { $in: listId },
+    });
     return data;
   }
 

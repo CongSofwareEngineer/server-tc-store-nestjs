@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Res, Query } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { formatRes } from 'src/utils/function';
+import { LIMIT_DATA } from 'src/common/app';
 
 @Controller('cart')
 export class CartController {
@@ -9,7 +10,7 @@ export class CartController {
   @Get(':idUser')
   async getCartByIdUser(@Res() res, @Param() param, @Query() query) {
     const page = query?.page || 1;
-    const limit = Number(query?.limit || 1);
+    const limit = Number(query?.limit || LIMIT_DATA);
 
     const data = await this.cartService.getCartByIdUser(
       param.idUser,

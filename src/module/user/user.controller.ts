@@ -3,7 +3,8 @@ import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
 import { CreateUserDto } from './dto';
-
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
+@SkipThrottle()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -11,9 +12,7 @@ export class UserController {
   @Get('list')
   async getUserByLimit(@Res() response, @Query() query): Promise<User[]> {
     try {
-      const page = query?.page || 1;
-      const limit = query?.limit || 1;
-      const data = await this.userService.getUserByLimit(page, limit);
+      const data = await this.userService.getUserByLimit(query);
       return formatRes(response, data);
     } catch (error) {
       return formatRes(response, null, true);
@@ -59,6 +58,7 @@ export class UserController {
     }
   }
 
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('login')
   async login(@Body() createUserDto: CreateUserDto): Promise<User | null> {
     return await this.userService.login(createUserDto.sdt, createUserDto.pass);

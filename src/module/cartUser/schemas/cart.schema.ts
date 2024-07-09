@@ -1,6 +1,5 @@
-import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { DBCollection } from 'src/common/mongoDB';
 
 @Schema()
 export class CartUser {
@@ -12,7 +11,8 @@ export class CartUser {
   @Prop()
   date?: string;
 
-  idProduct?: Types.ObjectId;
+  @Prop()
+  idProduct?: string;
 
   @Prop()
   idUser?: string;
@@ -26,7 +26,8 @@ export class CartUser {
   @Prop()
   exp?: number;
 
-  moreConfig?: Record<string, any>;
+  @Prop({ type: Object })
+  moreConfig?: { [key: string]: any };
 
   @Prop()
   name?: string;

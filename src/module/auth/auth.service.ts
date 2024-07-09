@@ -38,29 +38,35 @@ export class AuthService {
     return tokenRefresh;
   }
 
-  static async verifyAth(
+  static verifyAth(
     token: string,
     isRefreshToken: boolean = false,
-  ): Promise<{
-    id: string;
-    sdt: string;
-    iat: number;
-    exp: number;
-  }> {
-    const jwt = new JwtService({
-      secret: JwtConstants.secret,
-      signOptions: {
-        expiresIn: isRefreshToken
-          ? JwtConstants.expiredRefresh
-          : JwtConstants.expiredAccess,
-      },
-    });
+  ):
+    | boolean
+    | {
+        id: string;
+        sdt: string;
+        iat: number;
+        exp: number;
+      } {
+    try {
+      const jwt = new JwtService({
+        secret: JwtConstants.secret,
+        signOptions: {
+          expiresIn: isRefreshToken
+            ? JwtConstants.expiredRefresh
+            : JwtConstants.expiredAccess,
+        },
+      });
 
-    const data = await jwt.verify(token, {
-      secret: JwtConstants.secret,
-    });
+      const data = jwt.verify(token, {
+        secret: JwtConstants.secret,
+      });
 
-    return data;
+      return data;
+    } catch (error) {
+      return false;
+    }
   }
 
   static async refreshTokenAccess(tokenRefresh: string): Promise<string> {

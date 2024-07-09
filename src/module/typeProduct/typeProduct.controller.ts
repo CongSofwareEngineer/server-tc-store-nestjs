@@ -3,11 +3,11 @@ import { formatRes } from 'src/utils/function';
 import { TypeProduct } from './schemas/typeProduct.schema';
 import { TypeProductService } from './typeProduct.service';
 
-@Controller()
+@Controller('category')
 export class TypeProductController {
   constructor(private readonly typeProductService: TypeProductService) {}
 
-  @Get('/all-category')
+  @Get('all')
   async getAllUser(@Res() response): Promise<TypeProduct[]> {
     try {
       const data = await this.typeProductService.getAllType();
@@ -17,7 +17,7 @@ export class TypeProductController {
     }
   }
 
-  @Post('/create-type')
+  @Post('create')
   async createUser(
     @Res() response,
     @Body() typeData: TypeProduct,

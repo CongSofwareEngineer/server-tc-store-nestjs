@@ -1,12 +1,9 @@
 import { Body, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartUser } from './schemas/cart.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { DBCollection } from 'src/common/mongoDB';
-import { ObjectId } from 'mongodb';
 import { FunService } from 'src/common/funcService';
-import axios from 'axios';
-import { Product } from '../production/schemas/product.schema';
 import { ProductService } from '../production/product.service';
 
 @Injectable()
@@ -18,35 +15,44 @@ export class CartService {
 
   async getCartByIdUser(idUser: string, page: number, limit: number) {
     const skip = (page - 1) * limit;
-    // const data = await this.cartModel
-    //   .aggregate([
-    //     {
-    //       $match: { idUser: idUser },
-    //     },
-    //     {
-    //       $lookup: {
-    //         from: DBCollection.Production,
-    //         localField: 'idProduct',
-    //         foreignField: '_id',
-    //         as: 'more_data',
-    //         pipeline: [
-    //           {
-    //             $project: CartUser.pipelineMoreDataGetCart(),
-    //           },
-    //         ],
-    //       },
-    //     },
-    //   ])
-    //   .skip(skip)
-    //   .limit(limit);
-    const data = await this.cartModel.find({
-      idUser: idUser,
-    });
-    const listId = data.map((e) => new Types.ObjectId(e.idUser));
-    const dataPro = await this.productService.getProductByListID(listId);
-    console.log({ dataPro });
+    const data = await this.cartModel
+      .aggregate([
+        {
+          $match: { idUser: idUser },
+        },
+        {
+          $lookup: {
+            from: DBCollection.Production,
+            localField: 'idProduct',
+            foreignField: '_id',
+            as: 'more_data',
+            pipeline: [
+              {
+                $project: CartUser.pipelineMoreDataGetCart(),
+              },
+            ],
+          },
+        },
+      ])
+      .skip(skip)
+      .limit(limit);
+    // const data = await this.cartModel.find({
+    //   idUser: idUser,
+    // });
 
-    return listId;
+    // console.log({ data });
+    // const listId = data.map((e) => {
+    //   console.log({ e: e });
+
+    //   return e.idProduct;
+    // });
+    // console.log('====================================');
+    // console.log({ listId });
+    // console.log('====================================');
+    // const dataPro = await this.productService.getProductByListID(listId);
+    // console.log({ dataPro });
+
+    return data;
   }
 
   async create(body: CartUser): Promise<CartUser> {
@@ -55,7 +61,7 @@ export class CartService {
       date: body?.date || Date.now().toFixed(),
       idUser: body?.idUser,
       amount: body?.amount,
-      idProduct: new ObjectId(body.idProduct),
+      idProduct: body.idProduct,
     };
     return FunService.create(this.cartModel, bodyTemp);
   }

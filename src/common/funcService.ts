@@ -1,4 +1,6 @@
+import { Query } from '@nestjs/common';
 import { Model } from 'mongoose';
+import { getPageLimitSkip } from 'src/utils/function';
 
 export class FunService {
   static modelService: any = new FunService();
@@ -20,16 +22,25 @@ export class FunService {
     return model.findOne(param);
   }
 
+  static async getDataByListID(
+    model: Model<any>,
+    listId: string[],
+  ): Promise<any[]> {
+    const data = await model.find({
+      _id: { $in: listId },
+    });
+    return data;
+  }
+
   static async getDataByLimit(
     model: Model<any>,
-    page: number,
-    limit: number,
+    @Query() query,
   ): Promise<any[]> {
-    const skip = (page - 1) * limit;
+    const pageLimitSkip = getPageLimitSkip(query);
     const data = await model
       .find()
-      .skip(Number(skip))
-      .limit(Number(limit))
+      .skip(Number(pageLimitSkip.skip))
+      .limit(Number(pageLimitSkip.limit))
       .exec();
     return data;
   }
