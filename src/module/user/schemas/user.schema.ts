@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-
+import { IsPhoneNumber, IsNotEmpty } from 'class-validator';
 @Schema()
 export class User {
   _id?: Types.ObjectId;
@@ -14,10 +14,10 @@ export class User {
   @Prop()
   avatar?: string | null;
 
-  @Prop()
+  @IsNotEmpty({ message: 'No empty' })
   pass?: string;
 
-  @Prop()
+  @IsPhoneNumber(null, { message: 'Number phone not support  ' })
   sdt?: string;
 
   @Prop()

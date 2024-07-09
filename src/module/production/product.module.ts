@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Product, ProductSchema } from './schemas/product.schema';
-import { BDCollection } from 'src/common/mongoDB';
+import { DBCollection } from 'src/common/mongoDB';
 import { ProductionController } from './product.controller';
 import { ProductService } from './product.service';
 
@@ -11,11 +11,12 @@ import { ProductService } from './product.service';
       {
         name: Product.name,
         schema: ProductSchema,
-        collection: BDCollection.Production,
+        collection: DBCollection.Production,
       },
     ]),
   ],
   controllers: [ProductionController],
   providers: [ProductService],
+  exports: [ProductService],
 })
 export class ProductModule {}

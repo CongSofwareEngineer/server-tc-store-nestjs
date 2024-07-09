@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { TypeProduct } from './schemas/typeProduct.schema';
+import { FunService } from 'src/common/funcService';
 
 @Injectable()
 export class TypeProductService {
@@ -14,13 +15,7 @@ export class TypeProductService {
   }
 
   async getTypeByLimit(page: number, limit: number): Promise<TypeProduct[]> {
-    const skip = (page - 1) * limit;
-    const data = await this.typeProductModel
-      .find()
-      .skip(skip)
-      .limit(limit)
-      .exec();
-    return data;
+    return FunService.getDataByLimit(this.typeProductModel, page, limit);
   }
 
   async createTypeProduct(body: TypeProduct): Promise<TypeProduct> {
@@ -29,9 +24,7 @@ export class TypeProductService {
       name: body?.name || [],
       icon: body?.icon || '',
     };
-    const dataNew = await this.typeProductModel.create(bodyTypeProduct);
-    console.log({ dataNew });
 
-    return dataNew;
+    return FunService.create(this.typeProductModel, bodyTypeProduct);
   }
 }

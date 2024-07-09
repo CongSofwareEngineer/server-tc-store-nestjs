@@ -1,7 +1,8 @@
 import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { FunService } from 'src/common/funcService';
 
 @Injectable()
 export class ProductService {
@@ -10,29 +11,34 @@ export class ProductService {
   ) {}
 
   async create(body: Product): Promise<Product> {
-    const data = await this.productModel.create(body);
-    return data;
+    return FunService.create(this.productModel, body);
   }
 
   async getProductByLimit(@Query() query): Promise<Product[]> {
-    const { page = 1, limit = 1 } = query;
-    const skip = (page - 1) * limit;
-    const data = await this.productModel.find().skip(skip).limit(limit).exec();
-    return data;
+    const { page = 1, limit = 10 } = query;
+    return FunService.getDataByLimit(this.productModel, page, Number(limit));
   }
 
   async getProductByID(id: string): Promise<Product> {
-    const data = await this.productModel.findById(id).exec();
+    return FunService.findDataByID(this.productModel, id);
+  }
+
+  async getProductByListID(listId: Types.ObjectId[]): Promise<Product[]> {
+    const data = await this.productModel.aggregate([
+      {
+        $match: {
+          _id: listId,
+        },
+      },
+    ]);
     return data;
   }
 
   async deleteProductByID(id: string): Promise<Product> {
-    const data = await this.productModel.findByIdAndDelete(id).exec();
-    return data;
+    return FunService.deleteDataByID(this.productModel, id);
   }
 
   async updateProduct(id: string, body: Product): Promise<Product> {
-    const data = await this.productModel.findByIdAndUpdate(id, body).exec();
-    return data;
+    return FunService.updateData(this.productModel, id, body);
   }
 }

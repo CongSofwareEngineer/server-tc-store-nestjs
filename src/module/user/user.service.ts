@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
 import { AuthService } from '../auth/auth.service';
+import { FunService } from 'src/common/funcService';
 
 @Injectable()
 export class UserService {
@@ -27,13 +28,11 @@ export class UserService {
   }
 
   async getUserByLimit(page: number, limit: number): Promise<User[]> {
-    const skip = (page - 1) * limit;
-    const data = await this.userModel.find().skip(skip).limit(limit).exec();
-    return data;
+    return FunService.getDataByLimit(this.userModel, page, limit);
   }
 
   async login(sdt: string, pass: string): Promise<User | null> {
-    const dataUser = await this.userModel.findOne({
+    const dataUser = await FunService.findOneData(this.userModel, {
       sdt: sdt,
       pass: pass,
     });
@@ -58,14 +57,13 @@ export class UserService {
       avatar: body?.avatar || '',
       address: body?.address || '',
     };
-    const dataNew = await this.userModel.create(bodyUser);
-    console.log({ dataNew });
 
+    const dataNew = await FunService.create(this.userModel, bodyUser);
     return dataNew;
   }
 
   async findUserByID(id: string): Promise<User> {
-    return this.userModel.findById(id).exec();
+    return FunService.findDataByID(this.userModel, id);
   }
 
   async deleteUserByID(id: string): Promise<any> {

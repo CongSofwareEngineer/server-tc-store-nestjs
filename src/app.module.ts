@@ -9,6 +9,7 @@ import { TypeProductModule } from './module/typeProduct/typeProduct.module';
 import { ProductModule } from './module/production/product.module';
 import { AuthModule } from './module/auth/auth.module';
 import { MomoModule } from './module/momo/momo.module';
+import moment from 'moment-timezone';
 
 @Module({
   imports: [
@@ -28,6 +29,12 @@ import { MomoModule } from './module/momo/momo.module';
         enableUtf8Validation: true,
       },
     ),
+  ],
+  providers: [
+    {
+      provide: 'MomentWrapper',
+      useValue: moment,
+    },
   ],
 })
 export class AppModule {}

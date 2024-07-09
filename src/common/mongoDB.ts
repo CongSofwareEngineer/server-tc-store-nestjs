@@ -1,4 +1,4 @@
-export const BDCollection = {
+export const DBCollection = {
   User: 'User',
   Production: 'Production',
   CartUser: 'CartUser',
