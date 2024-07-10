@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
 import { AuthService } from '../auth/auth.service';
-import { FunService } from 'src/common/funcService';
+import { FunService } from 'src/utils/funcService';
 
 @Injectable()
 export class UserService {
@@ -62,11 +62,11 @@ export class UserService {
     return dataNew;
   }
 
-  async findUserByID(id: string): Promise<User> {
+  async findUserByID(id: string): Promise<User | null> {
     return FunService.findDataByID(this.userModel, id);
   }
 
-  async deleteUserByID(id: string): Promise<any> {
+  async deleteUserByID(id: string): Promise<any | null> {
     return await this.userModel.findByIdAndDelete(id);
   }
 }

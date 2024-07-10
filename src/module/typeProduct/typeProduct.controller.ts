@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { formatRes } from 'src/utils/function';
 import { TypeProduct } from './schemas/typeProduct.schema';
 import { TypeProductService } from './typeProduct.service';
@@ -9,24 +9,25 @@ export class TypeProductController {
 
   @Get('all')
   async getAllUser(@Res() response): Promise<TypeProduct[]> {
-    try {
-      const data = await this.typeProductService.getAllType();
-      return formatRes(response, data);
-    } catch (error) {
-      return formatRes(response, null, true);
-    }
+    const data = await this.typeProductService.getAllType();
+    return formatRes(response, data);
   }
 
   @Post('create')
-  async createUser(
+  async createType(
     @Res() response,
     @Body() typeData: TypeProduct,
   ): Promise<TypeProduct> {
-    try {
-      const data = await this.typeProductService.createTypeProduct(typeData);
-      return formatRes(response, data);
-    } catch (error) {
-      return formatRes(response, null, true);
-    }
+    const data = await this.typeProductService.createTypeProduct(typeData);
+    return formatRes(response, data);
+  }
+
+  @Post('delete/:id')
+  async deleteType(
+    @Res() response,
+    @Param() param,
+  ): Promise<TypeProduct | null> {
+    const data = await this.typeProductService.deleteType(param);
+    return formatRes(response, data);
   }
 }

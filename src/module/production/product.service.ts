@@ -2,7 +2,7 @@ import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Model } from 'mongoose';
-import { FunService } from 'src/common/funcService';
+import { FunService } from 'src/utils/funcService';
 import { MathDB } from 'src/common/mongoDB';
 import { lowercase } from 'src/utils/function';
 import { MathSort } from 'src/common/app';
@@ -17,15 +17,15 @@ export class ProductService {
     return FunService.create(this.productModel, body);
   }
 
-  async deleteProductByID(id: string): Promise<Product> {
+  async deleteProductByID(id: string): Promise<Product | null> {
     return FunService.deleteDataByID(this.productModel, id);
   }
 
-  async updateProduct(id: string, body: Product): Promise<Product> {
+  async updateProduct(id: string, body: Product): Promise<Product | null> {
     return FunService.updateData(this.productModel, id, body);
   }
 
-  async getProductByID(id: string): Promise<Product> {
+  async getProductByID(id: string): Promise<Product | null> {
     return FunService.findDataByID(this.productModel, id);
   }
 

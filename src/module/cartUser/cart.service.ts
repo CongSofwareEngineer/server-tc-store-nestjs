@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CartUser } from './schemas/cart.schema';
 import { Model } from 'mongoose';
 import { DBCollection } from 'src/common/mongoDB';
-import { FunService } from 'src/common/funcService';
+import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
 
 @Injectable()
@@ -66,11 +66,11 @@ export class CartService {
     return FunService.create(this.cartModel, bodyTemp);
   }
 
-  async deleteCart(id: string): Promise<CartUser> {
+  async deleteCart(id: string): Promise<CartUser | null> {
     return FunService.deleteDataByID(this.cartModel, id);
   }
 
-  async updateCart(id: string, @Body() body): Promise<CartUser> {
+  async updateCart(id: string, @Body() body): Promise<CartUser | null> {
     return FunService.updateData(this.cartModel, id, body);
   }
 }

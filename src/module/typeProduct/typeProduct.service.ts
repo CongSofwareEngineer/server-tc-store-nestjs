@@ -1,4 +1,4 @@
-import { Injectable, Query } from '@nestjs/common';
+import { Injectable, Param, Query } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { TypeProduct } from './schemas/typeProduct.schema';
@@ -16,6 +16,10 @@ export class TypeProductService {
 
   async getTypeByLimit(@Query() query): Promise<TypeProduct[]> {
     return FunService.getDataByLimit(this.typeProductModel, query);
+  }
+
+  async deleteType(@Param() param): Promise<TypeProduct | null> {
+    return FunService.deleteDataByID(this.typeProductModel, param.id);
   }
 
   async createTypeProduct(body: TypeProduct): Promise<TypeProduct> {

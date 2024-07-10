@@ -2,7 +2,7 @@ import { Inject, Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Bill } from './schemas/bill.schema';
 import { Model } from 'mongoose';
-import { FunService } from 'src/common/funcService';
+import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
 import { getPageLimitSkip } from 'src/utils/function';
 
