@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { formatRes } from 'src/utils/function';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 //hostname/product/Method
 @ApiTags('product')
@@ -24,6 +24,11 @@ export class ProductionController {
     return formatRes(res, data);
   }
 
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Id',
+  })
   @Get('detail/:id')
   async getProductByID(@Res() res, @Param() param) {
     const data = await this.productService.getProductByID(param.id);

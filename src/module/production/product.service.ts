@@ -1,7 +1,7 @@
 import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { MathDB } from 'src/common/mongoDB';
 import { lowercase } from 'src/utils/function';
@@ -39,7 +39,7 @@ export class ProductService {
       this.productModel,
       query,
       {
-        category: { [MathDB.$in]: listType },
+        typeProduct: { [MathDB.$in]: listType },
       },
       {},
       {

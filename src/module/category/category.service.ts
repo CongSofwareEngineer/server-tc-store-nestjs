@@ -11,7 +11,7 @@ export class CategoryService {
   ) {}
 
   async getAllType(): Promise<Category[]> {
-    return this.categoryModel.find().exec();
+    return this.categoryModel.find(null, { _id: 0 }).exec();
   }
 
   async getTypeByLimit(@Query() query): Promise<Category[]> {

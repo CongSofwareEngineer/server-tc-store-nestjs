@@ -3,7 +3,6 @@ import { HydratedDocument, Types } from 'mongoose';
 
 @Schema({ versionKey: false })
 export class Product {
-  @Prop()
   _id?: Types.ObjectId;
 
   @Prop()
