@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { FunService } from 'src/common/funcService';
 import { MathDB } from 'src/common/mongoDB';
 import { lowercase } from 'src/utils/function';
+import { MathSort } from 'src/common/app';
 
 @Injectable()
 export class ProductService {
@@ -40,9 +41,9 @@ export class ProductService {
       {
         typeProduct: { [MathDB.$in]: listType },
       },
-      { __v: 0 },
+      {},
       {
-        price: query.sort ? (query.sort === 'asc' ? 1 : -1) : 1,
+        price: query.sort ? (query.sort === MathSort.asc ? 1 : -1) : 1,
       },
     );
 
