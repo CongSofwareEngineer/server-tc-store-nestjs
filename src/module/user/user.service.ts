@@ -47,7 +47,7 @@ export class UserService {
   async createUser(body: User): Promise<User> {
     const bodyUser: CreateUserDto = {
       addressShipper: body?.addressShipper || [],
-      date: body?.date || Date.now(),
+      date: new Date().getTime().toFixed(),
       exp: body.exp || 0,
       sdt: body?.sdt,
       sex: body?.sex || true,

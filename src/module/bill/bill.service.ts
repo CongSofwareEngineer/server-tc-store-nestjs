@@ -14,27 +14,12 @@ export class BillService {
   ) {}
 
   async create(body: Bill): Promise<Bill> {
+    body.date = new Date().getTime().toFixed();
     return FunService.create(this.billModel, body);
   }
 
-  async getBillByLimit(@Query() query): Promise<Bill[]> {
-    // const data=await FunService.getDataByLimit(this.billModel, page, limit);
-    const pageLimitSkip = getPageLimitSkip(query);
-    const data = await this.billModel
-      .find()
-      .skip(Number(pageLimitSkip.skip))
-      .limit(Number(pageLimitSkip.limit))
-      .exec();
-    const listIDProduct: string[] = data.flatMap((e) =>
-      e.listBill.map((item) => item.id),
-    );
-    const dataProduct =
-      await this.productService.getProductByListID(listIDProduct);
-    console.log('====================================');
-    console.log({ dataProduct });
-    console.log('====================================');
-
-    return data;
+  async updateBill(id: string, body: Bill): Promise<Bill> {
+    return FunService.updateData(this.billModel, id, body);
   }
 
   async getBillByID(id: string): Promise<Bill> {
@@ -45,7 +30,24 @@ export class BillService {
     return FunService.deleteDataByID(this.billModel, id);
   }
 
-  async updateBill(id: string, body: Bill): Promise<Bill> {
-    return FunService.updateData(this.billModel, id, body);
+  async getBillByIDUser(@Query() query, idUser: string): Promise<Bill[]> {
+    // const data=await FunService.getDataByLimit(this.billModel, page, limit);
+    const pageLimitSkip = getPageLimitSkip(query);
+    const data = await this.billModel
+      .find({ isUser: idUser })
+      .skip(Number(pageLimitSkip.skip))
+      .limit(Number(pageLimitSkip.limit))
+      .exec();
+
+    const listIDProduct: string[] = data.flatMap((e) =>
+      e.listBill.map((item) => item.id),
+    );
+    const dataProduct =
+      await this.productService.getProductByListID(listIDProduct);
+    console.log('====================================');
+    console.log({ dataProduct });
+    console.log('====================================');
+
+    return data;
   }
 }

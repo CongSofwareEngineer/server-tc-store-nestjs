@@ -20,13 +20,13 @@ import { BillModule } from './module/bill/bill.module';
 
 @Module({
   imports: [
-    AuthModule,
-    MomoModule,
-    CarModule,
+    // AuthModule,
+    // MomoModule,
+    // CarModule,
     ProductModule,
-    UserModule,
-    TypeProductModule,
-    BillModule,
+    // UserModule,
+    // TypeProductModule,
+    // BillModule,
     ConfigModule.forRoot({
       envFilePath: '.env.local',
     }),

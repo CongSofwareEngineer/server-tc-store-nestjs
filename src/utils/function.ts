@@ -7,8 +7,16 @@ export function delayTime(ms = 500) {
   });
 }
 
+export function lowercase(text: any) {
+  try {
+    return text.toString().toLocaleLowerCase();
+  } catch (error) {
+    return text;
+  }
+}
+
 export function getPageLimitSkip(query: { [key: string]: any }) {
-  const page = query?.page || 1;
+  const page = Number(query?.page || 1);
   const limit = Number(query?.limit || LIMIT_DATA);
   const skip = (page - 1) * limit;
   return {

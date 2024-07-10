@@ -4,7 +4,7 @@ export class CreateUserDto {
   sex?: boolean;
   name?: string;
   isAdmin: boolean;
-  date: number;
+  date: string;
   addressShipper: string[];
   avatar?: string | null;
   exp?: number;

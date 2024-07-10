@@ -25,10 +25,53 @@ export class FunService {
   static async getDataByListID(
     model: Model<any>,
     listId: string[],
+    @Query() query,
   ): Promise<any[]> {
-    const data = await model.find({
-      _id: { $in: listId },
-    });
+    const pageLimitSkip = getPageLimitSkip(query);
+
+    const data = await model
+      .find({
+        _id: { $in: listId },
+      })
+      .skip(Number(pageLimitSkip.skip))
+      .limit(Number(pageLimitSkip.limit))
+      .exec();
+    return data;
+  }
+
+  static async findDataByOptions(
+    model: Model<any>,
+    @Query() query,
+    queryOption: { [key: string]: any } = {},
+    options: { [key: string]: any } = {},
+  ): Promise<any[]> {
+    const pageLimitSkip = getPageLimitSkip(query);
+
+    const data = await model
+      .find(queryOption, options)
+      .skip(Number(pageLimitSkip.skip))
+      .limit(Number(pageLimitSkip.limit))
+      .exec();
+
+    return data;
+  }
+
+  static async findAndSortDataByOptions(
+    model: Model<any>,
+    @Query() query,
+    queryOption: { [key: string]: any } = {},
+    options: { [key: string]: any } = {},
+    optionsSort: { [key: string]: any } = {},
+  ): Promise<any[]> {
+    const pageLimitSkip = getPageLimitSkip(query);
+
+    const data = await model
+      .find(queryOption, options)
+      .sort(optionsSort)
+      .skip(Number(pageLimitSkip.skip))
+      .limit(Number(pageLimitSkip.limit))
+      .exec();
+
     return data;
   }
 

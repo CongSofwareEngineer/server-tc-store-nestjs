@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
 
@@ -7,14 +7,26 @@ export class BillController {
   constructor(private billService: BillService) {}
 
   @Get('user/:idUser')
-  async getBill(@Res() res, @Query() query) {
-    const data = await this.billService.getBillByLimit(query);
+  async getBill(@Res() res, @Query() query, @Param() param) {
+    const data = await this.billService.getBillByIDUser(query, param.idUser);
     return formatRes(res, data);
   }
 
   @Post('create')
   async createBill(@Res() res, @Body() body) {
     const data = await this.billService.create(body);
+    return formatRes(res, data);
+  }
+
+  @Post('update/:id')
+  async updateBill(@Res() res, @Body() body, @Param() param) {
+    const data = await this.billService.updateBill(param.id, body);
+    return formatRes(res, data);
+  }
+
+  @Post('delete/:id')
+  async deleteBill(@Res() res, @Param() param) {
+    const data = await this.billService.deleteBillByID(param.id);
     return formatRes(res, data);
   }
 }

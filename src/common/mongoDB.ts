@@ -7,3 +7,14 @@ export enum DBCollection {
 }
 
 export const DataBaseName = 'tc-store';
+
+export enum MathDB {
+  $in = '$in',
+  $gt = '$gt',
+  $gte = '$gte',
+  $lt = '$lt',
+  $nor = '$nor',
+  $and = '$and',
+  $or = '$or',
+  $where = '$where',
+}
