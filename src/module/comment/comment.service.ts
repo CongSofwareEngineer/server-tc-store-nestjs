@@ -2,6 +2,7 @@ import { Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
+import { Comment } from './Schema/coment.schema';
 
 @Injectable()
 export class CommentService {
