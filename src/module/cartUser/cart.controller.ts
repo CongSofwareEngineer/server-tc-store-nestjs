@@ -1,13 +1,28 @@
-import { Body, Controller, Get, Param, Post, Res, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  Query,
+  Delete,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
 import { formatRes } from 'src/utils/function';
 import { LIMIT_DATA } from 'src/common/app';
-
+import { ApiParam, ApiTags } from '@nestjs/swagger';
+@ApiTags('cart')
 @Controller('cart')
 export class CartController {
   constructor(private cartService: CartService) {}
 
-  @Get(':idUser')
+  @ApiParam({
+    name: 'idUser',
+    required: true,
+    description: 'Id user',
+  })
+  @Get('detail/:idUser')
   async getCartByIdUser(@Res() res, @Param() param, @Query() query) {
     const page = query?.page || 1;
     const limit = Number(query?.limit || LIMIT_DATA);
@@ -26,7 +41,7 @@ export class CartController {
     return formatRes(res, data);
   }
 
-  @Post('delete-cart/:id')
+  @Delete('delete-cart/:id')
   async deleteCart(@Res() res, @Param() param) {
     const data = await this.cartService.deleteCart(param.id);
     return formatRes(res, data);

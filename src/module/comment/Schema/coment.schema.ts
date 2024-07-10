@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
-@Schema()
+@Schema({ versionKey: false })
 export class Comment {
   _id?: Types.ObjectId;
 
@@ -32,3 +32,9 @@ export class Comment {
 
 export type CommentDocument = HydratedDocument<Comment>;
 export const CommentSchema = SchemaFactory.createForClass(Comment);
+CommentSchema.set('toJSON', {
+  transform: (_, ret) => {
+    delete ret.__v;
+    return ret;
+  },
+});

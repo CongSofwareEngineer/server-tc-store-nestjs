@@ -10,7 +10,7 @@ import { CarModule } from './module/cartUser/cart.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DataBaseName } from './common/mongoDB';
 import { UserModule } from './module/user/user.module';
-import { TypeProductModule } from './module/typeProduct/typeProduct.module';
+import { CategoryModule } from './module/category/category.module';
 import { ProductModule } from './module/production/product.module';
 import { AuthModule } from './module/auth/auth.module';
 import { MomoModule } from './module/momo/momo.module';
@@ -26,7 +26,7 @@ import { CommentModule } from './module/comment/comment.module';
     CarModule,
     ProductModule,
     UserModule,
-    TypeProductModule,
+    CategoryModule,
     BillModule,
     CommentModule,
     ConfigModule.forRoot({

@@ -1,8 +1,8 @@
 import { Body, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartUser } from './schemas/cart.schema';
-import { Model } from 'mongoose';
-import { DBCollection } from 'src/common/mongoDB';
+import { Model, Types } from 'mongoose';
+import { DBCollection, MathDB } from 'src/common/mongoDB';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
 
@@ -36,21 +36,6 @@ export class CartService {
       ])
       .skip(skip)
       .limit(limit);
-    // const data = await this.cartModel.find({
-    //   idUser: idUser,
-    // });
-
-    // console.log({ data });
-    // const listId = data.map((e) => {
-    //   console.log({ e: e });
-
-    //   return e.idProduct;
-    // });
-    // console.log('====================================');
-    // console.log({ listId });
-    // console.log('====================================');
-    // const dataPro = await this.productService.getProductByListID(listId);
-    // console.log({ dataPro });
 
     return data;
   }

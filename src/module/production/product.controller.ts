@@ -1,8 +1,19 @@
-import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { formatRes } from 'src/utils/function';
+import { ApiTags } from '@nestjs/swagger';
 
 //hostname/product/Method
+@ApiTags('product')
 @Controller('product')
 export class ProductionController {
   constructor(private readonly productService: ProductService) {}
@@ -13,7 +24,7 @@ export class ProductionController {
     return formatRes(res, data);
   }
 
-  @Get(':id')
+  @Get('detail/:id')
   async getProductByID(@Res() res, @Param() param) {
     const data = await this.productService.getProductByID(param.id);
     return formatRes(res, data);
@@ -31,7 +42,7 @@ export class ProductionController {
     return formatRes(res, data);
   }
 
-  @Post('delete/:id')
+  @Delete('delete/:id')
   async deleteProduct(@Res() res, @Param() param) {
     const data = await this.productService.deleteProductByID(param.id);
     return formatRes(res, data);

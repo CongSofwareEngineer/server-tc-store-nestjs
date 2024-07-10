@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
-@Schema()
+@Schema({ versionKey: false })
 export class Bill {
   _id?: Types.ObjectId;
 
@@ -45,3 +45,9 @@ export class Bill {
 
 export type BillDocument = HydratedDocument<Bill>;
 export const BillSchema = SchemaFactory.createForClass(Bill);
+BillSchema.set('toJSON', {
+  transform: (_, ret) => {
+    delete ret.__v;
+    return ret;
+  },
+});

@@ -2,7 +2,8 @@ import { Controller, Post, Request, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { formatRes } from 'src/utils/function';
 import { isBoolean } from 'class-validator';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor() {}

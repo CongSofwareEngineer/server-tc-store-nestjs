@@ -3,7 +3,7 @@ export enum DBCollection {
   Production = 'Production',
   Comment = 'Comment',
   CartUser = 'CartUser',
-  TypeProduct = 'TypeProduct',
+  Category = 'TypeProduct',
   Bill = 'Bill',
 }
 

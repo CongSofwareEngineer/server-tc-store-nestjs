@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
-@Schema()
+@Schema({ versionKey: false })
 export class Product {
   @Prop()
   _id?: Types.ObjectId;
@@ -67,10 +67,16 @@ export class Product {
   sold?: number;
 
   @Prop()
-  typeProduct?: string;
+  category?: string;
 
   @Prop()
   weight?: string;
 }
 export type ProductDocument = HydratedDocument<Product>;
 export const ProductSchema = SchemaFactory.createForClass(Product);
+ProductSchema.set('toJSON', {
+  transform: (_, ret) => {
+    delete ret.__v;
+    return ret;
+  },
+});

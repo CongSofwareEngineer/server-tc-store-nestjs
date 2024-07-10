@@ -1,7 +1,7 @@
 import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { MathDB } from 'src/common/mongoDB';
 import { lowercase } from 'src/utils/function';
@@ -30,16 +30,16 @@ export class ProductService {
   }
 
   async getProductByTypeProduct(@Query() query): Promise<Product[]> {
-    if (!query.typeProduct || lowercase(query.typeProduct) === 'all') {
+    if (!query.category || lowercase(query.category) === 'all') {
       return FunService.getDataByLimit(this.productModel, query);
     }
-    let listType: string[] = query.typeProduct.split(',');
+    let listType: string[] = query.category.split(',');
     listType = listType.map((e) => lowercase(e));
     const dataFilter = await FunService.findAndSortDataByOptions(
       this.productModel,
       query,
       {
-        typeProduct: { [MathDB.$in]: listType },
+        category: { [MathDB.$in]: listType },
       },
       {},
       {

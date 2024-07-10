@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
-@Schema()
+@Schema({ versionKey: false })
 export class CartUser {
+  @Prop()
   _id?: Types.ObjectId;
 
   @Prop()
@@ -45,7 +46,7 @@ export class CartUser {
   weight?: string;
 
   @Prop()
-  typeProduct?: string;
+  category?: string;
 
   static pipelineMoreDataGetCart() {
     const bodyMoreDataRes = {
@@ -61,7 +62,7 @@ export class CartUser {
       numberChildren: 1,
       price: 1,
       sold: 1,
-      typeProduct: 1,
+      category: 1,
       weight: 1,
       // __v: 0,
     };
@@ -70,3 +71,9 @@ export class CartUser {
 }
 export type CartUserDocument = HydratedDocument<CartUser>;
 export const CartUserSchema = SchemaFactory.createForClass(CartUser);
+CartUserSchema.set('toJSON', {
+  transform: (_, ret) => {
+    delete ret.__v;
+    return ret;
+  },
+});

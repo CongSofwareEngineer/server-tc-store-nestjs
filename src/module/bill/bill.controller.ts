@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('bill')
 @Controller('bill')
 export class BillController {
   constructor(private billService: BillService) {}
@@ -24,7 +34,7 @@ export class BillController {
     return formatRes(res, data);
   }
 
-  @Post('delete/:id')
+  @Delete('delete/:id')
   async deleteBill(@Res() res, @Param() param) {
     const data = await this.billService.deleteBillByID(param.id);
     return formatRes(res, data);

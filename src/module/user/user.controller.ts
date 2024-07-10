@@ -4,6 +4,8 @@ import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
 import { CreateUserDto } from './dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('user')
 @SkipThrottle()
 @Controller('user')
 export class UserController {
@@ -37,7 +39,7 @@ export class UserController {
     return formatRes(response, 'hello');
   }
 
-  @Get('/:_id')
+  @Get('detail/:_id')
   async getUserByID(@Res() response, @Param() params): Promise<User | null> {
     const data = await this.userService.getUserByID(params);
     return formatRes(response, data);
