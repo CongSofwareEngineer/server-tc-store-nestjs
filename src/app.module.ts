@@ -17,6 +17,7 @@ import { MomoModule } from './module/momo/momo.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerMiddleware } from './logger.middleware';
 import { BillModule } from './module/bill/bill.module';
+import { CommentModule } from './module/comment/comment.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { BillModule } from './module/bill/bill.module';
     UserModule,
     TypeProductModule,
     BillModule,
+    CommentModule,
     ConfigModule.forRoot({
       envFilePath: '.env.local',
     }),

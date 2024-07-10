@@ -1,6 +1,7 @@
 export enum DBCollection {
   User = 'User',
   Production = 'Production',
+  Comment = 'Comment',
   CartUser = 'CartUser',
   TypeProduct = 'TypeProduct',
   Bill = 'Bill',
