@@ -16,10 +16,7 @@ export class UserService {
     });
   }
   async getUserByID(@Param() params): Promise<User> {
-    const data = await this.userModel.findById(params._id).exec();
-    console.log({ data });
-
-    return data;
+    return FunService.findDataByID(this.userModel, params._id);
   }
 
   async getAllUser(): Promise<User[]> {
@@ -36,6 +33,9 @@ export class UserService {
       sdt: sdt,
       pass: pass,
     });
+    if (!dataUser) {
+      return null;
+    }
 
     const auth = AuthService.generateAuth(dataUser.id, dataUser.sdt);
     dataUser.auth = auth.tokenAccess;

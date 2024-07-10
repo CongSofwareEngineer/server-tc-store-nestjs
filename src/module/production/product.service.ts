@@ -40,7 +40,7 @@ export class ProductService {
       {
         typeProduct: { [MathDB.$in]: listType },
       },
-      {},
+      { __v: 0 },
       {
         price: query.sort ? (query.sort === 'asc' ? 1 : -1) : 1,
       },

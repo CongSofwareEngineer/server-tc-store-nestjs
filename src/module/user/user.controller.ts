@@ -39,28 +39,26 @@ export class UserController {
 
   @Get('/:_id')
   async getUserByID(@Res() response, @Param() params): Promise<User> {
-    console.log({ params });
-
     const data = await this.userService.getUserByID(params);
-    console.log('====================================');
-    console.log({ data });
-    console.log('====================================');
     return formatRes(response, data);
   }
 
   @Post('create')
   async createUser(@Res() response, @Body() userData: User): Promise<User> {
-    try {
-      const data = await this.userService.createUser(userData);
-      return formatRes(response, data);
-    } catch (error) {
-      return formatRes(response, null, true);
-    }
+    const data = await this.userService.createUser(userData);
+    return formatRes(response, data);
   }
 
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('login')
-  async login(@Body() createUserDto: CreateUserDto): Promise<User | null> {
-    return await this.userService.login(createUserDto.sdt, createUserDto.pass);
+  async login(
+    @Res() response,
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<User | null> {
+    const data = await this.userService.login(
+      createUserDto.sdt,
+      createUserDto.pass,
+    );
+    return formatRes(response, data);
   }
 }

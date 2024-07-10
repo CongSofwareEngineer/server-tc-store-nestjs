@@ -11,15 +11,15 @@ export class FunService {
   }
 
   static async deleteDataByID(model: Model<any>, id: string): Promise<any> {
-    return model.findByIdAndDelete(id);
+    return model.findByIdAndDelete(id, { __v: 0 });
   }
 
   static async findDataByID(model: Model<any>, id: string): Promise<any> {
-    return model.findById(id).exec();
+    return model.findById(id, { __v: 0 }).exec();
   }
 
   static async findOneData(model: Model<any>, param: { [key: string]: any }) {
-    return model.findOne(param);
+    return model.findOne(param, { __v: 0 });
   }
 
   static async getDataByListID(
@@ -30,9 +30,12 @@ export class FunService {
     const pageLimitSkip = getPageLimitSkip(query);
 
     const data = await model
-      .find({
-        _id: { $in: listId },
-      })
+      .find(
+        {
+          _id: { $in: listId },
+        },
+        { __v: 0 },
+      )
       .skip(Number(pageLimitSkip.skip))
       .limit(Number(pageLimitSkip.limit))
       .exec();
@@ -48,7 +51,7 @@ export class FunService {
     const pageLimitSkip = getPageLimitSkip(query);
 
     const data = await model
-      .find(queryOption, options)
+      .find(queryOption, { ...options, __v: 0 })
       .skip(Number(pageLimitSkip.skip))
       .limit(Number(pageLimitSkip.limit))
       .exec();
@@ -66,7 +69,7 @@ export class FunService {
     const pageLimitSkip = getPageLimitSkip(query);
 
     const data = await model
-      .find(queryOption, options)
+      .find(queryOption, { __v: 0, ...options })
       .sort(optionsSort)
       .skip(Number(pageLimitSkip.skip))
       .limit(Number(pageLimitSkip.limit))
@@ -81,7 +84,7 @@ export class FunService {
   ): Promise<any[]> {
     const pageLimitSkip = getPageLimitSkip(query);
     const data = await model
-      .find()
+      .find({}, { __v: 0 })
       .skip(Number(pageLimitSkip.skip))
       .limit(Number(pageLimitSkip.limit))
       .exec();
@@ -93,7 +96,7 @@ export class FunService {
     id: string,
     body: any,
   ): Promise<any> {
-    const data = await model.findByIdAndUpdate(id, body).exec();
+    const data = await model.findByIdAndUpdate(id, body, { __v: 0 }).exec();
     return data;
   }
 }
