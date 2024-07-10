@@ -8,10 +8,10 @@ import { FunService } from 'src/utils/funcService';
 export class TypeProductService {
   constructor(
     @InjectModel(TypeProduct.name) private typeProductModel: Model<TypeProduct>,
-  ) {}
+  ) { }
 
   async getAllType(): Promise<TypeProduct[]> {
-    return this.typeProductModel.find().exec();
+    return this.typeProductModel.find({}, { __v: 0 }).exec();
   }
 
   async getTypeByLimit(@Query() query): Promise<TypeProduct[]> {
