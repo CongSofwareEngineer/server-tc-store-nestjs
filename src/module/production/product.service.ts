@@ -18,6 +18,8 @@ export class ProductService {
   }
 
   async deleteProductByID(id: string): Promise<Product | null> {
+    console.log({ id });
+
     return FunService.deleteDataByID(this.productModel, id);
   }
 

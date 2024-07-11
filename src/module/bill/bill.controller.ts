@@ -10,12 +10,17 @@ import {
 } from '@nestjs/common';
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 @ApiTags('bill')
 @Controller('bill')
 export class BillController {
   constructor(private billService: BillService) {}
 
+  @ApiParam({
+    name: 'idUser',
+    required: true,
+    description: 'Id user',
+  })
   @Get('user/:idUser')
   async getBill(@Res() res, @Query() query, @Param() param) {
     const data = await this.billService.getBillByIDUser(query, param.idUser);

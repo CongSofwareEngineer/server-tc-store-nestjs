@@ -10,7 +10,7 @@ import {
 import { formatRes } from 'src/utils/function';
 import { Category } from './schemas/category.schema';
 import { CategoryService } from './category.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('category')
 @Controller('category')
@@ -32,6 +32,11 @@ export class CategoryController {
     return formatRes(response, data);
   }
 
+  @ApiParam({
+    name: 'Id',
+    required: true,
+    description: 'Id',
+  })
   @Delete('delete/:id')
   async deleteType(@Res() response, @Param() param): Promise<Category | null> {
     const data = await this.categoryService.deleteCategory(param);
