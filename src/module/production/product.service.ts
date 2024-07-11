@@ -24,6 +24,9 @@ export class ProductService {
   }
 
   async updateProduct(id: string, body: Product): Promise<Product | null> {
+    console.log('====================================');
+    console.log({ body });
+    console.log('====================================');
     return FunService.updateData(this.productModel, id, body);
   }
 
@@ -41,7 +44,7 @@ export class ProductService {
       this.productModel,
       query,
       {
-        typeProduct: { [MathDB.$in]: listType },
+        category: { [MathDB.$in]: listType },
       },
       {},
       {

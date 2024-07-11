@@ -75,6 +75,10 @@ export class FunService {
     return data;
   }
 
+  static async getFullDataByID(model: Model<any>, id: string): Promise<any[]> {
+    return model.findById(id).exec();
+  }
+
   static async getDataByLimit(
     model: Model<any>,
     @Query() query,

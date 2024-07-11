@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
@@ -47,6 +56,17 @@ export class UserController {
   @Get('detail/:_id')
   async getUserByID(@Res() response, @Param() params): Promise<User | null> {
     const data = await this.userService.getUserByID(params);
+    return formatRes(response, data);
+  }
+
+  @ApiParam({
+    name: '_id',
+    required: true,
+    description: '_id',
+  })
+  @Delete('detail/:_id')
+  async deleteUserByID(@Res() response, @Param() params): Promise<User | null> {
+    const data = await this.userService.deleteUserByID(params._id);
     return formatRes(response, data);
   }
 

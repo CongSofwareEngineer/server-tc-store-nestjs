@@ -1,4 +1,4 @@
-import { Body, Inject, Injectable } from '@nestjs/common';
+import { Body, Inject, Injectable, Param } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartUser } from './schemas/cart.schema';
 import { Model, Types } from 'mongoose';
@@ -12,6 +12,10 @@ export class CartService {
     @InjectModel(CartUser.name) private cartModel: Model<CartUser>,
     @Inject(ProductService) private productService: ProductService,
   ) {}
+
+  async getLengthCartByIdUser(@Param() param) {
+    return FunService.getFullDataByID(this.cartModel, param.idUser);
+  }
 
   async getCartByIdUser(idUser: string, page: number, limit: number) {
     const skip = (page - 1) * limit;
