@@ -64,7 +64,7 @@ export class UserController {
     required: true,
     description: '_id',
   })
-  @Delete('detail/:_id')
+  @Delete('delete/:_id')
   async deleteUserByID(@Res() response, @Param() params): Promise<User | null> {
     const data = await this.userService.deleteUserByID(params._id);
     return formatRes(response, data);
@@ -88,6 +88,23 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
   ): Promise<User | null> {
     const data = await this.userService.login(
+      createUserDto.sdt,
+      createUserDto.pass,
+    );
+    return formatRes(response, data);
+  }
+
+  @ApiBody({
+    description: 'Login User',
+    required: true,
+    type: Object,
+  })
+  @Post('login/refresh')
+  async loginRefresh(
+    @Res() response,
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<User | null> {
+    const data = await this.userService.loginRefresh(
       createUserDto.sdt,
       createUserDto.pass,
     );

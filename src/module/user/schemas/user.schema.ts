@@ -39,7 +39,7 @@ export class User {
   auth?: string;
 
   @Prop()
-  tokenRefresh?: string;
+  authRefresh?: string;
 }
 export type UserDocument = HydratedDocument<User>;
 export const UserSchema = SchemaFactory.createForClass(User);

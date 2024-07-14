@@ -17,6 +17,12 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 export class CartController {
   constructor(private cartService: CartService) {}
 
+  @Get('all')
+  async getAllCart(@Res() res, @Query() query) {
+    const data = this.cartService.getAllCart(query);
+    return formatRes(res, data);
+  }
+
   @ApiParam({
     name: 'idUser',
     required: true,
@@ -24,14 +30,7 @@ export class CartController {
   })
   @Get('detail/:idUser')
   async getCartByIdUser(@Res() res, @Param() param, @Query() query) {
-    const page = query?.page || 1;
-    const limit = Number(query?.limit || LIMIT_DATA);
-
-    const data = await this.cartService.getCartByIdUser(
-      param.idUser,
-      page,
-      limit,
-    );
+    const data = await this.cartService.getCartByIdUser(param.idUser, query);
     return formatRes(res, data);
   }
 
@@ -58,6 +57,11 @@ export class CartController {
     return formatRes(res, data);
   }
 
+  @ApiParam({
+    name: 'Id',
+    required: true,
+    description: 'Id',
+  })
   @Post('update-cart/:id')
   async updateCart(@Res() res, @Param() param, @Body() body) {
     const data = await this.cartService.updateCart(param.id, body);

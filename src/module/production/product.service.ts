@@ -1,7 +1,7 @@
 import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { MathDB } from 'src/common/mongoDB';
 import { lowercase } from 'src/utils/function';
@@ -18,15 +18,10 @@ export class ProductService {
   }
 
   async deleteProductByID(id: string): Promise<Product | null> {
-    console.log({ id });
-
     return FunService.deleteDataByID(this.productModel, id);
   }
 
   async updateProduct(id: string, body: Product): Promise<Product | null> {
-    console.log('====================================');
-    console.log({ body });
-    console.log('====================================');
     return FunService.updateData(this.productModel, id, body);
   }
 
@@ -55,7 +50,7 @@ export class ProductService {
     return dataFilter;
   }
 
-  async getProductByListID(listId: string[]): Promise<Product[]> {
+  async getProductByListID(listId: Types.ObjectId[]): Promise<Product[]> {
     const data = await this.productModel.find({
       _id: { $in: listId },
     });

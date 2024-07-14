@@ -36,11 +36,20 @@ export class UserService {
     if (!dataUser) {
       return null;
     }
-
-    const auth = AuthService.generateAuth(dataUser.id, dataUser.sdt);
+    const auth = AuthService.generateAuth(dataUser._id, dataUser.sdt);
     dataUser.auth = auth.tokenAccess;
-    dataUser.tokenRefresh = auth.tokenRefresh;
+    dataUser.authRefresh = auth.tokenRefresh;
+    return dataUser;
+  }
 
+  async loginRefresh(sdt: string, pass: string): Promise<User | null> {
+    const dataUser = await FunService.findOneData(this.userModel, {
+      sdt: sdt,
+      pass: pass,
+    });
+    if (!dataUser) {
+      return null;
+    }
     return dataUser;
   }
 
@@ -52,7 +61,7 @@ export class UserService {
       sdt: body?.sdt,
       sex: body?.sex || true,
       isAdmin: !!body?.isAdmin,
-      name: body?.name || 'noname',
+      name: body?.name || body?.sdt || 'noname',
       pass: body?.pass,
       avatar: body?.avatar || '',
       address: body?.address || '',

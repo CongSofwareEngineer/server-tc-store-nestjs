@@ -1,25 +1,66 @@
 import { Query } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, PipelineStage, Types } from 'mongoose';
 import { getPageLimitSkip } from 'src/utils/function';
 
 export class FunService {
   static modelService: any = new FunService();
 
   static async create(model: Model<any>, data: any): Promise<any> {
-    const dataNew = await model.create(data);
-    return dataNew;
+    try {
+      const dataNew = await model.create(data);
+      return dataNew;
+    } catch (error) {
+      return null;
+    }
   }
 
-  static async deleteDataByID(model: Model<any>, id: string): Promise<any> {
-    return model.findByIdAndDelete(id);
+  static async deleteDataByID(
+    model: Model<any>,
+    id: string | Types.ObjectId,
+  ): Promise<any> {
+    try {
+      return model.findByIdAndDelete(id).exec();
+    } catch (error) {
+      return null;
+    }
   }
 
-  static async findDataByID(model: Model<any>, id: string): Promise<any> {
-    return model.findById(id).exec();
+  static async findDataByID(
+    model: Model<any>,
+    id: string | Types.ObjectId,
+  ): Promise<any> {
+    try {
+      return model.findById(id).exec();
+    } catch (error) {
+      return null;
+    }
   }
 
   static async findOneData(model: Model<any>, param: { [key: string]: any }) {
-    return model.findOne(param);
+    try {
+      return model.findOne(param).exec();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  static async getDataByID(
+    model: Model<any>,
+    id: Types.ObjectId,
+    @Query() query,
+  ): Promise<any[]> {
+    try {
+      const pageLimitSkip = getPageLimitSkip(query);
+
+      const data = await model
+        .findById(id)
+        .skip(Number(pageLimitSkip.skip))
+        .limit(Number(pageLimitSkip.limit))
+        .exec();
+      return data;
+    } catch (error) {
+      return [];
+    }
   }
 
   static async getDataByListID(
@@ -27,16 +68,20 @@ export class FunService {
     listId: string[],
     @Query() query,
   ): Promise<any[]> {
-    const pageLimitSkip = getPageLimitSkip(query);
+    try {
+      const pageLimitSkip = getPageLimitSkip(query);
 
-    const data = await model
-      .find({
-        _id: { $in: listId },
-      })
-      .skip(Number(pageLimitSkip.skip))
-      .limit(Number(pageLimitSkip.limit))
-      .exec();
-    return data;
+      const data = await model
+        .find({
+          _id: { $in: listId },
+        })
+        .skip(Number(pageLimitSkip.skip))
+        .limit(Number(pageLimitSkip.limit))
+        .exec();
+      return data;
+    } catch (error) {
+      return [];
+    }
   }
 
   static async findDataByOptions(
@@ -45,15 +90,38 @@ export class FunService {
     queryOption: { [key: string]: any } = {},
     options: { [key: string]: any } = {},
   ): Promise<any[]> {
-    const pageLimitSkip = getPageLimitSkip(query);
+    try {
+      const pageLimitSkip = getPageLimitSkip(query);
 
-    const data = await model
-      .find(queryOption, options)
-      .skip(Number(pageLimitSkip.skip))
-      .limit(Number(pageLimitSkip.limit))
-      .exec();
+      const data = await model
+        .find(queryOption, options)
+        .skip(Number(pageLimitSkip.skip))
+        .limit(Number(pageLimitSkip.limit))
+        .exec();
 
-    return data;
+      return data;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  static async findDataByAggregate(
+    model: Model<any>,
+    @Query() query,
+    pipelineStage?: PipelineStage[],
+  ): Promise<any[]> {
+    try {
+      const pageLimitSkip = getPageLimitSkip(query);
+      const data = await model
+        .aggregate(pipelineStage)
+        .skip(Number(pageLimitSkip.skip))
+        .limit(Number(pageLimitSkip.limit))
+        .exec();
+
+      return data;
+    } catch (error) {
+      return [];
+    }
   }
 
   static async findAndSortDataByOptions(
@@ -63,33 +131,45 @@ export class FunService {
     options: { [key: string]: any } = {},
     optionsSort: { [key: string]: any } = {},
   ): Promise<any[]> {
-    const pageLimitSkip = getPageLimitSkip(query);
+    try {
+      const pageLimitSkip = getPageLimitSkip(query);
 
-    const data = await model
-      .find(queryOption, options)
-      .sort(optionsSort)
-      .skip(Number(pageLimitSkip.skip))
-      .limit(Number(pageLimitSkip.limit))
-      .exec();
+      const data = await model
+        .find(queryOption, options)
+        .sort(optionsSort)
+        .skip(Number(pageLimitSkip.skip))
+        .limit(Number(pageLimitSkip.limit))
+        .exec();
 
-    return data;
+      return data;
+    } catch (error) {
+      return [];
+    }
   }
 
   static async getFullDataByID(model: Model<any>, id: string): Promise<any[]> {
-    return model.findById(id).exec();
+    try {
+      return model.findById(id).exec();
+    } catch (error) {
+      return null;
+    }
   }
 
   static async getDataByLimit(
     model: Model<any>,
     @Query() query,
   ): Promise<any[]> {
-    const pageLimitSkip = getPageLimitSkip(query);
-    const data = await model
-      .find()
-      .skip(Number(pageLimitSkip.skip))
-      .limit(Number(pageLimitSkip.limit))
-      .exec();
-    return data;
+    try {
+      const pageLimitSkip = getPageLimitSkip(query);
+      const data = await model
+        .find()
+        .skip(Number(pageLimitSkip.skip))
+        .limit(Number(pageLimitSkip.limit))
+        .exec();
+      return data;
+    } catch (error) {
+      return [];
+    }
   }
 
   static async updateData(
@@ -97,7 +177,11 @@ export class FunService {
     id: string,
     body: any,
   ): Promise<any> {
-    const data = await model.findByIdAndUpdate(id, body).exec();
-    return data;
+    try {
+      const data = await model.findByIdAndUpdate(id, body).exec();
+      return data;
+    } catch (error) {
+      return null;
+    }
   }
 }

@@ -1,8 +1,8 @@
-import { Body, Inject, Injectable, Param } from '@nestjs/common';
+import { Body, Inject, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartUser } from './schemas/cart.schema';
-import { Model, Types } from 'mongoose';
-import { DBCollection, MathDB } from 'src/common/mongoDB';
+import { Model, PipelineStage, Types } from 'mongoose';
+import { DBCollection } from 'src/common/mongoDB';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
 
@@ -13,16 +13,19 @@ export class CartService {
     @Inject(ProductService) private productService: ProductService,
   ) {}
 
+  async getAllCart(@Query() query) {
+    return FunService.getDataByLimit(this.cartModel, query);
+  }
+
   async getLengthCartByIdUser(@Param() param) {
     return FunService.getFullDataByID(this.cartModel, param.idUser);
   }
 
-  async getCartByIdUser(idUser: string, page: number, limit: number) {
-    const skip = (page - 1) * limit;
-    const data = await this.cartModel
-      .aggregate([
+  async getCartByIdUser(idUser: Types.ObjectId, @Query() query) {
+    try {
+      const arrFilter: PipelineStage[] = [
         {
-          $match: { idUser: idUser },
+          $match: { idUser: new Types.ObjectId(idUser) },
         },
         {
           $lookup: {
@@ -37,21 +40,27 @@ export class CartService {
             ],
           },
         },
-      ])
-      .skip(skip)
-      .limit(limit);
-
-    return data;
+      ];
+      const data = await FunService.findDataByAggregate(
+        this.cartModel,
+        query,
+        arrFilter,
+      );
+      return data;
+    } catch (error) {
+      return null;
+    }
   }
 
   async create(body: CartUser): Promise<CartUser> {
     const bodyTemp: CartUser = {
       moreConfig: body?.moreConfig || {},
-      date: body?.date || Date.now().toFixed(),
-      idUser: body?.idUser,
-      amount: body?.amount,
-      idProduct: body.idProduct,
+      date: new Date().getTime().toFixed(),
+      idUser: new Types.ObjectId(body?.idUser),
+      amount: Number(body?.amount),
+      idProduct: new Types.ObjectId(body.idProduct),
     };
+
     return FunService.create(this.cartModel, bodyTemp);
   }
 

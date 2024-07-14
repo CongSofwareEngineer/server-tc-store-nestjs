@@ -15,7 +15,7 @@ export class Bill {
   discount?: number;
 
   @Prop()
-  idUser?: string;
+  idUser?: Types.ObjectId;
 
   @Prop()
   addressShip?: string;
@@ -35,7 +35,7 @@ export class Bill {
   @Prop({ type: Object })
   listBill?: [
     {
-      id?: string;
+      _id?: string;
       amount?: number;
       moreConfig?: Record<string, any>;
       keyNameProduct?: string;

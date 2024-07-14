@@ -14,7 +14,7 @@ export class AuthService {
 
   static generateAuthAccess(id: string, sdt: string): string {
     const jwtAccess = new JwtService({
-      secret: JwtConstants.secret,
+      secret: process.env.SECRET_KEY_JWT,
       signOptions: { expiresIn: JwtConstants.expiredAccess },
     });
     const tokenAccess = jwtAccess.sign({
@@ -27,7 +27,7 @@ export class AuthService {
 
   static generateAuthRefresh(id: string, sdt: string): string {
     const jwtRefresh = new JwtService({
-      secret: JwtConstants.secret,
+      secret: process.env.SECRET_KEY_JWT,
       signOptions: { expiresIn: JwtConstants.expiredRefresh },
     });
     const tokenRefresh = jwtRefresh.sign({
@@ -51,7 +51,7 @@ export class AuthService {
       } {
     try {
       const jwt = new JwtService({
-        secret: JwtConstants.secret,
+        secret: process.env.SECRET_KEY_JWT,
         signOptions: {
           expiresIn: isRefreshToken
             ? JwtConstants.expiredRefresh
@@ -60,7 +60,7 @@ export class AuthService {
       });
 
       const data = jwt.verify(token, {
-        secret: JwtConstants.secret,
+        secret: process.env.SECRET_KEY_JWT,
       });
 
       return data;
@@ -71,7 +71,7 @@ export class AuthService {
 
   static async refreshTokenAccess(tokenRefresh: string): Promise<string> {
     const jwt = new JwtService({
-      secret: JwtConstants.secret,
+      secret: process.env.SECRET_KEY_JWT,
       signOptions: {
         expiresIn: JwtConstants.expiredAccess,
       },

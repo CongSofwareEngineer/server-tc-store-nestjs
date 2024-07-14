@@ -3,7 +3,6 @@ import { HydratedDocument, Types } from 'mongoose';
 
 @Schema({ versionKey: false })
 export class CartUser {
-  @Prop()
   _id?: Types.ObjectId;
 
   @Prop()
@@ -13,10 +12,10 @@ export class CartUser {
   date?: string;
 
   @Prop()
-  idProduct?: string;
+  idProduct?: Types.ObjectId;
 
   @Prop()
-  idUser?: string;
+  idUser?: Types.ObjectId;
 
   @Prop()
   imageMain?: string;

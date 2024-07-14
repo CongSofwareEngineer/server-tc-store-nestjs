@@ -6,15 +6,25 @@ import { AuthService } from './module/auth/auth.service';
 export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     try {
-      if (process.env.ENABLE_CHECK_AUTH === 'true') {
-        if (!AuthService.verifyAth(req.headers.authorization)) {
-          res.status(HttpStatus.BAD_REQUEST).send({
-            error: 'Authorization expired',
-            status: HttpStatus.BAD_REQUEST,
-          });
+      console.log({ url: req.originalUrl });
+      console.log({ token: req.headers.authorization });
+
+      if (
+        req.originalUrl === '/category/all' ||
+        req.originalUrl === '/user/login'
+      ) {
+        next();
+      } else {
+        if (process.env.ENABLE_CHECK_AUTH === 'true') {
+          if (!AuthService.verifyAth(req.headers.authorization)) {
+            res.status(HttpStatus.BAD_REQUEST).send({
+              error: 'Authorization expired',
+              status: HttpStatus.BAD_REQUEST,
+            });
+          }
         }
+        next();
       }
-      next();
     } catch (_) {
       res.status(HttpStatus.BAD_REQUEST).send({
         error: 'Not authorization',

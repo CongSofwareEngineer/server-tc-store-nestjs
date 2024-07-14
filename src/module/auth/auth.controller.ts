@@ -12,6 +12,7 @@ export class AuthController {
   async refreshToken(@Res() res, @Request() req) {
     const token = req.headers.authorization;
     const dataVerify = AuthService.verifyAth(token, true);
+
     if (!isBoolean(dataVerify)) {
       const tokenAccess = AuthService.generateAuthAccess(
         dataVerify.id,
