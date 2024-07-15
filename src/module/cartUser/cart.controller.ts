@@ -18,7 +18,7 @@ export class CartController {
 
   @Get('all')
   async getAllCart(@Res() res, @Query() query) {
-    const data = this.cartService.getAllCart(query);
+    const data = await this.cartService.getAllCart(query);
     return formatRes(res, data);
   }
 
@@ -50,7 +50,7 @@ export class CartController {
     return formatRes(res, data);
   }
 
-  @Delete('delete-cart/:id')
+  @Delete('delete/:id')
   async deleteCart(@Res() res, @Param() param) {
     const data = await this.cartService.deleteCart(param.id);
     return formatRes(res, data);

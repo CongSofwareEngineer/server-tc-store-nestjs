@@ -15,7 +15,7 @@ export class CartUser {
   idProduct?: Types.ObjectId;
 
   @Prop()
-  idUser?: Types.ObjectId;
+  idUser?: string;
 
   @Prop()
   imageMain?: string;

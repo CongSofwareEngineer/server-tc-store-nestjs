@@ -21,11 +21,11 @@ export class CartService {
     return FunService.getFullDataByID(this.cartModel, param.idUser);
   }
 
-  async getCartByIdUser(idUser: Types.ObjectId, @Query() query) {
+  async getCartByIdUser(idUser: string, @Query() query) {
     try {
       const arrFilter: PipelineStage[] = [
         {
-          $match: { idUser: new Types.ObjectId(idUser) },
+          $match: { idUser: idUser.toString() },
         },
         {
           $lookup: {
@@ -46,6 +46,9 @@ export class CartService {
         query,
         arrFilter,
       );
+      console.log('====================================');
+      console.log({ data });
+      console.log('====================================');
       return data;
     } catch (error) {
       return null;
@@ -56,7 +59,7 @@ export class CartService {
     const bodyTemp: CartUser = {
       moreConfig: body?.moreConfig || {},
       date: new Date().getTime().toFixed(),
-      idUser: new Types.ObjectId(body?.idUser),
+      idUser: body?.idUser,
       amount: Number(body?.amount),
       idProduct: new Types.ObjectId(body.idProduct),
     };
