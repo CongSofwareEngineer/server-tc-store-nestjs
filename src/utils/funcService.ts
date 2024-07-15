@@ -16,7 +16,7 @@ export class FunService {
 
   static async deleteDataByID(
     model: Model<any>,
-    id: string | Types.ObjectId,
+    id: Types.ObjectId,
   ): Promise<any> {
     try {
       return model.findByIdAndDelete(id).exec();

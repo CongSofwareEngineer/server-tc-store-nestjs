@@ -69,7 +69,7 @@ export class ProductionController {
   })
   @Delete('delete/:id')
   async deleteProduct(@Res() res, @Param() param) {
-    const data = await this.productService.deleteProductByID(param.id);
+    const data = await this.productService.deleteProductByID(param);
     return formatRes(res, data);
   }
 }

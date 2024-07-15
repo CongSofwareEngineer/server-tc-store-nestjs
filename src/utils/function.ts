@@ -7,6 +7,10 @@ export function delayTime(ms = 500) {
   });
 }
 
+export function cloneData(data: any) {
+  return JSON.parse(JSON.stringify(data));
+}
+
 export function lowercase(text: any) {
   try {
     return text.toString().toLocaleLowerCase();

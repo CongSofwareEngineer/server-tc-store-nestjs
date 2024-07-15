@@ -1,4 +1,4 @@
-import { Injectable, Query } from '@nestjs/common';
+import { Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Model, Types } from 'mongoose';
@@ -17,8 +17,11 @@ export class ProductService {
     return FunService.create(this.productModel, body);
   }
 
-  async deleteProductByID(id: string): Promise<Product | null> {
-    return FunService.deleteDataByID(this.productModel, id);
+  async deleteProductByID(@Param() param): Promise<Product | null> {
+    return FunService.deleteDataByID(
+      this.productModel,
+      new Types.ObjectId(param.id),
+    );
   }
 
   async updateProduct(id: string, body: Product): Promise<Product | null> {

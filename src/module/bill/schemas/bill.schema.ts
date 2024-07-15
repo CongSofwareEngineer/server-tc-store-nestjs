@@ -33,14 +33,12 @@ export class Bill {
   note?: string;
 
   @Prop({ type: Object })
-  listBill?: [
-    {
-      _id?: string;
-      amount?: number;
-      moreConfig?: Record<string, any>;
-      keyNameProduct?: string;
-    },
-  ];
+  listBill?: {
+    _id?: Types.ObjectId;
+    amount?: number;
+    moreConfig?: Record<string, any>;
+    keyNameProduct?: string;
+  }[];
 }
 
 export type BillDocument = HydratedDocument<Bill>;

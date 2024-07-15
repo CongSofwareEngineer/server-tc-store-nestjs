@@ -20,7 +20,7 @@ import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('list')
+  @Get('all')
   async getUserByLimit(@Res() response, @Query() query): Promise<User[]> {
     try {
       const data = await this.userService.getUserByLimit(query);
@@ -39,13 +39,6 @@ export class UserController {
     } catch (error) {
       return formatRes(response, null, true);
     }
-  }
-
-  @Get('check')
-  async hello(@Res() response): Promise<User[]> {
-    console.log({ snv: process.env.PASSWORD_MONGO });
-    console.log({ snv: process.env.USER_NAME_MONGO });
-    return formatRes(response, 'hello');
   }
 
   @ApiParam({
@@ -70,7 +63,7 @@ export class UserController {
     return formatRes(response, data);
   }
 
-  @Post('create')
+  @Post('register')
   async createUser(@Res() response, @Body() userData: User): Promise<User> {
     const data = await this.userService.createUser(userData);
     return formatRes(response, data);

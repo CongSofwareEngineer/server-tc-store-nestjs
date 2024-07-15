@@ -65,7 +65,7 @@ export class CartService {
   }
 
   async deleteCart(id: string): Promise<CartUser | null> {
-    return FunService.deleteDataByID(this.cartModel, id);
+    return FunService.deleteDataByID(this.cartModel, new Types.ObjectId(id));
   }
 
   async updateCart(id: string, @Body() body): Promise<CartUser | null> {

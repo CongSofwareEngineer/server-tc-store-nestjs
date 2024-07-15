@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { formatRes } from 'src/utils/function';
-import { LIMIT_DATA } from 'src/common/app';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 @ApiTags('cart')
 @Controller('cart')

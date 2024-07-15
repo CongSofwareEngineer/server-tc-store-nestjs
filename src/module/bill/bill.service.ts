@@ -4,7 +4,7 @@ import { Bill } from './schemas/bill.schema';
 import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
-import { getPageLimitSkip } from 'src/utils/function';
+import { cloneData } from 'src/utils/function';
 
 @Injectable()
 export class BillService {
@@ -14,8 +14,17 @@ export class BillService {
   ) {}
 
   async create(body: Bill): Promise<Bill> {
-    body.date = new Date().getTime().toFixed();
-    console.log({ body });
+    const listBillDetail = body.listBill.map((e) => {
+      const itemBase: any = {
+        _id: new Types.ObjectId(e._id),
+        amount: Number(e.amount),
+        keyNameProduct: e.keyNameProduct,
+      };
+      if (e.moreConfig) {
+        itemBase.moreConfig = e.moreConfig;
+      }
+      return itemBase;
+    });
     const bodyTemp: Bill = {
       date: new Date().getTime().toFixed(),
       addressShip: 'Quận 8',
@@ -23,16 +32,9 @@ export class BillService {
       discount: body.discount || 0,
       note: 'Đến nhớ gọi',
       abort: false,
-      listBill: [
-        {
-          _id: '668a3ba4587801297308f7a6',
-          amount: 1,
-          keyNameProduct: '',
-        },
-      ],
+      listBill: listBillDetail,
     };
-    return body;
-    // return FunService.create(this.billModel, body);
+    return FunService.create(this.billModel, bodyTemp);
   }
 
   async updateBill(id: string, body: Bill): Promise<Bill> {
@@ -58,6 +60,7 @@ export class BillService {
     const dataBase = await FunService.findDataByOptions(this.billModel, query, {
       idUser: new Types.ObjectId(idUser),
     });
+    const dataFinal = cloneData(dataBase);
 
     const listIDProduct = dataBase.flatMap((e) =>
       e.listBill.map((item) => item._id),
@@ -65,8 +68,9 @@ export class BillService {
 
     const dataProduct =
       await this.productService.getProductByListID(listIDProduct);
+
     console.log('====================================');
-    console.log({ dataProduct });
+    console.log({ dataProduct, listIDProduct });
     console.log('====================================');
 
     return dataBase;
