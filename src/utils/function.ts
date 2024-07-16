@@ -32,19 +32,34 @@ export function getPageLimitSkip(query: { [key: string]: any }) {
 
 export function formatRes(response: any, data: any, isError?: boolean) {
   try {
-    if (isError || !data) {
+    let dataClone = cloneData(data);
+
+    if (isError || !dataClone) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         data: null,
         status: HttpStatus.BAD_REQUEST,
       });
     }
+    if (Array.isArray(dataClone)) {
+      dataClone = dataClone.map((e) => {
+        if (typeof e == 'object') {
+          delete e.__v;
+        }
+        return e;
+      });
+    } else {
+      if (typeof dataClone == 'object') {
+        delete dataClone.__v;
+      }
+    }
+
     return response.status(HttpStatus.OK).json({
-      data,
+      data: dataClone,
       status: HttpStatus.OK,
     });
   } catch (error) {
     return response.status(HttpStatus.BAD_REQUEST).json({
-      data: null,
+      dataClone: null,
       status: HttpStatus.BAD_REQUEST,
     });
   }

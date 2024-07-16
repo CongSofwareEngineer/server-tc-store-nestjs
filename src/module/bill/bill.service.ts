@@ -1,10 +1,11 @@
 import { Inject, Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Bill } from './schemas/bill.schema';
-import { Model, Types } from 'mongoose';
+import { Model, PipelineStage, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
 import { cloneData } from 'src/utils/function';
+import { DBCollection } from 'src/common/mongoDB';
 
 @Injectable()
 export class BillService {
@@ -57,22 +58,36 @@ export class BillService {
     @Query() query,
     idUser: Types.ObjectId,
   ): Promise<Bill[]> {
-    const dataBase = await FunService.getDataByOptions(this.billModel, query, {
-      idUser: new Types.ObjectId(idUser),
-    });
-    const dataFinal = cloneData(dataBase);
-
-    const listIDProduct = dataBase.flatMap((e) =>
-      e.listBill.map((item) => item._id),
+    const pipeline: PipelineStage[] = [
+      {
+        $match: { idUser: new Types.ObjectId(idUser) },
+      },
+      {
+        $unwind: '$listBill',
+      },
+      {
+        $lookup: {
+          from: DBCollection.Production,
+          localField: 'listBill._id',
+          foreignField: '_id',
+          as: 'more_data',
+          pipeline: [
+            {
+              $project: Bill.pipelineMoreDataGetCart(),
+            },
+          ],
+        },
+      },
+      {
+        $unwind: '$more_data',
+      },
+    ];
+    const data = await FunService.getDataByAggregate(
+      this.billModel,
+      query,
+      pipeline,
     );
 
-    const dataProduct =
-      await this.productService.getProductByListID(listIDProduct);
-
-    console.log('====================================');
-    console.log({ dataProduct, listIDProduct });
-    console.log('====================================');
-
-    return dataBase;
+    return data;
   }
 }

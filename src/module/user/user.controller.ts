@@ -106,12 +106,27 @@ export class UserController {
   @Post('login/refresh')
   async loginRefresh(
     @Res() response,
-    @Body() createUserDto: CreateUserDto,
+    @Body() createUserDto,
   ): Promise<User | null> {
     const data = await this.userService.loginRefresh(
       createUserDto.sdt,
       createUserDto.pass,
     );
+    return formatRes(response, data);
+  }
+
+  @ApiBody({
+    description: 'update User',
+    required: true,
+    type: Object,
+  })
+  @Post('update/:_id')
+  async updateUser(
+    @Res() response,
+    @Body() body,
+    @Param() param,
+  ): Promise<User | null> {
+    const data = await this.userService.updateUser(param, body);
     return formatRes(response, data);
   }
 }

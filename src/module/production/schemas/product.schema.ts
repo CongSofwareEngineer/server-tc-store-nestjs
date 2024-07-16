@@ -73,9 +73,3 @@ export class Product {
 }
 export type ProductDocument = HydratedDocument<Product>;
 export const ProductSchema = SchemaFactory.createForClass(Product);
-ProductSchema.set('toJSON', {
-  transform: (_, ret) => {
-    delete ret.__v;
-    return ret;
-  },
-});

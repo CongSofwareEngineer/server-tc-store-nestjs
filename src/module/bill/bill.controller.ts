@@ -27,7 +27,7 @@ export class BillController {
     required: true,
     description: 'Id user',
   })
-  @Get('user/:idUser')
+  @Get('detail/:idUser')
   async getBill(@Res() res, @Query() query, @Param() param) {
     const data = await this.billService.getBillByIDUser(query, param.idUser);
     return formatRes(res, data);

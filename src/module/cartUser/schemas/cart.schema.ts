@@ -49,7 +49,6 @@ export class CartUser {
 
   static pipelineMoreDataGetCart() {
     const bodyMoreDataRes = {
-      _id: 0,
       amount: 1,
       disCount: 1,
       imageMore: 1,
@@ -63,16 +62,9 @@ export class CartUser {
       sold: 1,
       category: 1,
       weight: 1,
-      // __v: 0,
     };
     return bodyMoreDataRes;
   }
 }
 export type CartUserDocument = HydratedDocument<CartUser>;
 export const CartUserSchema = SchemaFactory.createForClass(CartUser);
-CartUserSchema.set('toJSON', {
-  transform: (_, ret) => {
-    delete ret.__v;
-    return ret;
-  },
-});

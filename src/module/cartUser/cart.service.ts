@@ -42,6 +42,9 @@ export class CartService {
           $match: { idUser: idUser.toString() },
         },
         {
+          $unwind: '$idProduct',
+        },
+        {
           $lookup: {
             from: DBCollection.Production,
             localField: 'idProduct',
@@ -54,15 +57,15 @@ export class CartService {
             ],
           },
         },
+        {
+          $unwind: '$more_data',
+        },
       ];
       const data = await FunService.getDataByAggregate(
         this.cartModel,
         query,
         arrFilter,
       );
-      console.log('====================================');
-      console.log({ data });
-      console.log('====================================');
       return data;
     } catch (error) {
       return null;

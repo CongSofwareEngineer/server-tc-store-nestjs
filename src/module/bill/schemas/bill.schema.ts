@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { CartUser } from 'src/module/cartUser/schemas/cart.schema';
 
 @Schema({ versionKey: false })
 export class Bill {
@@ -39,13 +40,11 @@ export class Bill {
     moreConfig?: Record<string, any>;
     keyNameProduct?: string;
   }[];
+
+  static pipelineMoreDataGetCart() {
+    return CartUser.pipelineMoreDataGetCart();
+  }
 }
 
 export type BillDocument = HydratedDocument<Bill>;
 export const BillSchema = SchemaFactory.createForClass(Bill);
-BillSchema.set('toJSON', {
-  transform: (_, ret) => {
-    delete ret.__v;
-    return ret;
-  },
-});

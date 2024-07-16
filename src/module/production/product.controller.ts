@@ -18,7 +18,7 @@ import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 export class ProductionController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get('list-product')
+  @Get('all')
   async getProductByTypeProduct(@Res() res, @Query() query) {
     const data = await this.productService.getProductByTypeProduct(query);
     return formatRes(res, data);

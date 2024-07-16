@@ -1,7 +1,7 @@
-import { Injectable, Param, Query } from '@nestjs/common';
+import { Body, Injectable, Param, Query } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { AuthService } from '../auth/auth.service';
 import { FunService } from 'src/utils/funcService';
 
@@ -25,6 +25,10 @@ export class UserService {
 
   async getUserByLimit(@Query() query): Promise<User[]> {
     return FunService.getDataByLimit(this.userModel, query);
+  }
+
+  async updateUser(@Param() param, @Body() body): Promise<User | null> {
+    return FunService.updateData(this.userModel, param._id.toString(), body);
   }
 
   async login(sdt: string, pass: string): Promise<User | null> {
