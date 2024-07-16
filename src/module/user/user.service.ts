@@ -2,7 +2,6 @@ import { Injectable, Param, Query } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto';
 import { AuthService } from '../auth/auth.service';
 import { FunService } from 'src/utils/funcService';
 
@@ -29,7 +28,7 @@ export class UserService {
   }
 
   async login(sdt: string, pass: string): Promise<User | null> {
-    const dataUser = await FunService.findOneData(this.userModel, {
+    const dataUser = await FunService.getOneData(this.userModel, {
       sdt: sdt,
       pass: pass,
     });
@@ -43,7 +42,7 @@ export class UserService {
   }
 
   async loginRefresh(sdt: string, pass: string): Promise<User | null> {
-    const dataUser = await FunService.findOneData(this.userModel, {
+    const dataUser = await FunService.getOneData(this.userModel, {
       sdt: sdt,
       pass: pass,
     });
@@ -53,8 +52,13 @@ export class UserService {
     return dataUser;
   }
 
-  async createUser(body: User): Promise<User> {
-    const bodyUser: CreateUserDto = {
+  async createUser(body: User): Promise<User | null> {
+    const exitedAccount = await this.findOne(body?.sdt);
+    if (exitedAccount) {
+      return null;
+    }
+
+    const bodyUser: User = {
       addressShipper: body?.addressShipper || [],
       date: new Date().getTime().toFixed(),
       exp: body.exp || 0,

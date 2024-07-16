@@ -38,7 +38,7 @@ export class ProductService {
     }
     let listType: string[] = query.category.split(',');
     listType = listType.map((e) => lowercase(e));
-    const dataFilter = await FunService.findAndSortDataByOptions(
+    const dataFilter = await FunService.getAndSortDataByOptions(
       this.productModel,
       query,
       {

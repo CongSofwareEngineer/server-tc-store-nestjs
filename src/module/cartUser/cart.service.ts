@@ -18,7 +18,21 @@ export class CartService {
   }
 
   async getLengthCartByIdUser(@Param() param) {
-    return FunService.getFullDataByID(this.cartModel, param.idUser);
+    const data = await FunService.getFullDataByOption(this.cartModel, {
+      idUser: param.idUser.toString(),
+    });
+    return { lengthCart: data?.length || 0 };
+  }
+
+  async getCartByIdUserIdPro(@Param() param) {
+    return FunService.getDataByOptions(
+      this.cartModel,
+      {},
+      {
+        idUser: param.idUser,
+        idProduct: new Types.ObjectId(param.idProduct),
+      },
+    );
   }
 
   async getCartByIdUser(idUser: string, @Query() query) {
@@ -41,7 +55,7 @@ export class CartService {
           },
         },
       ];
-      const data = await FunService.findDataByAggregate(
+      const data = await FunService.getDataByAggregate(
         this.cartModel,
         query,
         arrFilter,

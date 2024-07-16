@@ -36,7 +36,19 @@ export class FunService {
     }
   }
 
-  static async findOneData(model: Model<any>, param: { [key: string]: any }) {
+  static async getFullDataByOption(
+    model: Model<any>,
+    queryOption: { [key: string]: any } = {},
+    options: { [key: string]: any } = {},
+  ): Promise<any> {
+    try {
+      return model.find(queryOption, options).exec();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  static async getOneData(model: Model<any>, param: { [key: string]: any }) {
     try {
       return model.findOne(param).exec();
     } catch (error) {
@@ -84,7 +96,7 @@ export class FunService {
     }
   }
 
-  static async findDataByOptions(
+  static async getDataByOptions(
     model: Model<any>,
     @Query() query,
     queryOption: { [key: string]: any } = {},
@@ -105,7 +117,7 @@ export class FunService {
     }
   }
 
-  static async findDataByAggregate(
+  static async getDataByAggregate(
     model: Model<any>,
     @Query() query,
     pipelineStage?: PipelineStage[],
@@ -124,7 +136,7 @@ export class FunService {
     }
   }
 
-  static async findAndSortDataByOptions(
+  static async getAndSortDataByOptions(
     model: Model<any>,
     @Query() query,
     queryOption: { [key: string]: any } = {},
@@ -147,7 +159,10 @@ export class FunService {
     }
   }
 
-  static async getFullDataByID(model: Model<any>, id: string): Promise<any[]> {
+  static async getFullDataByID(
+    model: Model<any>,
+    id: string | Types.ObjectId,
+  ): Promise<any[]> {
     try {
       return model.findById(id).exec();
     } catch (error) {

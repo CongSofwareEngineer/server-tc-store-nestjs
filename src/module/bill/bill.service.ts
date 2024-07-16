@@ -57,7 +57,7 @@ export class BillService {
     @Query() query,
     idUser: Types.ObjectId,
   ): Promise<Bill[]> {
-    const dataBase = await FunService.findDataByOptions(this.billModel, query, {
+    const dataBase = await FunService.getDataByOptions(this.billModel, query, {
       idUser: new Types.ObjectId(idUser),
     });
     const dataFinal = cloneData(dataBase);

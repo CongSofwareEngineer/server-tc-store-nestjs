@@ -38,6 +38,22 @@ export class CartController {
     required: true,
     description: 'Id user',
   })
+  @ApiParam({
+    name: 'idProduct',
+    required: true,
+    description: 'idProduct',
+  })
+  @Get('details/:idUser/:idProduct')
+  async getCartByIdUserIdPro(@Res() res, @Param() param) {
+    const data = await this.cartService.getCartByIdUserIdPro(param);
+    return formatRes(res, data);
+  }
+
+  @ApiParam({
+    name: 'idUser',
+    required: true,
+    description: 'Id user',
+  })
   @Get('length-cart/:idUser')
   async getLengthCartByIdUser(@Res() res, @Param() param) {
     const data = await this.cartService.getLengthCartByIdUser(param);

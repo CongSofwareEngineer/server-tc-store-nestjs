@@ -57,6 +57,17 @@ export class UserController {
     required: true,
     description: '_id',
   })
+  @Get('check-user/:sdt')
+  async getExitedUser(@Res() response, @Param() params): Promise<User | null> {
+    const data = await this.userService.findOne(params.sdt);
+    return formatRes(response, { exit: !!data });
+  }
+
+  @ApiParam({
+    name: '_id',
+    required: true,
+    description: '_id',
+  })
   @Delete('delete/:_id')
   async deleteUserByID(@Res() response, @Param() params): Promise<User | null> {
     const data = await this.userService.deleteUserByID(params._id);
@@ -64,7 +75,7 @@ export class UserController {
   }
 
   @Post('register')
-  async createUser(@Res() response, @Body() userData: User): Promise<User> {
+  async createUser(@Res() response, @Body() userData): Promise<User> {
     const data = await this.userService.createUser(userData);
     return formatRes(response, data);
   }

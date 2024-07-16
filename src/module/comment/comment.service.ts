@@ -11,7 +11,7 @@ export class CommentService {
   ) {}
 
   async getComment(@Param() param, @Query() query): Promise<Comment[] | null> {
-    const data = await FunService.findDataByOptions(this.commentModel, query, {
+    const data = await FunService.getDataByOptions(this.commentModel, query, {
       idProduct: param.idProduct,
     });
     return data;

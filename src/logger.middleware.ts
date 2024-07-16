@@ -8,6 +8,7 @@ export class LoggerMiddleware implements NestMiddleware {
     try {
       console.log({ url: req.originalUrl });
       console.log({ token: req.headers.authorization });
+      console.log({ method: req.method });
 
       if (
         req.originalUrl === '/category/all' ||
