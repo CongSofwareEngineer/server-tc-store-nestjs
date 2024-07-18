@@ -19,7 +19,7 @@ export class BillService {
       const itemBase: any = {
         _id: new Types.ObjectId(e._id),
         amount: Number(e.amount),
-        keyNameProduct: e.keyNameProduct,
+        keyName: e.keyName,
       };
       if (e.moreConfig) {
         itemBase.moreConfig = e.moreConfig;
@@ -28,13 +28,15 @@ export class BillService {
     });
     const bodyTemp: Bill = {
       date: new Date().getTime().toFixed(),
-      addressShip: 'Quận 8',
+      addressShip: body.addressShip,
       idUser: new Types.ObjectId(body.idUser),
       discount: body.discount || 0,
       note: 'Đến nhớ gọi',
       abort: false,
       listBill: listBillDetail,
+      sdt: body?.sdt,
     };
+
     return FunService.create(this.billModel, bodyTemp);
   }
 

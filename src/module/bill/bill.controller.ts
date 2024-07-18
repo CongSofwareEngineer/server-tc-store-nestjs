@@ -45,6 +45,11 @@ export class BillController {
     return formatRes(res, data);
   }
 
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Id Bill',
+  })
   @Delete('delete/:id')
   async deleteBill(@Res() res, @Param() param) {
     const data = await this.billService.deleteBillByID(param.id);

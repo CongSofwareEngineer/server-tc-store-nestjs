@@ -10,6 +10,9 @@ export class Bill {
   date?: string;
 
   @Prop()
+  sdt?: string;
+
+  @Prop()
   totalBill?: number;
 
   @Prop()
@@ -18,8 +21,11 @@ export class Bill {
   @Prop()
   idUser?: Types.ObjectId;
 
-  @Prop()
-  addressShip?: string;
+  @Prop({ type: Object })
+  addressShip?: {
+    address?: string;
+    addressDetail?: string;
+  };
 
   @Prop()
   abort?: boolean;
@@ -38,7 +44,7 @@ export class Bill {
     _id?: Types.ObjectId;
     amount?: number;
     moreConfig?: Record<string, any>;
-    keyNameProduct?: string;
+    keyName?: string;
   }[];
 
   static pipelineMoreDataGetCart() {
