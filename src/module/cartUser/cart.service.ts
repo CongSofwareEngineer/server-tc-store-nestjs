@@ -14,7 +14,7 @@ export class CartService {
   ) {}
 
   async getAllCart(@Query() query) {
-    return FunService.getDataByLimit(this.cartModel, query);
+    return FunService.getDataByLimit(this.cartModel, query, { date: -1 });
   }
 
   async getLengthCartByIdUser(@Param() param) {
@@ -59,6 +59,9 @@ export class CartService {
         },
         {
           $unwind: '$more_data',
+        },
+        {
+          $sort: { date: -1 },
         },
       ];
       const data = await FunService.getDataByAggregate(

@@ -101,6 +101,7 @@ export class FunService {
     @Query() query,
     queryOption: { [key: string]: any } = {},
     options: { [key: string]: any } = {},
+    optionsSort: { [key: string]: any } = {},
   ): Promise<any[]> {
     try {
       const pageLimitSkip = getPageLimitSkip(query);
@@ -109,6 +110,7 @@ export class FunService {
         .find(queryOption, options)
         .skip(Number(pageLimitSkip.skip))
         .limit(Number(pageLimitSkip.limit))
+        .sort(optionsSort)
         .exec();
 
       return data;
@@ -173,6 +175,7 @@ export class FunService {
   static async getDataByLimit(
     model: Model<any>,
     @Query() query,
+    querySort?: any,
   ): Promise<any[]> {
     try {
       const pageLimitSkip = getPageLimitSkip(query);
@@ -180,6 +183,7 @@ export class FunService {
         .find()
         .skip(Number(pageLimitSkip.skip))
         .limit(Number(pageLimitSkip.limit))
+        .sort(querySort)
         .exec();
       return data;
     } catch (error) {

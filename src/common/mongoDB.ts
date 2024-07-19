@@ -18,4 +18,5 @@ export enum MathDB {
   $and = '$and',
   $or = '$or',
   $where = '$where',
+  $MergeObjects = '$mergeObjects',
 }

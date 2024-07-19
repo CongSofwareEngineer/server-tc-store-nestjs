@@ -15,7 +15,10 @@ export class Comment {
   title?: string;
 
   @Prop()
-  idUser?: string;
+  idUser?: Types.ObjectId;
+
+  @Prop()
+  isProduct?: Types.ObjectId;
 
   @Prop({ type: Array<{ [key: string]: any }> })
   lisReplay?: [
@@ -32,9 +35,3 @@ export class Comment {
 
 export type CommentDocument = HydratedDocument<Comment>;
 export const CommentSchema = SchemaFactory.createForClass(Comment);
-CommentSchema.set('toJSON', {
-  transform: (_, ret) => {
-    delete ret.__v;
-    return ret;
-  },
-});

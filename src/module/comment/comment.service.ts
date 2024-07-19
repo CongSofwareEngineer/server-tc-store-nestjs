@@ -1,8 +1,10 @@
 import { Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { Comment } from './Schema/coment.schema';
+import { PipelineStage } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class CommentService {
@@ -11,9 +13,15 @@ export class CommentService {
   ) {}
 
   async getComment(@Param() param, @Query() query): Promise<Comment[] | null> {
-    const data = await FunService.getDataByOptions(this.commentModel, query, {
-      idProduct: param.idProduct,
-    });
+    const data = await FunService.getDataByOptions(
+      this.commentModel,
+      query,
+      {
+        idProduct: new Types.ObjectId(param.idProduct),
+      },
+      {},
+      { date: -1 },
+    );
     return data;
   }
 }

@@ -4,7 +4,6 @@ import { Bill } from './schemas/bill.schema';
 import { Model, PipelineStage, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
-import { cloneData } from 'src/utils/function';
 import { DBCollection } from 'src/common/mongoDB';
 
 @Injectable()
@@ -31,7 +30,7 @@ export class BillService {
       addressShip: body.addressShip,
       idUser: new Types.ObjectId(body.idUser),
       discount: body.discount || 0,
-      note: 'Đến nhớ gọi',
+      note: body.note,
       abort: false,
       listBill: listBillDetail,
       sdt: body?.sdt,
@@ -45,7 +44,7 @@ export class BillService {
   }
 
   async getAllBill(@Query() query): Promise<Bill[]> {
-    return FunService.getDataByLimit(this.billModel, query);
+    return FunService.getDataByLimit(this.billModel, query, { date: -1 });
   }
 
   async getBillByID(id: Types.ObjectId): Promise<Bill> {
@@ -82,6 +81,25 @@ export class BillService {
       },
       {
         $unwind: '$more_data',
+      },
+      {
+        $group: {
+          _id: '$_id',
+          date: { $first: '$date' },
+          totalBill: { $first: '$totalBill' },
+          discount: { $first: '$discount' },
+          idUser: { $first: '$idUser' },
+          addressShip: { $first: '$addressShip' },
+          abort: { $first: '$abort' },
+          note: { $first: '$note' },
+          sdt: { $first: '$sdt' },
+          listBill: {
+            $push: { $mergeObjects: ['$listBill', '$more_data'] },
+          },
+        },
+      },
+      {
+        $sort: { date: -1 },
       },
     ];
     const data = await FunService.getDataByAggregate(
