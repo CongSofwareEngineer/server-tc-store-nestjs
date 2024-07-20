@@ -4,17 +4,22 @@ import { Bill } from './schemas/bill.schema';
 import { Model, PipelineStage, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
-import { DBCollection } from 'src/common/mongoDB';
+import { DB_COLLECTION } from 'src/common/mongoDB';
+import { CartService } from '../cartUser/cart.service';
+import { FILTER_BILL } from 'src/common/app';
 
 @Injectable()
 export class BillService {
   constructor(
     @InjectModel(Bill.name) private readonly billModel: Model<Bill>,
     @Inject(ProductService) private readonly productService: ProductService,
+    @Inject(CartService) private readonly cartService: CartService,
   ) {}
 
-  async create(body: Bill): Promise<Bill> {
+  async create(body: Bill): Promise<any> {
+    const listIdCart: string[] = [];
     const listBillDetail = body.listBill.map((e) => {
+      listIdCart.push(e.idCart);
       const itemBase: any = {
         _id: new Types.ObjectId(e._id),
         amount: Number(e.amount),
@@ -25,6 +30,7 @@ export class BillService {
       }
       return itemBase;
     });
+
     const bodyTemp: Bill = {
       date: new Date().getTime().toFixed(),
       addressShip: body.addressShip,
@@ -34,8 +40,10 @@ export class BillService {
       abort: false,
       listBill: listBillDetail,
       sdt: body?.sdt,
+      status: FILTER_BILL.Processing,
     };
 
+    await this.cartService.deleteManyProduct(listIdCart);
     return FunService.create(this.billModel, bodyTemp);
   }
 
@@ -61,17 +69,14 @@ export class BillService {
   ): Promise<Bill[]> {
     const pipeline: PipelineStage[] = [
       {
-        $match: { idUser: new Types.ObjectId(idUser) },
-      },
-      {
         $unwind: '$listBill',
       },
       {
         $lookup: {
-          from: DBCollection.Production,
+          from: DB_COLLECTION.Production,
           localField: 'listBill._id',
           foreignField: '_id',
-          as: 'more_data',
+          as: 'listBill.more_data',
           pipeline: [
             {
               $project: Bill.pipelineMoreDataGetCart(),
@@ -80,7 +85,7 @@ export class BillService {
         },
       },
       {
-        $unwind: '$more_data',
+        $unwind: '$listBill.more_data',
       },
       {
         $group: {
@@ -93,8 +98,9 @@ export class BillService {
           abort: { $first: '$abort' },
           note: { $first: '$note' },
           sdt: { $first: '$sdt' },
+          status: { $first: '$status' },
           listBill: {
-            $push: { $mergeObjects: ['$listBill', '$more_data'] },
+            $push: '$listBill',
           },
         },
       },
@@ -102,6 +108,19 @@ export class BillService {
         $sort: { date: -1 },
       },
     ];
+    if (query?.type && query?.type !== FILTER_BILL.All) {
+      pipeline.push({
+        $match: {
+          idUser: new Types.ObjectId(idUser),
+          status: query?.type,
+        },
+      });
+    } else {
+      pipeline.push({
+        $match: { idUser: new Types.ObjectId(idUser) },
+      });
+    }
+
     const data = await FunService.getDataByAggregate(
       this.billModel,
       query,

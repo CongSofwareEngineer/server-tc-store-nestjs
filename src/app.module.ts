@@ -1,14 +1,9 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CarModule } from './module/cartUser/cart.module';
+import { CartModule } from './module/cartUser/cart.module';
 
 import { MongooseModule } from '@nestjs/mongoose';
-import { DataBaseName } from './common/mongoDB';
+import { DB_NAME } from './common/mongoDB';
 import { UserModule } from './module/user/user.module';
 import { CategoryModule } from './module/category/category.module';
 import { ProductModule } from './module/production/product.module';
@@ -23,7 +18,7 @@ import { CommentModule } from './module/comment/comment.module';
   imports: [
     AuthModule,
     MomoModule,
-    CarModule,
+    CartModule,
     ProductModule,
     UserModule,
     CategoryModule,
@@ -35,7 +30,7 @@ import { CommentModule } from './module/comment/comment.module';
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.USER_NAME_MONGO}:${process.env.PASSWORD_MONGO}@tc-store-admin.mpkyxqj.mongodb.net/?retryWrites=true&w=majority&appName=tc-store-admin`,
       {
-        dbName: DataBaseName,
+        dbName: DB_NAME,
         enableUtf8Validation: true,
       },
     ),

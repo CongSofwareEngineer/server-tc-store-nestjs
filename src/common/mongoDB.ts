@@ -1,4 +1,4 @@
-export enum DBCollection {
+export enum DB_COLLECTION {
   User = 'User',
   Production = 'Production',
   Comment = 'Comment',
@@ -7,9 +7,9 @@ export enum DBCollection {
   Bill = 'Bill',
 }
 
-export const DataBaseName = 'tc-store';
+export const DB_NAME = 'tc-store';
 
-export enum MathDB {
+export enum MATH_DB {
   $in = '$in',
   $gt = '$gt',
   $gte = '$gte',

@@ -25,6 +25,18 @@ export class FunService {
     }
   }
 
+  static async deleteManyData(
+    model: Model<any>,
+    filter: { [key: string]: any } = {},
+    options: { [key: string]: any } = {},
+  ): Promise<any> {
+    try {
+      return model.deleteMany(filter, options).exec();
+    } catch (error) {
+      return null;
+    }
+  }
+
   static async findDataByID(
     model: Model<any>,
     id: string | Types.ObjectId,

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CommentController } from './comment.controller';
 import { CommentService } from './comment.service';
-import { DBCollection } from 'src/common/mongoDB';
+import { DB_COLLECTION } from 'src/common/mongoDB';
 import { Comment, CommentSchema } from './Schema/coment.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -11,7 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       {
         name: Comment.name,
         schema: CommentSchema,
-        collection: DBCollection.Comment,
+        collection: DB_COLLECTION.Comment,
       },
     ]),
   ],

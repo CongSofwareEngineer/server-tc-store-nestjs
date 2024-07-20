@@ -2,7 +2,7 @@ import { Body, Inject, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartUser } from './schemas/cart.schema';
 import { Model, PipelineStage, Types } from 'mongoose';
-import { DBCollection } from 'src/common/mongoDB';
+import { DB_COLLECTION, MATH_DB } from 'src/common/mongoDB';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
 
@@ -46,7 +46,7 @@ export class CartService {
         },
         {
           $lookup: {
-            from: DBCollection.Production,
+            from: DB_COLLECTION.Production,
             localField: 'idProduct',
             foreignField: '_id',
             as: 'more_data',
@@ -89,6 +89,13 @@ export class CartService {
 
   async deleteCart(id: string): Promise<CartUser | null> {
     return FunService.deleteDataByID(this.cartModel, new Types.ObjectId(id));
+  }
+
+  async deleteManyProduct(listId: string[]): Promise<CartUser | null> {
+    const filter = {
+      _id: { [MATH_DB.$in]: listId },
+    };
+    return FunService.deleteManyData(this.cartModel, filter);
   }
 
   async updateCart(id: string, @Body() body): Promise<CartUser | null> {

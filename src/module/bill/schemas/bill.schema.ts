@@ -30,6 +30,9 @@ export class Bill {
   @Prop()
   abort?: boolean;
 
+  @Prop()
+  status?: string;
+
   @Prop({ type: Object })
   contentBill?: {
     contentBillBanking?: number;
@@ -45,6 +48,7 @@ export class Bill {
     amount?: number;
     moreConfig?: Record<string, any>;
     keyName?: string;
+    idCart?: string;
   }[];
 
   static pipelineMoreDataGetCart() {

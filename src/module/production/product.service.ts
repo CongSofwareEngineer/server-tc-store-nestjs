@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
-import { MathDB } from 'src/common/mongoDB';
+import { MATH_DB } from 'src/common/mongoDB';
 import { lowercase } from 'src/utils/function';
-import { MathSort } from 'src/common/app';
+import { MATH_SORT } from 'src/common/app';
 
 @Injectable()
 export class ProductService {
@@ -22,6 +22,13 @@ export class ProductService {
       this.productModel,
       new Types.ObjectId(param.id),
     );
+  }
+
+  async deleteManyProduct(listId: string[]): Promise<Product | null> {
+    const filter = {
+      id: { [MATH_DB.$in]: listId },
+    };
+    return FunService.deleteManyData(this.productModel, filter);
   }
 
   async updateProduct(id: string, body: Product): Promise<Product | null> {
@@ -42,11 +49,11 @@ export class ProductService {
       this.productModel,
       query,
       {
-        category: { [MathDB.$in]: listType },
+        category: { [MATH_DB.$in]: listType },
       },
       {},
       {
-        price: query.sort ? (query.sort === MathSort.asc ? 1 : -1) : 1,
+        price: query.sort ? (query.sort === MATH_SORT.asc ? 1 : -1) : 1,
       },
     );
 

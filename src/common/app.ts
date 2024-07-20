@@ -6,7 +6,15 @@ export const JwtConstants = {
 
 export const LIMIT_DATA = 20 as const;
 
-export const MathSort = {
+export const MATH_SORT = {
   asc: 'asc',
   desc: 'desc',
 };
+
+export enum FILTER_BILL {
+  'All' = 'all',
+  'Processing' = 'processing',
+  'Delivering' = 'delivering',
+  'DeliverySuccess' = 'deliverySuccess',
+  'Canceled' = 'canceled',
+}
