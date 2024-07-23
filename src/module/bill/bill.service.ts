@@ -43,6 +43,7 @@ export class BillService {
       listBill: listBillDetail,
       sdt: body?.sdt,
       status: FILTER_BILL.Processing,
+      totalBill: Number(body.totalBill),
     };
 
     await this.cartService.deleteManyProduct(listIdCart);

@@ -14,6 +14,7 @@ export function dateNow(type: TYPE_DATE_TIME = TYPE_DATE_TIME.Day) {
   //   default:
   //     break;
   //  }
+  console.log({ type });
 }
 
 export function cloneData(data: any) {
