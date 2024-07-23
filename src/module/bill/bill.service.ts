@@ -8,6 +8,8 @@ import { DB_COLLECTION } from 'src/common/mongoDB';
 import { CartService } from '../cartUser/cart.service';
 import { FILTER_BILL } from 'src/common/app';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const moment = require('moment');
 @Injectable()
 export class BillService {
   constructor(
@@ -108,18 +110,25 @@ export class BillService {
         $sort: { date: -1 },
       },
     ];
+    const queryBase: PipelineStage = {
+      $match: { idUser: new Types.ObjectId(idUser) },
+    };
     if (query?.type && query?.type !== FILTER_BILL.All) {
-      pipeline.push({
-        $match: {
-          idUser: new Types.ObjectId(idUser),
-          status: query?.type,
-        },
-      });
-    } else {
-      pipeline.push({
-        $match: { idUser: new Types.ObjectId(idUser) },
-      });
+      queryBase.$match.status = query?.type;
     }
+    if (query?.date) {
+      const day = new Date(Number(query.date));
+
+      const start = new Date(moment(day).startOf('day').toString()).getTime();
+      const end = new Date(moment(day).endOf('day').toString()).getTime();
+      console.log({ day });
+
+      queryBase.$match.date = {
+        $gte: start.toString(),
+        $lt: end.toString(),
+      };
+    }
+    pipeline.push(queryBase);
 
     const data = await FunService.getDataByAggregate(
       this.billModel,

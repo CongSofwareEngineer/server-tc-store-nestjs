@@ -16,6 +16,11 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 export class BillController {
   constructor(private billService: BillService) {}
 
+  @Get('datetime')
+  async getDateTime(@Res() res) {
+    return formatRes(res, { time: new Date().getTime().toString() });
+  }
+
   @Get('all')
   async getAllBill(@Res() res, @Query() query) {
     const data = await this.billService.getAllBill(query);

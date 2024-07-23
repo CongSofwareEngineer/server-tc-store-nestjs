@@ -1,10 +1,19 @@
 import { HttpStatus } from '@nestjs/common';
-import { LIMIT_DATA } from 'src/common/app';
+import { LIMIT_DATA, TYPE_DATE_TIME } from 'src/common/app';
 
 export function delayTime(ms = 500) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
+}
+
+export function dateNow(type: TYPE_DATE_TIME = TYPE_DATE_TIME.Day) {
+  //  switch (key) {
+  //   case value:
+  //     break;
+  //   default:
+  //     break;
+  //  }
 }
 
 export function cloneData(data: any) {

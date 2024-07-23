@@ -18,3 +18,11 @@ export enum FILTER_BILL {
   'DeliverySuccess' = 'deliverySuccess',
   'Canceled' = 'canceled',
 }
+
+export enum TYPE_DATE_TIME {
+  'Hour' = 'Hour',
+  'Day' = 'Day',
+  'Second' = 'Second',
+  'Moth' = 'Moth',
+  'Year' = 'Year',
+}
