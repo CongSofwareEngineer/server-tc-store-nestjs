@@ -35,6 +35,17 @@ export class ProductionController {
     return formatRes(res, data);
   }
 
+  @ApiParam({
+    name: 'keyName',
+    required: true,
+    description: 'keyName',
+  })
+  @Get('detail-keyName/:keyName')
+  async getProductByKeyName(@Res() res, @Param() param) {
+    const data = await this.productService.getProductByKeyName(param.keyName);
+    return formatRes(res, data);
+  }
+
   @ApiBody({
     description: 'Create',
     required: true,

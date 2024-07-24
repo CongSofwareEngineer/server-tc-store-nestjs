@@ -39,6 +39,10 @@ export class ProductService {
     return FunService.findDataByID(this.productModel, id);
   }
 
+  async getProductByKeyName(keyName: string): Promise<Product | null> {
+    return FunService.getOneData(this.productModel, { keyName });
+  }
+
   async getProductByTypeProduct(@Query() query): Promise<Product[]> {
     if (!query.category || lowercase(query.category) === 'all') {
       return FunService.getDataByLimit(this.productModel, query);
