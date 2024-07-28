@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { IsNotEmpty } from 'class-validator';
 @Schema()
 export class User {
   _id?: Types.ObjectId;

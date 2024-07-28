@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AuthService } from '../auth/auth.service';
 import { FunService } from 'src/utils/funcService';
+import { CloudinaryService } from 'src/services/cloudinary';
 
 @Injectable()
 export class UserService {
@@ -25,6 +26,17 @@ export class UserService {
 
   async getUserByLimit(@Query() query): Promise<User[]> {
     return FunService.getDataByLimit(this.userModel, query);
+  }
+
+  async updateAvatarUser(@Param() param, @Body() body): Promise<User | null> {
+    const dataImg = await CloudinaryService.uploadImg(body.file);
+
+    if (!dataImg?.public_id) {
+      return null;
+    }
+    return FunService.updateData(this.userModel, param._id.toString(), {
+      avatar: dataImg?.public_id.toString(),
+    });
   }
 
   async updateUser(@Param() param, @Body() body): Promise<User | null> {

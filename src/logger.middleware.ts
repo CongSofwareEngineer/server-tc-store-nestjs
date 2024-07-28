@@ -6,9 +6,11 @@ import { AuthService } from './module/auth/auth.service';
 export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log({ url: req.originalUrl });
-      console.log({ token: req.headers.authorization });
-      console.log({ method: req.method });
+      if (req.originalUrl?.includes('bill')) {
+        console.log({ url: req.originalUrl });
+        console.log({ token: req.headers.authorization });
+        console.log({ method: req.method });
+      }
 
       if (
         req.originalUrl === '/category/all' ||

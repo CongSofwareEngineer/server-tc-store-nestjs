@@ -7,6 +7,8 @@ import {
   Post,
   Query,
   Res,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
@@ -14,6 +16,8 @@ import { formatRes } from 'src/utils/function';
 import { CreateUserDto } from './dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { CloudinaryService } from 'src/services/cloudinary';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 @ApiTags('user')
 @SkipThrottle()
 @Controller('user')
@@ -26,6 +30,24 @@ export class UserController {
       const data = await this.userService.getUserByLimit(query);
       return formatRes(response, data);
     } catch (error) {
+      return formatRes(response, null, true);
+    }
+  }
+
+  @Get('check')
+  async upload(@Res() response, @Query() query): Promise<User[]> {
+    try {
+      console.log('check');
+
+      const data = await CloudinaryService.uploadImgSystem();
+      console.log('====================================');
+      console.log({ CloudinaryService: data });
+      console.log('====================================');
+      return formatRes(response, data);
+    } catch (error) {
+      console.log('====================================');
+      console.log({ error });
+      console.log('====================================');
       return formatRes(response, null, true);
     }
   }
@@ -127,6 +149,22 @@ export class UserController {
     @Param() param,
   ): Promise<User | null> {
     const data = await this.userService.updateUser(param, body);
+    return formatRes(response, data);
+  }
+
+  @ApiBody({
+    description: 'update User',
+    required: true,
+    type: Object,
+  })
+  @Post('update-avatar/:_id')
+  @UseInterceptors(AnyFilesInterceptor())
+  async updateAvatarUser(
+    @Res() response,
+    @Body() body,
+    @Param() param,
+  ): Promise<User | null> {
+    const data = await this.userService.updateAvatarUser(param, body);
     return formatRes(response, data);
   }
 }
