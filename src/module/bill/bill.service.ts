@@ -55,7 +55,73 @@ export class BillService {
   }
 
   async getAllBill(@Query() query): Promise<Bill[]> {
-    return FunService.getDataByLimit(this.billModel, query, { date: -1 });
+    const pipeline: PipelineStage[] = [
+      {
+        $unwind: '$listBill',
+      },
+      {
+        $lookup: {
+          from: DB_COLLECTION.Production,
+          localField: 'listBill._id',
+          foreignField: '_id',
+          as: 'listBill.more_data',
+          pipeline: [
+            {
+              $project: Bill.pipelineMoreDataGetCart(),
+            },
+          ],
+        },
+      },
+      {
+        $unwind: '$listBill.more_data',
+      },
+      {
+        $group: {
+          _id: '$_id',
+          date: { $first: '$date' },
+          totalBill: { $first: '$totalBill' },
+          discount: { $first: '$discount' },
+          idUser: { $first: '$idUser' },
+          addressShip: { $first: '$addressShip' },
+          abort: { $first: '$abort' },
+          note: { $first: '$note' },
+          sdt: { $first: '$sdt' },
+          status: { $first: '$status' },
+          listBill: {
+            $push: '$listBill',
+          },
+        },
+      },
+      {
+        $sort: { date: -1 },
+      },
+    ];
+    const queryBase: PipelineStage = {
+      $match: {},
+    };
+    if (query?.type && query?.type !== FILTER_BILL.All) {
+      queryBase.$match.status = query?.type;
+    }
+    if (query?.date) {
+      const day = new Date(Number(query.date));
+
+      const start = new Date(moment(day).startOf('day').toString()).getTime();
+      const end = new Date(moment(day).endOf('day').toString()).getTime();
+      console.log({ day });
+
+      queryBase.$match.date = {
+        $gte: start.toString(),
+        $lt: end.toString(),
+      };
+    }
+    pipeline.push(queryBase);
+
+    const data = await FunService.getDataByAggregate(
+      this.billModel,
+      query,
+      pipeline,
+    );
+    return data;
   }
 
   async getBillByID(id: Types.ObjectId): Promise<Bill> {
