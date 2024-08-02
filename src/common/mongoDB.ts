@@ -9,9 +9,12 @@ export enum DB_COLLECTION {
   MyService = 'MyService',
 }
 
-export enum PATH_CLOUD_IMG {
+export enum PATH_IMG {
   MyService = 'my-services',
   Users = 'users',
+  Comment = 'comment',
+  Products = 'products',
+  ContactMe = 'contact-me',
 }
 
 export const DB_NAME = 'tc-store';
