@@ -5,7 +5,7 @@ import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ContactMeService } from './contactMe.service';
 
 @ApiTags('My service')
-@Controller('my-service')
+@Controller('contact-me')
 export class ContactMeController {
   constructor(private readonly contactMeService: ContactMeService) {}
 
