@@ -27,7 +27,14 @@ export class ContactMeController {
   })
   @Post('/create')
   async create(@Res() res, @Body() body) {
-    const data = await this.contactMeService.create(body);
-    return formatRes(res, data);
+    try {
+      const data = await this.contactMeService.create(body);
+      if (!data) {
+        return formatRes(res, { error: 'email exited' }, true);
+      }
+      return formatRes(res, data);
+    } catch (error) {
+      return formatRes(res, { error }, true);
+    }
   }
 }

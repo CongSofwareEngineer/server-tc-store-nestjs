@@ -15,7 +15,14 @@ export class ContactMeService {
     return FunService.getFullDataByOption(this.contactMeModel);
   }
 
-  async create(@Body() body): Promise<ContactMe[]> {
+  async create(@Body() body): Promise<ContactMe | null> {
+    const isExited = await FunService.getOneData(this.contactMeModel, {
+      emailUser: body.emailUser.toString(),
+    });
+
+    if (isExited) {
+      return null;
+    }
     return FunService.create(this.contactMeModel, body);
   }
 }

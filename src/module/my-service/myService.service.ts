@@ -16,7 +16,7 @@ export class MyServiceService {
     return FunService.getFullDataByOption(this.myServiceModel);
   }
 
-  async create(@Body() body): Promise<MyService[]> {
+  async create(@Body() body): Promise<MyService> {
     const urlIcon = await CloudinaryService.uploadImg(body.file, '');
     const datDTO: MyService = {
       des: body.des,
