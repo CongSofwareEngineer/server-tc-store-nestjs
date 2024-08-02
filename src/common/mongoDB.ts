@@ -9,7 +9,7 @@ export enum DB_COLLECTION {
   MyService = 'MyService',
 }
 
-export enum PATH_IMG {
+export enum PATH_CLOUD_IMG {
   MyService = 'my-services',
   Users = 'users',
 }

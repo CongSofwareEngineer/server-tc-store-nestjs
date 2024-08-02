@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { CloudinaryService } from 'src/services/cloudinary';
-import { PATH_IMG } from 'src/common/mongoDB';
+import { PATH_CLOUD_IMG } from 'src/common/mongoDB';
 
 @Injectable()
 export class MyServiceService {
@@ -20,7 +20,7 @@ export class MyServiceService {
   async create(@Body() body): Promise<MyService> {
     const urlIcon = await CloudinaryService.uploadImg(
       body.file,
-      PATH_IMG.MyService,
+      PATH_CLOUD_IMG.MyService,
     );
     const datDTO: MyService = {
       des: body.des,
