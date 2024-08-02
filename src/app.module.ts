@@ -14,10 +14,12 @@ import { LoggerMiddleware } from './logger.middleware';
 import { BillModule } from './module/bill/bill.module';
 import { CommentModule } from './module/comment/comment.module';
 import { MyServiceModule } from './module/my-service/myService.module';
+import { ContactMeModule } from './module/contact-me/contactMe.module';
 
 @Module({
   imports: [
     MyServiceModule,
+    ContactMeModule,
     AuthModule,
     MomoModule,
     CartModule,
