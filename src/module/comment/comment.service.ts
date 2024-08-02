@@ -3,8 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { Comment } from './Schema/coment.schema';
-import { PipelineStage } from 'mongoose';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class CommentService {

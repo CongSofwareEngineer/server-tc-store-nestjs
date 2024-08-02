@@ -7,12 +7,13 @@ cloudinary.config({
   cloud_name: 'tc-store',
 });
 export class CloudinaryService {
-  static async uploadImg(file: any) {
+  static async uploadImg(file: any, path = '') {
     cloudinary.uploader.destroy(file.public_id);
     const result = await cloudinary.uploader.upload(file.base64, {
-      folder: 'tc-store/users',
+      folder: path || 'tc-store/users',
       public_id: `${file.name}-${new Date().getTime()}`,
       async: true,
+
       use_filename: true,
       type: 'upload',
       overwrite: true,

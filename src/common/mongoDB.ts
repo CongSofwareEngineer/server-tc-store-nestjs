@@ -5,6 +5,8 @@ export enum DB_COLLECTION {
   CartUser = 'CartUser',
   Category = 'TypeProduct',
   Bill = 'Bill',
+  ContactMe = 'ContactMe',
+  MyService = 'MyService',
 }
 
 export const DB_NAME = 'tc-store';

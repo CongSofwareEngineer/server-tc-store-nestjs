@@ -13,9 +13,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerMiddleware } from './logger.middleware';
 import { BillModule } from './module/bill/bill.module';
 import { CommentModule } from './module/comment/comment.module';
+import { MyServiceModule } from './module/my-service/myService.module';
 
 @Module({
   imports: [
+    MyServiceModule,
     AuthModule,
     MomoModule,
     CartModule,
