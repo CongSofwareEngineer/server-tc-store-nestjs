@@ -15,11 +15,6 @@ export class ContactMeController {
     return formatRes(res, data);
   }
 
-  @ApiParam({
-    name: 'body',
-    required: true,
-    description: 'body api',
-  })
   @ApiBody({
     description: 'body Contact Me ',
     required: true,

@@ -9,6 +9,11 @@ export enum DB_COLLECTION {
   MyService = 'MyService',
 }
 
+export enum PATH_IMG {
+  MyService = 'my-services',
+  Users = 'users',
+}
+
 export const DB_NAME = 'tc-store';
 
 export enum MATH_DB {

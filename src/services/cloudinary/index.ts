@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import { join } from 'path';
+import { PATH_IMG } from 'src/common/mongoDB';
 cloudinary.config({
   api_key: '359654788484534',
   api_secret: 'vOHwtW8xux5KIzklJ2RgQkbE-Bk',
@@ -10,7 +11,7 @@ export class CloudinaryService {
   static async uploadImg(file: any, path = '') {
     cloudinary.uploader.destroy(file.public_id);
     const result = await cloudinary.uploader.upload(file.base64, {
-      folder: path || 'tc-store/users',
+      folder: `tc-store/${path || PATH_IMG.Users}`,
       public_id: `${file.name}-${new Date().getTime()}`,
       async: true,
 
