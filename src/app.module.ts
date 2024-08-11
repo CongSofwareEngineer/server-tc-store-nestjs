@@ -29,7 +29,7 @@ import { ContactMeModule } from './module/contact-me/contactMe.module';
     BillModule,
     CommentModule,
     ConfigModule.forRoot({
-      envFilePath: '.env.local',
+      envFilePath: '.env.test.local',
     }),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.USER_NAME_MONGO}:${process.env.PASSWORD_MONGO}@tc-store-admin.mpkyxqj.mongodb.net/?retryWrites=true&w=majority&appName=tc-store-admin`,
