@@ -9,31 +9,32 @@ export class Comment {
   date?: string;
 
   @Prop()
-  des?: string;
+  sdt?: string;
 
   @Prop()
-  title?: string;
+  name?: string;
 
   @Prop()
-  idUser?: Types.ObjectId;
+  note?: string;
 
   @Prop()
   isProduct?: Types.ObjectId;
 
   @Prop({ type: Array<{ [key: string]: any }> })
-  lisReplay?: [
-    {
-      idUser?: string;
-      des?: string;
-      date?: string;
-    },
-  ];
+  listReplay?: {
+    idUser?: string;
+    des?: string;
+    date?: string;
+  }[];
 
   @Prop()
   like?: number;
 
   @Prop()
-  image?: string[];
+  rate?: number;
+
+  @Prop()
+  listImg?: string[];
 }
 
 export type CommentDocument = HydratedDocument<Comment>;
