@@ -1,8 +1,8 @@
-import { Controller, Get, Param, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { formatRes } from 'src/utils/function';
-import { ApiParam } from '@nestjs/swagger';
-
+import { ApiParam, ApiTags } from '@nestjs/swagger';
+@ApiTags('Comment')
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
@@ -12,9 +12,15 @@ export class CommentController {
     required: true,
     description: 'idProduct',
   })
-  @Get('list/:idProduct')
+  @Get('detail/:idProduct')
   async getComment(@Res() res, @Param() parma, @Query() query) {
     const data = await this.commentService.getComment(parma, query);
+    return formatRes(res, data);
+  }
+
+  @Post('update/:_id')
+  async updateComment(@Res() res, @Param() parma, @Body() body) {
+    const data = await this.commentService.updateComment(parma, body);
     return formatRes(res, data);
   }
 }

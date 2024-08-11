@@ -1,4 +1,4 @@
-import { Injectable, Param, Query } from '@nestjs/common';
+import { Body, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
@@ -19,6 +19,15 @@ export class CommentService {
       },
       {},
       { date: -1 },
+    );
+    return data;
+  }
+
+  async updateComment(@Param() param, @Body() body): Promise<Comment | null> {
+    const data = await FunService.updateData(
+      this.commentModel,
+      param._id.toString,
+      body,
     );
     return data;
   }

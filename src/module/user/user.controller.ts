@@ -109,14 +109,8 @@ export class UserController {
     type: Object,
   })
   @Post('login')
-  async login(
-    @Res() response,
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<User | null> {
-    const data = await this.userService.login(
-      createUserDto.sdt,
-      createUserDto.pass,
-    );
+  async login(@Res() response, @Body() body): Promise<User | null> {
+    const data = await this.userService.login(body);
     return formatRes(response, data);
   }
 

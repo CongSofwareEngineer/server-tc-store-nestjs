@@ -31,6 +31,9 @@ export class Comment {
 
   @Prop()
   like?: number;
+
+  @Prop()
+  image?: string[];
 }
 
 export type CommentDocument = HydratedDocument<Comment>;

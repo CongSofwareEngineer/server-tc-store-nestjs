@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { AuthService } from '../auth/auth.service';
 import { FunService } from 'src/utils/funcService';
 import { CloudinaryService } from 'src/services/cloudinary';
+import { decryptData } from 'src/utils/crypto';
 
 @Injectable()
 export class UserService {
@@ -43,18 +44,23 @@ export class UserService {
     return FunService.updateData(this.userModel, param._id.toString(), body);
   }
 
-  async login(sdt: string, pass: string): Promise<User | null> {
-    const dataUser = await FunService.getOneData(this.userModel, {
-      sdt: sdt,
-      pass: pass,
-    });
-    if (!dataUser) {
+  async login(@Body() body): Promise<User | null> {
+    try {
+      const dataDecode = JSON.parse(decryptData(body.data));
+      const dataUser = await FunService.getOneData(this.userModel, {
+        sdt: dataDecode.sdt,
+        pass: dataDecode.pass,
+      });
+      if (!dataUser) {
+        return null;
+      }
+      const auth = AuthService.generateAuth(dataUser._id, dataUser.sdt);
+      dataUser.auth = auth.tokenAccess;
+      dataUser.authRefresh = auth.tokenRefresh;
+      return dataUser;
+    } catch (error) {
       return null;
     }
-    const auth = AuthService.generateAuth(dataUser._id, dataUser.sdt);
-    dataUser.auth = auth.tokenAccess;
-    dataUser.authRefresh = auth.tokenRefresh;
-    return dataUser;
   }
 
   async loginRefresh(sdt: string, pass: string): Promise<User | null> {

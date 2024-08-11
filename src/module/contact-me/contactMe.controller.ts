@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 
 import { formatRes } from 'src/utils/function';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { ContactMeService } from './contactMe.service';
 
-@ApiTags('My service')
+@ApiTags('Contact')
 @Controller('contact-me')
 export class ContactMeController {
   constructor(private readonly contactMeService: ContactMeService) {}
