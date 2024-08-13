@@ -3,9 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
-import { MATH_DB } from 'src/common/mongoDB';
-import { lowercase } from 'src/utils/function';
+import { MATH_DB, PATH_IMG } from 'src/common/mongoDB';
+import { isObject, lowercase } from 'src/utils/function';
 import { MATH_SORT } from 'src/common/app';
+import { CloudinaryService } from 'src/services/cloudinary';
 
 @Injectable()
 export class ProductService {
@@ -14,7 +15,31 @@ export class ProductService {
   ) {}
 
   async create(body: Product): Promise<Product> {
-    return FunService.create(this.productModel, body);
+    try {
+      const listImgMoreFun: any[] = body.imageMore.map((e) => {
+        return CloudinaryService.uploadImg(e, PATH_IMG.Products);
+      });
+
+      const listUrlImgMore = await Promise.all(listImgMoreFun);
+
+      const urlImgMain: any = await CloudinaryService.uploadImg(
+        body.imageMain,
+        PATH_IMG.Products,
+      );
+
+      const listPublicIdImgMore = listUrlImgMore.map((e: any) => {
+        return e?.public_id || e;
+      });
+      const dataNew: Product = {
+        ...body,
+        imageMain: urlImgMain.public_id,
+        imageMore: listPublicIdImgMore,
+      };
+
+      return FunService.create(this.productModel, dataNew);
+    } catch (error) {
+      return null;
+    }
   }
 
   async deleteProductByID(@Param() param): Promise<Product | null> {
@@ -32,6 +57,34 @@ export class ProductService {
   }
 
   async updateProduct(id: string, body: Product): Promise<Product | null> {
+    const dataBody = { ...body };
+    if (body?.imageMore) {
+      const listImgMoreFun: any[] = body.imageMore.map((e) => {
+        if (isObject(e)) {
+          return CloudinaryService.uploadImg(e, PATH_IMG.Products);
+        }
+        return e;
+      });
+      const listImg = await Promise.all(listImgMoreFun);
+      const listImgValid = listImg.map((e) => {
+        if (isObject(e)) {
+          return e.public_id;
+        }
+        return e;
+      });
+      dataBody.imageMore = listImgValid;
+    }
+
+    if (body?.imageMain) {
+      if (isObject(body?.imageMain)) {
+        const dataImgMain = await CloudinaryService.uploadImg(
+          body.imageMain,
+          PATH_IMG.Products,
+        );
+        dataBody.imageMain = dataImgMain.public_id;
+      }
+    }
+
     return FunService.updateData(this.productModel, id, body);
   }
 

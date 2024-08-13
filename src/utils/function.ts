@@ -7,6 +7,17 @@ export function delayTime(ms = 500) {
   });
 }
 
+export function isObject(value: any) {
+  try {
+    if (!value) {
+      return false;
+    }
+    return Object.prototype.toString.call(value) === '[object Object]';
+  } catch (error) {
+    return false;
+  }
+}
+
 export function dateNow(type: TYPE_DATE_TIME = TYPE_DATE_TIME.Day) {
   //  switch (key) {
   //   case value:
