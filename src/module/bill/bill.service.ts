@@ -1,4 +1,4 @@
-import { Inject, Injectable, Query } from '@nestjs/common';
+import { Body, Inject, Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Bill } from './schemas/bill.schema';
 import { Model, PipelineStage, Types } from 'mongoose';
@@ -18,19 +18,19 @@ export class BillService {
     @Inject(CartService) private readonly cartService: CartService,
   ) {}
 
-  async create(body: Bill): Promise<any> {
+  async create(@Body() body): Promise<any> {
     const listIdCart: string[] = [];
     const listBillDetail = body.listBill.map((e) => {
       listIdCart.push(e.idCart);
-      const itemBase: any = {
+      const itemTemp: any = {
         _id: new Types.ObjectId(e._id),
         amount: Number(e.amount),
         keyName: e.keyName,
       };
       if (e.moreConfig) {
-        itemBase.moreConfig = e.moreConfig;
+        itemTemp.moreConfig = e.moreConfig;
       }
-      return itemBase;
+      return itemTemp;
     });
 
     const bodyTemp: Bill = {
@@ -45,8 +45,14 @@ export class BillService {
       status: FILTER_BILL.Processing,
       totalBill: Number(body.totalBill),
     };
+    const lsitUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
+      return this.productService.updateProduct(e.idProduct, { sold: e.sold });
+    });
+    await Promise.all([
+      this.cartService.deleteManyProduct(listIdCart),
+      lsitUpdateProductFuc,
+    ]);
 
-    await this.cartService.deleteManyProduct(listIdCart);
     return FunService.create(this.billModel, bodyTemp);
   }
 

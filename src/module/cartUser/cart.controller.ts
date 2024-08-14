@@ -66,6 +66,11 @@ export class CartController {
     return formatRes(res, data);
   }
 
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Id cart',
+  })
   @Delete('delete/:id')
   async deleteCart(@Res() res, @Param() param) {
     const data = await this.cartService.deleteCart(param.id);

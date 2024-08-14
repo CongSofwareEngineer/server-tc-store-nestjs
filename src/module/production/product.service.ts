@@ -85,7 +85,7 @@ export class ProductService {
       }
     }
 
-    return FunService.updateData(this.productModel, id, body);
+    return FunService.updateData(this.productModel, id, dataBody);
   }
 
   async getProductByID(id: string): Promise<Product | null> {
