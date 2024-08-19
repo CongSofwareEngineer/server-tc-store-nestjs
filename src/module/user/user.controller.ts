@@ -7,13 +7,11 @@ import {
   Post,
   Query,
   Res,
-  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
-import { CreateUserDto } from './dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CloudinaryService } from 'src/services/cloudinary';

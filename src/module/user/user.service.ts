@@ -1,7 +1,7 @@
 import { Body, Injectable, Param, Query } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { AuthService } from '../auth/auth.service';
 import { FunService } from 'src/utils/funcService';
 import { CloudinaryService } from 'src/services/cloudinary';
@@ -29,7 +29,14 @@ export class UserService {
     return FunService.getDataByLimit(this.userModel, query);
   }
 
-  async updateAvatarUser(@Param() param, @Body() body): Promise<User | null> {
+  async updateAvatarUser(
+    @Param() param,
+    @Body() bodyEncode,
+  ): Promise<User | null> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
     const dataImg = await CloudinaryService.uploadImg(body.file);
 
     if (!dataImg?.public_id) {
@@ -40,12 +47,20 @@ export class UserService {
     });
   }
 
-  async updateUser(@Param() param, @Body() body): Promise<User | null> {
+  async updateUser(@Param() param, @Body() bodyEncode): Promise<User | null> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
     return FunService.updateData(this.userModel, param._id.toString(), body);
   }
 
-  async login(@Body() body): Promise<User | null> {
+  async login(@Body() bodyEncode): Promise<User | null> {
     try {
+      const body = decryptData(bodyEncode?.data);
+      if (!body) {
+        return null;
+      }
       const dataDecode = JSON.parse(decryptData(body.data));
       const dataUser = await FunService.getOneData(this.userModel, {
         sdt: dataDecode.sdt,
@@ -59,6 +74,8 @@ export class UserService {
       dataUser.authRefresh = auth.tokenRefresh;
       return dataUser;
     } catch (error) {
+      console.log({ error });
+
       return null;
     }
   }
@@ -74,7 +91,11 @@ export class UserService {
     return dataUser;
   }
 
-  async createUser(body: User): Promise<User | null> {
+  async createUser(@Body() bodyEncode): Promise<User | null> {
+    const body: User = decryptData(bodyEncode?.data);
+    if (!body) {
+      return null;
+    }
     const exitedAccount = await this.findOne(body?.sdt);
     if (exitedAccount) {
       return null;

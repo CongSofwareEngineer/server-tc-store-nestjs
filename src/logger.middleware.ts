@@ -11,6 +11,9 @@ export class LoggerMiddleware implements NestMiddleware {
         console.log({ token: req.headers.authorization });
         console.log({ method: req.method });
       }
+      console.log({ method: req.method });
+      console.log({ token: req.headers.authorization });
+      console.log({ url: req.originalUrl });
 
       if (
         req.originalUrl === '/category/all' ||
@@ -25,8 +28,22 @@ export class LoggerMiddleware implements NestMiddleware {
               status: HttpStatus.BAD_REQUEST,
             });
           }
+        } else {
+          if (req.method !== 'GET') {
+            const dataverify = AuthService.verifyAth(req.headers.authorization);
+
+            if (!dataverify) {
+              res.status(HttpStatus.BAD_REQUEST).send({
+                error: 'Authorization expired',
+                status: HttpStatus.BAD_REQUEST,
+              });
+            } else {
+              next();
+            }
+          } else {
+            next();
+          }
         }
-        next();
       }
     } catch (_) {
       res.status(HttpStatus.BAD_REQUEST).send({

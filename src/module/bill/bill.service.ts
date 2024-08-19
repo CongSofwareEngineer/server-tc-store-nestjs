@@ -1,4 +1,4 @@
-import { Body, Inject, Injectable, Query } from '@nestjs/common';
+import { Body, Inject, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Bill } from './schemas/bill.schema';
 import { Model, PipelineStage, Types } from 'mongoose';
@@ -7,6 +7,7 @@ import { ProductService } from '../production/product.service';
 import { DB_COLLECTION } from 'src/common/mongoDB';
 import { CartService } from '../cartUser/cart.service';
 import { FILTER_BILL } from 'src/common/app';
+import { decryptData } from 'src/utils/crypto';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require('moment');
@@ -18,46 +19,60 @@ export class BillService {
     @Inject(CartService) private readonly cartService: CartService,
   ) {}
 
-  async create(@Body() body): Promise<any> {
-    const listIdCart: string[] = [];
-    const listBillDetail = body.listBill.map((e) => {
-      listIdCart.push(e.idCart);
-      const itemTemp: any = {
-        _id: new Types.ObjectId(e._id),
-        amount: Number(e.amount),
-        keyName: e.keyName,
-      };
-      if (e.moreConfig) {
-        itemTemp.moreConfig = e.moreConfig;
+  async create(@Body() bodyEncode): Promise<any> {
+    try {
+      const body = decryptData(bodyEncode.data);
+      if (!body) {
+        return null;
       }
-      return itemTemp;
-    });
 
-    const bodyTemp: Bill = {
-      date: new Date().getTime().toFixed(),
-      addressShip: body.addressShip,
-      idUser: new Types.ObjectId(body.idUser),
-      discount: body.discount || 0,
-      note: body.note,
-      abort: false,
-      listBill: listBillDetail,
-      sdt: body?.sdt,
-      status: FILTER_BILL.Processing,
-      totalBill: Number(body.totalBill),
-    };
-    const lsitUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
-      return this.productService.updateProduct(e.idProduct, { sold: e.sold });
-    });
-    await Promise.all([
-      this.cartService.deleteManyProduct(listIdCart),
-      lsitUpdateProductFuc,
-    ]);
+      const listIdCart: string[] = [];
+      const listBillDetail = body.listBill.map((e) => {
+        listIdCart.push(e.idCart);
+        const itemTemp: any = {
+          _id: new Types.ObjectId(e._id),
+          amount: Number(e.amount),
+          keyName: e.keyName,
+        };
+        if (e.moreConfig) {
+          itemTemp.moreConfig = e.moreConfig;
+        }
+        return itemTemp;
+      });
 
-    return FunService.create(this.billModel, bodyTemp);
+      const bodyTemp: Bill = {
+        date: new Date().getTime().toFixed(),
+        addressShip: body.addressShip,
+        idUser: new Types.ObjectId(body.idUser),
+        discount: body.discount || 0,
+        note: body.note,
+        abort: false,
+        listBill: listBillDetail,
+        sdt: body?.sdt,
+        status: FILTER_BILL.Processing,
+        totalBill: Number(body.totalBill),
+      };
+
+      const lsitUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
+        return this.productService.updateProduct(e.idProduct, { sold: e.sold });
+      });
+      await Promise.all([
+        this.cartService.deleteManyProduct(listIdCart),
+        lsitUpdateProductFuc,
+      ]);
+
+      return FunService.create(this.billModel, bodyTemp);
+    } catch (error) {
+      return null;
+    }
   }
 
-  async updateBill(id: string, body: Bill): Promise<Bill> {
-    return FunService.updateData(this.billModel, id, body);
+  async updateBill(@Body() bodyEncode, @Param() param): Promise<Bill> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
+    return FunService.updateData(this.billModel, param.id, body);
   }
 
   async getAllBill(@Query() query): Promise<Bill[]> {

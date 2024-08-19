@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { LIMIT_DATA, TYPE_DATE_TIME } from 'src/common/app';
+import { encryptData } from './crypto';
 
 export function delayTime(ms = 500) {
   return new Promise((resolve) => {
@@ -69,13 +70,20 @@ export function formatRes(response: any, data: any, isError?: boolean) {
         return e;
       });
     } else {
-      if (typeof dataClone == 'object') {
+      if (isObject(dataClone)) {
         delete dataClone.__v;
       }
     }
+    if (!dataClone) {
+      return response.status(HttpStatus.OK).json({
+        data: dataClone,
+        status: HttpStatus.OK,
+      });
+    }
+    console.log({ methodresponse: response.method });
 
     return response.status(HttpStatus.OK).json({
-      data: dataClone,
+      data: response.req.method !== 'GET' ? encryptData(dataClone) : dataClone,
       status: HttpStatus.OK,
     });
   } catch (error) {

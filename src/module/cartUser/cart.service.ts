@@ -5,6 +5,7 @@ import { Model, PipelineStage, Types } from 'mongoose';
 import { DB_COLLECTION, MATH_DB } from 'src/common/mongoDB';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
+import { decryptData } from 'src/utils/crypto';
 
 @Injectable()
 export class CartService {
@@ -78,7 +79,11 @@ export class CartService {
     }
   }
 
-  async create(body: CartUser): Promise<CartUser> {
+  async create(@Body() bodyEncode): Promise<CartUser> {
+    const body: CartUser = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
     const bodyTemp: CartUser = {
       moreConfig: body?.moreConfig || {},
       date: new Date().getTime().toFixed(),
@@ -101,7 +106,14 @@ export class CartService {
     return FunService.deleteManyData(this.cartModel, filter);
   }
 
-  async updateCart(id: string, @Body() body): Promise<CartUser | null> {
+  async updateCart(id: string, @Body() bodyEncode): Promise<CartUser | null> {
+    const body: CartUser = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
+    console.log('====================================');
+    console.log({ body });
+    console.log('====================================');
     return FunService.updateData(this.cartModel, id, body);
   }
 }

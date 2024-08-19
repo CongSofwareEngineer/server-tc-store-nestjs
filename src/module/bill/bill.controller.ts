@@ -46,7 +46,7 @@ export class BillController {
 
   @Post('update/:id')
   async updateBill(@Res() res, @Body() body, @Param() param) {
-    const data = await this.billService.updateBill(param.id, body);
+    const data = await this.billService.updateBill(body, param);
     return formatRes(res, data);
   }
 
