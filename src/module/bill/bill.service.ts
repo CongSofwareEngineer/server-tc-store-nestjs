@@ -183,7 +183,13 @@ export class BillService {
         $sort: { date: -1 },
       },
     ];
-    const queryBase = getQueryDB(query, KEY_OPTION_FILTER_DB.Bill);
+    const queryBase: PipelineStage = getQueryDB(
+      query,
+      KEY_OPTION_FILTER_DB.Bill,
+    );
+
+    queryBase.$match['idUser'] = new Types.ObjectId(idUser);
+
     pipeline.push(queryBase);
 
     const data = await FunService.getDataByAggregate(

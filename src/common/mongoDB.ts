@@ -48,6 +48,7 @@ export const OPTION_FILTER_DB = {
     date: 'date',
     sdt: 'sdt',
     status: 'status',
+    idUser: 'idUser',
   },
   User: {
     ...FILTER_BASE_DB,

@@ -97,10 +97,7 @@ export function formatRes(response: any, data: any, isError?: boolean) {
   }
 }
 
-export const getQueryDB = (
-  query: any,
-  keyType?: KEY_OPTION_FILTER_DB,
-): PipelineStage => {
+export const getQueryDB = (query: any, keyType?: KEY_OPTION_FILTER_DB) => {
   const queryBase: PipelineStage = {
     $match: {},
   };
