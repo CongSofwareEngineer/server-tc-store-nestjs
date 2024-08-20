@@ -1,6 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
-import { LIMIT_DATA, TYPE_DATE_TIME } from 'src/common/app';
+import { FILTER_BILL, LIMIT_DATA, TYPE_DATE_TIME } from 'src/common/app';
 import { encryptData } from './crypto';
+import { PipelineStage, Types } from 'mongoose';
+import { KEY_OPTION_FILTER_DB, OPTION_FILTER_DB } from 'src/common/mongoDB';
+import moment from 'moment';
 
 export function delayTime(ms = 500) {
   return new Promise((resolve) => {
@@ -93,3 +96,44 @@ export function formatRes(response: any, data: any, isError?: boolean) {
     });
   }
 }
+
+export const getQueryDB = (
+  query: any,
+  keyType?: KEY_OPTION_FILTER_DB,
+): PipelineStage => {
+  const queryBase: PipelineStage = {
+    $match: {},
+  };
+  if (OPTION_FILTER_DB[keyType]) {
+    Object.keys(OPTION_FILTER_DB[keyType]).forEach((key) => {
+      if (key !== 'page' && key !== 'limit' && query[key]) {
+        if (key === 'date') {
+          const day = new Date(Number(query.date));
+
+          const start = new Date(
+            moment(day).startOf('day').toString(),
+          ).getTime();
+          const end = new Date(moment(day).endOf('day').toString()).getTime();
+
+          queryBase.$match.date = {
+            $gte: start.toString(),
+            $lt: end.toString(),
+          };
+        } else {
+          if (key === 'status' || key === 'type') {
+            if (query[key] !== FILTER_BILL.All) {
+              queryBase.$match[key] = query[key];
+            }
+          } else {
+            if (key === 'id') {
+              queryBase.$match._id = new Types.ObjectId(query[key]?.toString());
+            } else {
+              queryBase.$match[key] = query[key];
+            }
+          }
+        }
+      }
+    });
+  }
+  return queryBase;
+};
