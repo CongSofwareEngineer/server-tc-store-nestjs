@@ -8,7 +8,7 @@ export class RevenueService {
 
   async getAllRevenue(@Query() query) {
     const data = await this.billService.getFullBillAdmin(query);
-    const 
+
     return data;
   }
 }
