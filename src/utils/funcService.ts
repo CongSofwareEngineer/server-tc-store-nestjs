@@ -127,7 +127,7 @@ export class FunService {
 
       return data;
     } catch (error) {
-      return [];
+      return null;
     }
   }
 
@@ -144,6 +144,18 @@ export class FunService {
         .limit(Number(pageLimitSkip.limit))
         .exec();
 
+      return data;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  static async getFullDataByAggregate(
+    model: Model<any>,
+    pipelineStage?: PipelineStage[],
+  ): Promise<any[]> {
+    try {
+      const data = await model.aggregate(pipelineStage).exec();
       return data;
     } catch (error) {
       return [];

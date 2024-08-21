@@ -8,7 +8,7 @@ import { DB_COLLECTION, KEY_OPTION_FILTER_DB } from 'src/common/mongoDB';
 import { CartService } from '../cartUser/cart.service';
 import { FILTER_BILL } from 'src/common/app';
 import { decryptData } from 'src/utils/crypto';
-import { getQueryDB } from 'src/utils/function';
+import { getDateToQuery, getQueryDB } from 'src/utils/function';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require('moment');
@@ -19,6 +19,51 @@ export class BillService {
     @Inject(ProductService) private readonly productService: ProductService,
     @Inject(CartService) private readonly cartService: CartService,
   ) {}
+
+  getBaseQueryBill() {
+    const pipeline: PipelineStage[] = [
+      {
+        $unwind: '$listBill',
+      },
+      {
+        $lookup: {
+          from: DB_COLLECTION.Production,
+          localField: 'listBill._id',
+          foreignField: '_id',
+          as: 'listBill.more_data',
+          pipeline: [
+            {
+              $project: Bill.pipelineMoreDataGetCart(),
+            },
+          ],
+        },
+      },
+      {
+        $unwind: '$listBill.more_data',
+      },
+      {
+        $group: {
+          _id: '$_id',
+          date: { $first: '$date' },
+          totalBill: { $first: '$totalBill' },
+          discount: { $first: '$discount' },
+          idUser: { $first: '$idUser' },
+          addressShip: { $first: '$addressShip' },
+          abort: { $first: '$abort' },
+          note: { $first: '$note' },
+          sdt: { $first: '$sdt' },
+          status: { $first: '$status' },
+          listBill: {
+            $push: '$listBill',
+          },
+        },
+      },
+      {
+        $sort: { date: -1 },
+      },
+    ];
+    return pipeline;
+  }
 
   async create(@Body() bodyEncode): Promise<any> {
     try {
@@ -77,54 +122,47 @@ export class BillService {
   }
 
   async getAllBill(@Query() query): Promise<Bill[]> {
-    const pipeline: PipelineStage[] = [
-      {
-        $unwind: '$listBill',
-      },
-      {
-        $lookup: {
-          from: DB_COLLECTION.Production,
-          localField: 'listBill._id',
-          foreignField: '_id',
-          as: 'listBill.more_data',
-          pipeline: [
-            {
-              $project: Bill.pipelineMoreDataGetCart(),
-            },
-          ],
-        },
-      },
-      {
-        $unwind: '$listBill.more_data',
-      },
-      {
-        $group: {
-          _id: '$_id',
-          date: { $first: '$date' },
-          totalBill: { $first: '$totalBill' },
-          discount: { $first: '$discount' },
-          idUser: { $first: '$idUser' },
-          addressShip: { $first: '$addressShip' },
-          abort: { $first: '$abort' },
-          note: { $first: '$note' },
-          sdt: { $first: '$sdt' },
-          status: { $first: '$status' },
-          listBill: {
-            $push: '$listBill',
-          },
-        },
-      },
-      {
-        $sort: { date: -1 },
-      },
-    ];
-    const queryBase = getQueryDB(query, KEY_OPTION_FILTER_DB.Bill);
+    const pipeline = this.getBaseQueryBill();
+    const queryMore: PipelineStage = {
+      $match: {},
+    };
+    if (query?.status) {
+      queryMore.$match[`status`] = query.status;
+    }
+    if (query?.date) {
+      queryMore.$match[`date`] = getDateToQuery(query?.date);
+    }
+    pipeline.push(queryMore);
+    const data = await FunService.getDataByAggregate(
+      this.billModel,
+      query,
+      pipeline,
+    );
+    return data;
+  }
 
-    pipeline.push(queryBase);
+  async getAllBillAdmin(@Query() query): Promise<Bill[]> {
+    const pipeline = this.getBaseQueryBill();
+    const queryMore = getQueryDB(query, KEY_OPTION_FILTER_DB.Bill);
+
+    pipeline.push(queryMore);
 
     const data = await FunService.getDataByAggregate(
       this.billModel,
       query,
+      pipeline,
+    );
+    return data;
+  }
+
+  async getFullBillAdmin(@Query() query): Promise<Bill[]> {
+    const pipeline = this.getBaseQueryBill();
+    const queryMore = getQueryDB(query, KEY_OPTION_FILTER_DB.Bill);
+
+    pipeline.push(queryMore);
+
+    const data = await FunService.getFullDataByAggregate(
+      this.billModel,
       pipeline,
     );
     return data;
@@ -142,47 +180,7 @@ export class BillService {
     @Query() query,
     idUser: Types.ObjectId,
   ): Promise<Bill[]> {
-    const pipeline: PipelineStage[] = [
-      {
-        $unwind: '$listBill',
-      },
-      {
-        $lookup: {
-          from: DB_COLLECTION.Production,
-          localField: 'listBill._id',
-          foreignField: '_id',
-          as: 'listBill.more_data',
-          pipeline: [
-            {
-              $project: Bill.pipelineMoreDataGetCart(),
-            },
-          ],
-        },
-      },
-      {
-        $unwind: '$listBill.more_data',
-      },
-      {
-        $group: {
-          _id: '$_id',
-          date: { $first: '$date' },
-          totalBill: { $first: '$totalBill' },
-          discount: { $first: '$discount' },
-          idUser: { $first: '$idUser' },
-          addressShip: { $first: '$addressShip' },
-          abort: { $first: '$abort' },
-          note: { $first: '$note' },
-          sdt: { $first: '$sdt' },
-          status: { $first: '$status' },
-          listBill: {
-            $push: '$listBill',
-          },
-        },
-      },
-      {
-        $sort: { date: -1 },
-      },
-    ];
+    const pipeline = this.getBaseQueryBill();
     const queryBase: PipelineStage = getQueryDB(
       query,
       KEY_OPTION_FILTER_DB.Bill,

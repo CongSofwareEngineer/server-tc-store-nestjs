@@ -3,7 +3,7 @@ import { FILTER_BILL, LIMIT_DATA, TYPE_DATE_TIME } from 'src/common/app';
 import { encryptData } from './crypto';
 import { PipelineStage, Types } from 'mongoose';
 import { KEY_OPTION_FILTER_DB, OPTION_FILTER_DB } from 'src/common/mongoDB';
-import moment from 'moment';
+const moment = require('moment');
 
 export function delayTime(ms = 500) {
   return new Promise((resolve) => {
@@ -22,14 +22,28 @@ export function isObject(value: any) {
   }
 }
 
-export function dateNow(type: TYPE_DATE_TIME = TYPE_DATE_TIME.Day) {
-  //  switch (key) {
-  //   case value:
-  //     break;
-  //   default:
-  //     break;
-  //  }
-  console.log({ type });
+export function getDateToQuery(value: string) {
+  const day = new Date(Number(value));
+
+  const start = new Date(moment(day).startOf('day').toString()).getTime();
+  const end = new Date(moment(day).endOf('day').toString()).getTime();
+
+  return {
+    $gte: start,
+    $lte: end,
+  };
+}
+
+export function getRangeDateToQuery(startDate: string, endDate: string) {
+  const dayStart = new Date(Number(startDate));
+  const dayEnd = new Date(Number(endDate));
+
+  const start = new Date(moment(dayStart).startOf('day').toString()).getTime();
+  const end = new Date(moment(dayEnd).endOf('day').toString()).getTime();
+  return {
+    $gte: start,
+    $lte: end,
+  };
 }
 
 export function cloneData(data: any) {
@@ -57,41 +71,27 @@ export function getPageLimitSkip(query: { [key: string]: any }) {
 
 export function formatRes(response: any, data: any, isError?: boolean) {
   try {
-    let dataClone = cloneData(data);
-
-    if (isError || !dataClone) {
+    if (isError) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         data: null,
         status: HttpStatus.BAD_REQUEST,
       });
     }
-    if (Array.isArray(dataClone)) {
-      dataClone = dataClone.map((e) => {
-        if (typeof e == 'object') {
-          delete e.__v;
-        }
-        return e;
-      });
-    } else {
-      if (isObject(dataClone)) {
-        delete dataClone.__v;
-      }
-    }
-    if (!dataClone) {
+
+    if (!data) {
       return response.status(HttpStatus.OK).json({
-        data: dataClone,
+        data: data,
         status: HttpStatus.OK,
       });
     }
-    console.log({ methodresponse: response.method });
 
     return response.status(HttpStatus.OK).json({
-      data: response.req.method !== 'GET' ? encryptData(dataClone) : dataClone,
+      data: response.req.method !== 'GET' ? encryptData(data) : data,
       status: HttpStatus.OK,
     });
   } catch (error) {
     return response.status(HttpStatus.BAD_REQUEST).json({
-      dataClone: null,
+      data: null,
       status: HttpStatus.BAD_REQUEST,
     });
   }
@@ -103,29 +103,33 @@ export const getQueryDB = (query: any, keyType?: KEY_OPTION_FILTER_DB) => {
   };
   if (OPTION_FILTER_DB[keyType]) {
     Object.keys(OPTION_FILTER_DB[keyType]).forEach((key) => {
-      if (key !== 'page' && key !== 'limit' && query[key]) {
+      if (query[key]) {
         if (key === 'date') {
-          const day = new Date(Number(query.date));
-
-          const start = new Date(
-            moment(day).startOf('day').toString(),
-          ).getTime();
-          const end = new Date(moment(day).endOf('day').toString()).getTime();
-
-          queryBase.$match.date = {
-            $gte: start.toString(),
-            $lt: end.toString(),
-          };
+          queryBase.$match.date = getDateToQuery(query.date);
         } else {
-          if (key === 'status' || key === 'type') {
-            if (query[key] !== FILTER_BILL.All) {
-              queryBase.$match[key] = query[key];
-            }
+          if (key === 'dateRange') {
+            const listRanegDate = query[key].split(',');
+            queryBase.$match.date = getRangeDateToQuery(
+              listRanegDate[0],
+              listRanegDate[1],
+            );
           } else {
-            if (key === 'id') {
-              queryBase.$match._id = new Types.ObjectId(query[key]?.toString());
+            if (key === 'status' || key === 'type') {
+              if (query[key] !== FILTER_BILL.All) {
+                queryBase.$match[key] = query[key];
+              }
             } else {
-              queryBase.$match[key] = query[key];
+              if (key === 'id') {
+                queryBase.$match._id = new Types.ObjectId(
+                  query[key]?.toString(),
+                );
+              } else {
+                if (key == 'admin') {
+                  queryBase.$match[key] = query[key] === 'true' ? true : false;
+                } else {
+                  queryBase.$match[key] = query[key];
+                }
+              }
             }
           }
         }

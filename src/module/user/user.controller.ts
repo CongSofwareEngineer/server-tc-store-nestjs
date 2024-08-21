@@ -13,39 +13,29 @@ import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiParam,
+  ApiTags,
+  ApiQuery,
+  ApiUnauthorizedResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
+@ApiBearerAuth()
 @ApiTags('user')
 @SkipThrottle()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  @ApiUnauthorizedResponse({})
   @Get('all')
   async getUserByLimit(@Res() response, @Query() query): Promise<User[]> {
     try {
       const data = await this.userService.getUserByLimit(query);
       return formatRes(response, data);
     } catch (error) {
-      return formatRes(response, null, true);
-    }
-  }
-
-  @Get('check')
-  async upload(@Res() response, @Query() query): Promise<User[]> {
-    try {
-      console.log('check');
-
-      const data = await CloudinaryService.uploadImgSystem();
-      console.log('====================================');
-      console.log({ CloudinaryService: data });
-      console.log('====================================');
-      return formatRes(response, data);
-    } catch (error) {
-      console.log('====================================');
-      console.log({ error });
-      console.log('====================================');
       return formatRes(response, null, true);
     }
   }
@@ -59,6 +49,12 @@ export class UserController {
     } catch (error) {
       return formatRes(response, null, true);
     }
+  }
+
+  @Get('admin/all')
+  async getUserInAdmin(@Res() response, @Query() query): Promise<User[]> {
+    const data = await this.userService.getUserInAdmin(query);
+    return formatRes(response, data);
   }
 
   @ApiParam({

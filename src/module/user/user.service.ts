@@ -6,6 +6,8 @@ import { AuthService } from '../auth/auth.service';
 import { FunService } from 'src/utils/funcService';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { decryptData } from 'src/utils/crypto';
+import { getQueryDB } from 'src/utils/function';
+import { KEY_OPTION_FILTER_DB } from 'src/common/mongoDB';
 
 @Injectable()
 export class UserService {
@@ -22,6 +24,15 @@ export class UserService {
 
   async getAllUser(): Promise<User[]> {
     const data = await this.userModel.find().exec();
+    return data;
+  }
+
+  async getUserInAdmin(@Query() query): Promise<User[]> {
+    const queryBase = getQueryDB(query, KEY_OPTION_FILTER_DB.User);
+
+    const data = await FunService.getDataByAggregate(this.userModel, query, [
+      queryBase,
+    ]);
     return data;
   }
 

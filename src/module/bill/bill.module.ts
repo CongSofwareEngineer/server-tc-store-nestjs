@@ -21,5 +21,6 @@ import { CartModule } from '../cartUser/cart.module';
   ],
   controllers: [BillController],
   providers: [BillService],
+  exports: [BillService],
 })
 export class BillModule {}

@@ -59,7 +59,7 @@ export class AuthService {
         },
       });
 
-      const data = jwt.verify(token, {
+      const data = jwt.verify(token.replace('Bearer ', ''), {
         secret: process.env.SECRET_KEY_JWT,
       });
 

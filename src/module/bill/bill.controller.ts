@@ -11,6 +11,7 @@ import {
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 @ApiTags('bill')
 @Controller('bill')
 export class BillController {
@@ -24,6 +25,12 @@ export class BillController {
   @Get('all')
   async getAllBill(@Res() res, @Query() query) {
     const data = await this.billService.getAllBill(query);
+    return formatRes(res, data);
+  }
+
+  @Get('admin/all')
+  async getAllBillAdmin(@Res() res: Response, @Query() query) {
+    const data = await this.billService.getAllBillAdmin(query);
     return formatRes(res, data);
   }
 

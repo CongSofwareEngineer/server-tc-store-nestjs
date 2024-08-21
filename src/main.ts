@@ -10,6 +10,7 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('TC Store example')
     .setDescription('The TC Store API description')
     .setVersion('1.0')

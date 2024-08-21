@@ -32,8 +32,6 @@ export enum MATH_DB {
 }
 
 const FILTER_BASE_DB = {
-  page: 'page',
-  limit: 'limit',
   id: 'id',
 };
 
@@ -53,7 +51,7 @@ export const OPTION_FILTER_DB = {
   User: {
     ...FILTER_BASE_DB,
     sdt: 'sdt',
-    admin: 'admin',
+    isAdmin: 'isAdmin',
   },
   Cart: {
     ...FILTER_BASE_DB,
@@ -66,11 +64,19 @@ export const OPTION_FILTER_DB = {
     sdt: 'sdt',
     idProduct: 'idProduct',
   },
+  Revenue: {
+    ...FILTER_BASE_DB,
+    date: 'date',
+    dateRange: 'dateRange',
+    sdt: 'sdt',
+    idProduct: 'idProduct',
+  },
 };
 
 export enum KEY_OPTION_FILTER_DB {
   Poduct = 'Poduct',
   Bill = 'Bill',
+  Revenue = 'Revenue',
   User = 'User',
   Cart = 'Cart',
   Comment = 'Comment',
