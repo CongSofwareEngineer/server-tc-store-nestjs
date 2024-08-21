@@ -10,8 +10,8 @@ import {
 import { formatRes } from 'src/utils/function';
 import { Category } from './schemas/category.schema';
 import { CategoryService } from './category.service';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
-
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
 @ApiTags('category')
 @Controller('category')
 export class CategoryController {

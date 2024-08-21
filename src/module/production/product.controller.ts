@@ -10,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { formatRes } from 'src/utils/function';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 
 //hostname/product/Method
+@ApiBearerAuth()
 @ApiTags('product')
 @Controller('product')
 export class ProductionController {

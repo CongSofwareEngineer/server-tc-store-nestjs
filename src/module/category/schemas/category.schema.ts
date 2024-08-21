@@ -16,9 +16,3 @@ export class Category {
 }
 export type CategoryDocument = HydratedDocument<Category>;
 export const CategorySchema = SchemaFactory.createForClass(Category);
-CategorySchema.set('toJSON', {
-  transform: (_, ret) => {
-    delete ret.__v;
-    return ret;
-  },
-});

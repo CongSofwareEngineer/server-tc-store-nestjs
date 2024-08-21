@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 
 import { formatRes } from 'src/utils/function';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ContactMeService } from './contactMe.service';
-
+@ApiBearerAuth()
 @ApiTags('Contact')
 @Controller('contact-me')
 export class ContactMeController {

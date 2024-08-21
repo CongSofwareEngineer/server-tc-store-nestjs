@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { formatRes } from 'src/utils/function';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
 @ApiTags('cart')
 @Controller('cart')
 export class CartController {

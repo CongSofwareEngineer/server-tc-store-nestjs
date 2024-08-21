@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common';
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+@ApiBearerAuth()
 @ApiTags('bill')
 @Controller('bill')
 export class BillController {

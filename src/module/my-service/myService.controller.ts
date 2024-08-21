@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { MyServiceService } from './myService.service';
 import { formatRes } from 'src/utils/function';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
 @ApiTags('My service')
 @Controller('my-service')
 export class MyServiceController {

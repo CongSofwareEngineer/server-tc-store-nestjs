@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { formatRes } from 'src/utils/function';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+
+@ApiBearerAuth()
 @ApiTags('Comment')
 @Controller('comment')
 export class CommentController {
