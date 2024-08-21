@@ -1,8 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
-import { FILTER_BILL, LIMIT_DATA, TYPE_DATE_TIME } from 'src/common/app';
+import { FILTER_BILL, LIMIT_DATA } from 'src/common/app';
 import { encryptData } from './crypto';
 import { PipelineStage, Types } from 'mongoose';
 import { KEY_OPTION_FILTER_DB, OPTION_FILTER_DB } from 'src/common/mongoDB';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require('moment');
 
 export function delayTime(ms = 500) {
