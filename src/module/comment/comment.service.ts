@@ -1,10 +1,11 @@
 import { Body, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, PipelineStage, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { Comment } from './Schema/coment.schema';
 import { CloudinaryService } from 'src/services/cloudinary';
-import { PATH_IMG } from 'src/common/mongoDB';
+import { DB_COLLECTION, PATH_IMG } from 'src/common/mongoDB';
+import { decryptData } from 'src/utils/crypto';
 
 @Injectable()
 export class CommentService {
@@ -13,14 +14,36 @@ export class CommentService {
   ) {}
 
   async getComment(@Param() param, @Query() query): Promise<Comment[] | null> {
-    const data = await FunService.getDataByOptions(
+    const pipeline: PipelineStage[] = [
+      {
+        $match: { idProduct: new Types.ObjectId(param.idProduct) },
+      },
+
+      {
+        $lookup: {
+          from: DB_COLLECTION.User,
+          localField: 'sdt',
+          foreignField: 'sdt',
+          as: 'user',
+          pipeline: [
+            {
+              $project: {
+                avatar: 1,
+                _id: 0,
+              },
+            },
+          ],
+        },
+      },
+
+      {
+        $sort: { date: -1 },
+      },
+    ];
+    const data = await FunService.getDataByAggregate(
       this.commentModel,
       query,
-      {
-        idProduct: new Types.ObjectId(param.idProduct),
-      },
-      {},
-      { date: -1 },
+      pipeline,
     );
     return data;
   }
@@ -42,17 +65,23 @@ export class CommentService {
     return data;
   }
 
-  async createComment(@Body() body): Promise<Comment | null> {
+  async createComment(@Body() bodyEncode): Promise<Comment | null> {
     try {
-      const listFun = body.listImg.map((e) => {
+      const body = decryptData(bodyEncode.data);
+      if (!body) {
+        return null;
+      }
+      const listFun = body.listImg.map((e: any) => {
         return CloudinaryService.uploadImg(e, PATH_IMG.Comment);
       });
       const listData = await Promise.all(listFun);
+      console.log({ listData });
+
       const listUrl = listData.map((e) => e.public_id);
       const bodyData: Comment = {
         date: new Date().getTime().toString(),
         listImg: listUrl,
-        isProduct: new Types.ObjectId(body.idProduct.toString()),
+        idProduct: new Types.ObjectId(body.idProduct.toString()),
         like: 0,
         note: body.note,
         listReplay: [],
@@ -62,6 +91,11 @@ export class CommentService {
       };
       const data = await FunService.create(this.commentModel, bodyData);
       return data;
-    } catch (error) {}
+    } catch (error) {
+      console.log('====================================');
+      console.log({ error });
+      console.log('====================================');
+      return null;
+    }
   }
 }

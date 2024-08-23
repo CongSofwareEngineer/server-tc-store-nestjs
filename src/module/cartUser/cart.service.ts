@@ -38,9 +38,6 @@ export class CartService {
 
   async getCartByIdUser(idUser: string, @Query() query) {
     try {
-      console.log('====================================');
-      console.log({ idUser });
-      console.log('====================================');
       const arrFilter: PipelineStage[] = [
         {
           $match: { idUser: idUser.toString() },

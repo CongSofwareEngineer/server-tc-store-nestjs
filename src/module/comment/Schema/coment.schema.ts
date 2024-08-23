@@ -18,7 +18,7 @@ export class Comment {
   note?: string;
 
   @Prop()
-  isProduct?: Types.ObjectId;
+  idProduct?: Types.ObjectId;
 
   @Prop({ type: Array<{ [key: string]: any }> })
   listReplay?: {
