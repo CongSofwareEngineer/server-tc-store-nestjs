@@ -12,6 +12,14 @@ export function delayTime(ms = 500) {
   });
 }
 
+export function getIdObject(id: string): any {
+  try {
+    return new Types.ObjectId(id);
+  } catch (error) {
+    return process.env.KEY_CRYPTO_IV_ENCODE;
+  }
+}
+
 export function isObject(value: any) {
   try {
     if (!value) {
@@ -121,9 +129,7 @@ export const getQueryDB = (query: any, keyType?: KEY_OPTION_FILTER_DB) => {
               }
             } else {
               if (key === 'id') {
-                queryBase.$match._id = new Types.ObjectId(
-                  query[key]?.toString(),
-                );
+                queryBase.$match._id = getIdObject(query[key]?.toString());
               } else {
                 if (key == 'admin') {
                   queryBase.$match[key] = query[key] === 'true' ? true : false;

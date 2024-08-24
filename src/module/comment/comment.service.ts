@@ -6,6 +6,7 @@ import { Comment } from './Schema/coment.schema';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { DB_COLLECTION, PATH_IMG } from 'src/common/mongoDB';
 import { decryptData } from 'src/utils/crypto';
+import { getIdObject } from 'src/utils/function';
 
 @Injectable()
 export class CommentService {
@@ -16,7 +17,7 @@ export class CommentService {
   async getComment(@Param() param, @Query() query): Promise<Comment[] | null> {
     const pipeline: PipelineStage[] = [
       {
-        $match: { idProduct: new Types.ObjectId(param.idProduct) },
+        $match: { idProduct: getIdObject(param.idProduct) },
       },
 
       {
@@ -48,6 +49,14 @@ export class CommentService {
     return data;
   }
 
+  async getCommentUserByIDProduct(@Param() param): Promise<Comment | null> {
+    const data = await FunService.getOneData(this.commentModel, {
+      idProduct: getIdObject(param.idProduct),
+      sdt: param.sdt,
+    });
+    return data;
+  }
+
   async updateComment(@Param() param, @Body() body): Promise<Comment | null> {
     const data = await FunService.updateData(
       this.commentModel,
@@ -60,7 +69,7 @@ export class CommentService {
   async deleteComment(@Param() param): Promise<Comment | null> {
     const data = await FunService.deleteDataByID(
       this.commentModel,
-      new Types.ObjectId(param._id),
+      getIdObject(param._id),
     );
     return data;
   }
@@ -75,13 +84,12 @@ export class CommentService {
         return CloudinaryService.uploadImg(e, PATH_IMG.Comment);
       });
       const listData = await Promise.all(listFun);
-      console.log({ listData });
 
       const listUrl = listData.map((e) => e.public_id);
       const bodyData: Comment = {
         date: new Date().getTime().toString(),
         listImg: listUrl,
-        idProduct: new Types.ObjectId(body.idProduct.toString()),
+        idProduct: getIdObject(body.idProduct.toString()),
         like: 0,
         note: body.note,
         listReplay: [],
@@ -92,9 +100,6 @@ export class CommentService {
       const data = await FunService.create(this.commentModel, bodyData);
       return data;
     } catch (error) {
-      console.log('====================================');
-      console.log({ error });
-      console.log('====================================');
       return null;
     }
   }

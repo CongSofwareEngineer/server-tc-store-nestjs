@@ -34,6 +34,22 @@ export class CommentController {
     required: true,
     description: 'idProduct',
   })
+  @ApiParam({
+    name: 'sdt',
+    required: true,
+    description: 'sdt user',
+  })
+  @Get('detail/:idProduct/:sdt')
+  async getCommentUserByIDProduct(@Res() res, @Param() parma) {
+    const data = await this.commentService.getCommentUserByIDProduct(parma);
+    return formatRes(res, data);
+  }
+
+  @ApiParam({
+    name: 'idProduct',
+    required: true,
+    description: 'idProduct',
+  })
   @Delete('detail/:_id')
   async deleteComment(@Res() res, @Param() parma) {
     const data = await this.commentService.deleteComment(parma);

@@ -4,7 +4,12 @@ import { Product } from './schemas/product.schema';
 import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { KEY_OPTION_FILTER_DB, MATH_DB, PATH_IMG } from 'src/common/mongoDB';
-import { getQueryDB, isObject, lowercase } from 'src/utils/function';
+import {
+  getIdObject,
+  getQueryDB,
+  isObject,
+  lowercase,
+} from 'src/utils/function';
 import { MATH_SORT } from 'src/common/app';
 import { CloudinaryService } from 'src/services/cloudinary';
 
@@ -43,10 +48,7 @@ export class ProductService {
   }
 
   async deleteProductByID(@Param() param): Promise<Product | null> {
-    return FunService.deleteDataByID(
-      this.productModel,
-      new Types.ObjectId(param.id),
-    );
+    return FunService.deleteDataByID(this.productModel, getIdObject(param.id));
   }
 
   async deleteManyProduct(listId: string[]): Promise<Product | null> {

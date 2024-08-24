@@ -8,7 +8,7 @@ import { DB_COLLECTION, KEY_OPTION_FILTER_DB } from 'src/common/mongoDB';
 import { CartService } from '../cartUser/cart.service';
 import { FILTER_BILL } from 'src/common/app';
 import { decryptData } from 'src/utils/crypto';
-import { getDateToQuery, getQueryDB } from 'src/utils/function';
+import { getDateToQuery, getIdObject, getQueryDB } from 'src/utils/function';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require('moment');
@@ -76,7 +76,7 @@ export class BillService {
       const listBillDetail = body.listBill.map((e) => {
         listIdCart.push(e.idCart);
         const itemTemp: any = {
-          _id: new Types.ObjectId(e._id),
+          _id: getIdObject(e._id),
           amount: Number(e.amount),
           keyName: e.keyName,
         };
@@ -89,7 +89,7 @@ export class BillService {
       const bodyTemp: Bill = {
         date: new Date().getTime().toFixed(),
         addressShip: body.addressShip,
-        idUser: new Types.ObjectId(body.idUser),
+        idUser: getIdObject(body.idUser),
         discount: body.discount || 0,
         note: body.note,
         abort: false,
@@ -169,11 +169,11 @@ export class BillService {
   }
 
   async getBillByID(id: Types.ObjectId): Promise<Bill> {
-    return FunService.findDataByID(this.billModel, new Types.ObjectId(id));
+    return FunService.findDataByID(this.billModel, getIdObject(id?.toString()));
   }
 
   async deleteBillByID(id: string): Promise<Bill> {
-    return FunService.deleteDataByID(this.billModel, new Types.ObjectId(id));
+    return FunService.deleteDataByID(this.billModel, getIdObject(id));
   }
 
   async getBillByIDUser(
@@ -186,7 +186,7 @@ export class BillService {
       KEY_OPTION_FILTER_DB.Bill,
     );
 
-    queryBase.$match['idUser'] = new Types.ObjectId(idUser);
+    queryBase.$match['idUser'] = getIdObject(idUser?.toString());
 
     pipeline.push(queryBase);
 

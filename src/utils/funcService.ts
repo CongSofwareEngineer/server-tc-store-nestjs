@@ -54,7 +54,9 @@ export class FunService {
     options: { [key: string]: any } = {},
   ): Promise<any> {
     try {
-      return model.find(queryOption, options).exec();
+      const data = await model.find(queryOption, options).exec();
+
+      return data;
     } catch (error) {
       return null;
     }

@@ -6,6 +6,7 @@ import { DB_COLLECTION, MATH_DB } from 'src/common/mongoDB';
 import { FunService } from 'src/utils/funcService';
 import { ProductService } from '../production/product.service';
 import { decryptData } from 'src/utils/crypto';
+import { getIdObject } from 'src/utils/function';
 
 @Injectable()
 export class CartService {
@@ -31,7 +32,7 @@ export class CartService {
       {},
       {
         idUser: param.idUser,
-        idProduct: new Types.ObjectId(param.idProduct),
+        idProduct: getIdObject(param.idProduct),
       },
     );
   }
@@ -86,14 +87,14 @@ export class CartService {
       date: new Date().getTime().toFixed(),
       idUser: body?.idUser,
       amount: Number(body?.amount),
-      idProduct: new Types.ObjectId(body.idProduct),
+      idProduct: getIdObject(body.idProduct?.toString()),
     };
 
     return FunService.create(this.cartModel, bodyTemp);
   }
 
   async deleteCart(id: string): Promise<CartUser | null> {
-    return FunService.deleteDataByID(this.cartModel, new Types.ObjectId(id));
+    return FunService.deleteDataByID(this.cartModel, getIdObject(id));
   }
 
   async deleteManyProduct(listId: string[]): Promise<CartUser | null> {
