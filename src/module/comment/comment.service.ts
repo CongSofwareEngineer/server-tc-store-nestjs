@@ -6,7 +6,7 @@ import { Comment } from './Schema/coment.schema';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { DB_COLLECTION, PATH_IMG } from 'src/common/mongoDB';
 import { decryptData } from 'src/utils/crypto';
-import { getIdObject } from 'src/utils/function';
+import { getIdObject, isObject } from 'src/utils/function';
 
 @Injectable()
 export class CommentService {
@@ -57,11 +57,34 @@ export class CommentService {
     return data;
   }
 
-  async updateComment(@Param() param, @Body() body): Promise<Comment | null> {
+  async updateComment(
+    @Param() param,
+    @Body() bodyEncode,
+  ): Promise<Comment | null> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
+    const dataUpdate = {
+      ...body,
+    };
+    if (body.listImg) {
+      const listFun = body.listImg.map((e: any) => {
+        if (isObject(e)) {
+          return CloudinaryService.uploadImg(e, PATH_IMG.Comment);
+        }
+        return e;
+      });
+      const listData = await Promise.all(listFun);
+
+      const listUrl = listData.map((e) => e.public_id);
+      dataUpdate.listImg = listUrl;
+    }
+
     const data = await FunService.updateData(
       this.commentModel,
       param._id.toString(),
-      body,
+      dataUpdate,
     );
     return data;
   }
