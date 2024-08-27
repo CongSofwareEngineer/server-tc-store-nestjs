@@ -90,6 +90,9 @@ export class UserController {
     return formatRes(response, data);
   }
 
+  @ApiBody({
+    type: User,
+  })
   @Post('register')
   async createUser(@Res() response, @Body() userData): Promise<User> {
     const data = await this.userService.createUser(userData);
@@ -98,9 +101,7 @@ export class UserController {
 
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @ApiBody({
-    description: 'Login User',
-    required: true,
-    type: Object,
+    type: User,
   })
   @Post('login')
   async login(@Res() response, @Body() body): Promise<User | null> {
@@ -126,9 +127,7 @@ export class UserController {
   }
 
   @ApiBody({
-    description: 'update User',
-    required: true,
-    type: Object,
+    type: User,
   })
   @Post('update/:_id')
   async updateUser(
@@ -141,9 +140,7 @@ export class UserController {
   }
 
   @ApiBody({
-    description: 'update User',
-    required: true,
-    type: Object,
+    type: User,
   })
   @Post('update-avatar/:_id')
   @UseInterceptors(AnyFilesInterceptor())

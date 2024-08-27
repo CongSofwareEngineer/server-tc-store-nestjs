@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common';
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
-import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { Bill } from './schemas/bill.schema';
 @ApiBearerAuth()
 @ApiTags('bill')
 @Controller('bill')
@@ -46,12 +47,18 @@ export class BillController {
     return formatRes(res, data);
   }
 
+  @ApiBody({
+    type: Bill,
+  })
   @Post('create')
   async createBill(@Res() res, @Body() body) {
     const data = await this.billService.create(body);
     return formatRes(res, data);
   }
 
+  @ApiBody({
+    type: Bill,
+  })
   @Post('update/:id')
   async updateBill(@Res() res, @Body() body, @Param() param) {
     const data = await this.billService.updateBill(body, param);

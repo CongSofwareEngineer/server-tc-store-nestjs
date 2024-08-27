@@ -1,8 +1,10 @@
-import { Body, Injectable } from '@nestjs/common';
+import { Body, Injectable, Param } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { ContactMe } from './schemas/contactMe.schema';
+import { decryptData } from 'src/utils/crypto';
+import { getIdObject } from 'src/utils/function';
 
 @Injectable()
 export class ContactMeService {
@@ -15,14 +17,43 @@ export class ContactMeService {
     return FunService.getFullDataByOption(this.contactMeModel);
   }
 
-  async create(@Body() body): Promise<ContactMe | null> {
-    const isExited = await FunService.getOneData(this.contactMeModel, {
-      emailUser: body.emailUser.toString(),
-    });
-
-    if (isExited) {
+  async update(@Body() bodyEncode): Promise<ContactMe[]> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
       return null;
     }
+    const dataUpdate: ContactMe = {
+      des: body.des,
+    };
+    return FunService.updateData(
+      this.contactMeModel,
+      getIdObject(body.id),
+      dataUpdate,
+    );
+  }
+
+  async create(@Body() bodyEncode): Promise<ContactMe | null> {
+    let dataExited = false;
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
+    if (body.emailUser) {
+      dataExited = await FunService.getOneData(this.contactMeModel, {
+        emailUser: body.emailUser.toString(),
+      });
+    }
+
+    if (body.sdt) {
+      dataExited = await FunService.getOneData(this.contactMeModel, {
+        sdt: body.sdt.toString(),
+      });
+    }
+
+    if (dataExited) {
+      return null;
+    }
+
     return FunService.create(this.contactMeModel, body);
   }
 }
