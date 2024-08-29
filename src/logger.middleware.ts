@@ -11,38 +11,26 @@ export class LoggerMiddleware implements NestMiddleware {
         console.log({ token: req.headers.authorization });
         console.log({ method: req.method });
       }
-      console.log({ method: req.method });
+      console.log({ method: req.get('host') });
       console.log({ token: req.headers.authorization });
       console.log({ url: req.originalUrl });
 
-      if (
-        req.originalUrl === '/category/all' ||
-        req.originalUrl === '/user/login'
-      ) {
+      if (req.originalUrl === '/user/login') {
         next();
       } else {
-        if (process.env.ENABLE_CHECK_AUTH === 'true') {
-          if (!AuthService.verifyAth(req.headers.authorization)) {
+        if (req.method !== 'GET') {
+          const dataverify = AuthService.verifyAth(req.headers.authorization);
+
+          if (!dataverify) {
             res.status(HttpStatus.BAD_REQUEST).send({
               error: 'Authorization expired',
               status: HttpStatus.BAD_REQUEST,
             });
-          }
-        } else {
-          if (req.method !== 'GET') {
-            const dataverify = AuthService.verifyAth(req.headers.authorization);
-
-            if (!dataverify) {
-              res.status(HttpStatus.BAD_REQUEST).send({
-                error: 'Authorization expired',
-                status: HttpStatus.BAD_REQUEST,
-              });
-            } else {
-              next();
-            }
           } else {
             next();
           }
+        } else {
+          next();
         }
       }
     } catch (_) {
