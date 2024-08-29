@@ -6,10 +6,19 @@ import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(json({ limit: '50mb' }));
-  app.enableCors({
-    origin: ['http://192.168.0.49:3000/', 'https://tcstore.vercel.app'],
-  });
+  app.use(json({ limit: '20mb' }));
+
+  if (!!process.env.ENABLE_LMIT_DOMAIN) {
+    app.enableCors({
+      origin: [
+        'https://tc-store-nestjs.adaptable.app',
+        'https://tcstore.vercel.app',
+      ],
+    });
+  } else {
+    app.enableCors();
+  }
+
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
     .addBearerAuth()

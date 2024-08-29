@@ -5,6 +5,7 @@ interface EnvironmentVariables {
   readonly ENABLE_CHECK_AUTH: string;
   readonly KEY_CRYPTO_IV_ENCODE: string;
   readonly KEY_CRYPTO_SALT: string;
+  readonly ENABLE_LMIT_DOMAIN: string;
 }
 
 declare namespace NodeJS {
