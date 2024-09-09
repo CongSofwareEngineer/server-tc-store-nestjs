@@ -1,4 +1,4 @@
-import { Injectable, Param, Query } from '@nestjs/common';
+import { Body, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Model, Types } from 'mongoose';
@@ -12,6 +12,7 @@ import {
 } from 'src/utils/function';
 import { MATH_SORT } from 'src/common/app';
 import { CloudinaryService } from 'src/services/cloudinary';
+import { decryptData } from 'src/utils/crypto';
 
 @Injectable()
 export class ProductService {
@@ -58,7 +59,11 @@ export class ProductService {
     return FunService.deleteManyData(this.productModel, filter);
   }
 
-  async updateProduct(id: string, body: Product): Promise<Product | null> {
+  async updateProduct(id: string, @Body() bodyEncode): Promise<Product | null> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
     const dataBody = { ...body };
     if (body?.imageMore) {
       const listImgMoreFun: any[] = body.imageMore.map((e) => {
