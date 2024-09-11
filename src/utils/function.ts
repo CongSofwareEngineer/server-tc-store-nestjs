@@ -50,8 +50,8 @@ export function getRangeDateToQuery(startDate: string, endDate: string) {
   const start = new Date(moment(dayStart).startOf('day').toString()).getTime();
   const end = new Date(moment(dayEnd).endOf('day').toString()).getTime();
   return {
-    $gte: start,
-    $lte: end,
+    $gte: start.toString(),
+    $lte: end.toString(),
   };
 }
 
@@ -116,12 +116,18 @@ export const getQueryDB = (query: any, keyType?: KEY_OPTION_FILTER_DB) => {
         if (key === 'date') {
           queryBase.$match.date = getDateToQuery(query.date);
         } else {
-          if (key === 'dateRange') {
-            const listRanegDate = query[key].split(',');
-            queryBase.$match.date = getRangeDateToQuery(
-              listRanegDate[0],
-              listRanegDate[1],
-            );
+          if (key === 'dateEnd' || key === 'dateStart') {
+            if (key === 'dateEnd') {
+              queryBase.$match.date = getRangeDateToQuery(
+                query['dateStart'] || new Date().getTime().toString(),
+                query[key],
+              );
+            } else {
+              queryBase.$match.date = getRangeDateToQuery(
+                query[key],
+                query['dateEnd'] || new Date().getTime().toString(),
+              );
+            }
           } else {
             if (key === 'status' || key === 'type') {
               if (query[key] !== FILTER_BILL.All) {

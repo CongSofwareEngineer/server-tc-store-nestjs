@@ -144,6 +144,7 @@ export class BillService {
   async getAllBillAdmin(@Query() query): Promise<Bill[]> {
     const pipeline = this.getBaseQueryBill();
     const queryMore = getQueryDB(query, KEY_OPTION_FILTER_DB.Bill);
+    console.log({ queryMore, query });
 
     pipeline.push(queryMore);
 
