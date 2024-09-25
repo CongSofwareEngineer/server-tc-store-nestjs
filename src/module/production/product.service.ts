@@ -20,8 +20,13 @@ export class ProductService {
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
   ) {}
 
-  async create(body: Product): Promise<Product> {
+  async create(@Body() bodyEncode): Promise<Product> {
     try {
+      const body = decryptData(bodyEncode.data);
+      if (!body) {
+        return null;
+      }
+
       const listImgMoreFun: any[] = body.imageMore.map((e) => {
         return CloudinaryService.uploadImg(e, PATH_IMG.Products);
       });
