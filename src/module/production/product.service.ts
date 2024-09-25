@@ -104,18 +104,61 @@ export class ProductService {
   }
 
   async getProductByTypeProduct(@Query() query): Promise<Product[]> {
-    if (!query.category || lowercase(query.category) === 'all') {
-      return FunService.getDataByLimit(this.productModel, query);
+    let matchQuery: Record<string, any> = {};
+    let listType: string[];
+    if (query.category && lowercase(query.category) !== 'all') {
+      listType = query.category.split(',');
+      listType = listType.map((e) => lowercase(e));
+      matchQuery.category = { [MATH_DB.$in]: listType };
     }
-    let listType: string[] = query.category.split(',');
-    listType = listType.map((e) => lowercase(e));
-    const dataFilter = await FunService.getAndSortDataByOptions(
+
+    if (query.name) {
+      matchQuery.name = { [MATH_DB.$regex]: new RegExp(query.name, 'i') };
+    }
+    console.log({ matchQuery });
+
+    const dataFilter = await FunService.getSortDataByAggregate(
       this.productModel,
       query,
+      [
+        {
+          $match: matchQuery,
+        },
+        {
+          $project: {
+            cost: 0,
+          },
+        },
+      ],
       {
-        category: { [MATH_DB.$in]: listType },
+        price: query.sort ? (query.sort === MATH_SORT.asc ? 1 : -1) : 1,
       },
-      {},
+    );
+
+    return dataFilter;
+  }
+
+  async getListProductAdmin(@Query() query): Promise<Product[]> {
+    let matchQuery: Record<string, any> = {};
+    let listType: string[];
+    if (query.category && lowercase(query.category) !== 'all') {
+      listType = query.category.split(',');
+      listType = listType.map((e) => lowercase(e));
+      matchQuery.category = { [MATH_DB.$in]: listType };
+    }
+
+    if (query.keyName) {
+      matchQuery.keyName = query.keyName;
+    }
+
+    const dataFilter = await FunService.getSortDataByAggregate(
+      this.productModel,
+      query,
+      [
+        {
+          $match: matchQuery,
+        },
+      ],
       {
         price: query.sort ? (query.sort === MATH_SORT.asc ? 1 : -1) : 1,
       },

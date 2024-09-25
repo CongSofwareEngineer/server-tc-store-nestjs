@@ -1,5 +1,5 @@
 import { Query } from '@nestjs/common';
-import { Model, PipelineStage, Types } from 'mongoose';
+import { Model, PipelineStage, SortValues, Types } from 'mongoose';
 import { getPageLimitSkip } from 'src/utils/function';
 
 export class FunService {
@@ -144,6 +144,27 @@ export class FunService {
         .aggregate(pipelineStage)
         .skip(Number(pageLimitSkip.skip))
         .limit(Number(pageLimitSkip.limit))
+        .exec();
+
+      return data;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  static async getSortDataByAggregate(
+    model: Model<any>,
+    @Query() query,
+    pipelineStage?: PipelineStage[],
+    optionSort?: Record<string, SortValues>,
+  ): Promise<any[]> {
+    try {
+      const pageLimitSkip = getPageLimitSkip(query);
+      const data = await model
+        .aggregate(pipelineStage)
+        .skip(Number(pageLimitSkip.skip))
+        .limit(Number(pageLimitSkip.limit))
+        .sort(optionSort)
         .exec();
 
       return data;

@@ -10,7 +10,13 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { formatRes } from 'src/utils/function';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
 //hostname/product/Method
 @ApiBearerAuth()
@@ -22,6 +28,12 @@ export class ProductionController {
   @Get('all')
   async getProductByTypeProduct(@Res() res, @Query() query) {
     const data = await this.productService.getProductByTypeProduct(query);
+    return formatRes(res, data);
+  }
+
+  @Get('admin/all')
+  async getListProductAdmin(@Res() res, @Query() query) {
+    const data = await this.productService.getListProductAdmin(query);
     return formatRes(res, data);
   }
 

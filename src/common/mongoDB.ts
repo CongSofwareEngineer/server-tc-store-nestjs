@@ -29,6 +29,7 @@ export enum MATH_DB {
   $or = '$or',
   $where = '$where',
   $MergeObjects = '$mergeObjects',
+  $regex = '$regex',
 }
 
 const FILTER_BASE_DB = {
