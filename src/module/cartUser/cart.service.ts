@@ -109,9 +109,7 @@ export class CartService {
     if (!body) {
       return null;
     }
-    console.log('====================================');
-    console.log({ body });
-    console.log('====================================');
+
     return FunService.updateData(this.cartModel, id, body);
   }
 }

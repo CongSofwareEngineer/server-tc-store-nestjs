@@ -10,10 +10,9 @@ async function bootstrap() {
 
   if (process.env.ENABLE_LMIT_DOMAIN) {
     app.enableCors({
-      origin: [
-        'https://tc-store-nestjs.adaptable.app',
-        'https://tcstore.vercel.app',
-      ],
+      origin: ['tc-store-nestjs.adaptable.app', 'tcstore.vercel.app'],
+      methods: ['GET', 'POST'],
+      credentials: true,
     });
   } else {
     app.enableCors();

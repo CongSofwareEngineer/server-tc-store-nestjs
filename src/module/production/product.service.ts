@@ -120,7 +120,6 @@ export class ProductService {
     if (query.name) {
       matchQuery.name = { [MATH_DB.$regex]: new RegExp(query.name, 'i') };
     }
-    console.log({ matchQuery });
 
     const dataFilter = await FunService.getSortDataByAggregate(
       this.productModel,
