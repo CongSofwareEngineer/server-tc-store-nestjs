@@ -34,53 +34,49 @@ export enum MATH_DB {
 
 const FILTER_BASE_DB = {
   id: 'id',
-};
-
-export const OPTION_FILTER_DB = {
-  Poduct: {
-    ...FILTER_BASE_DB,
-    keyName: 'keyName',
-  },
-  Bill: {
-    ...FILTER_BASE_DB,
-    type: 'type',
-    date: 'date',
-    dateStart: 'dateStart',
-    dateEnd: 'dateEnd',
-    sdt: 'sdt',
-    status: 'status',
-    idUser: 'idUser',
-  },
-  User: {
-    ...FILTER_BASE_DB,
-    sdt: 'sdt',
-    isAdmin: 'isAdmin',
-  },
-  Cart: {
-    ...FILTER_BASE_DB,
-    date: 'date',
-    sdt: 'sdt',
-  },
-  Comment: {
-    ...FILTER_BASE_DB,
-    date: 'date',
-    sdt: 'sdt',
-    idProduct: 'idProduct',
-  },
-  Revenue: {
-    ...FILTER_BASE_DB,
-    date: 'date',
-    dateRange: 'dateRange',
-    sdt: 'sdt',
-    idProduct: 'idProduct',
-  },
+  sdt: 'sdt',
 };
 
 export enum KEY_OPTION_FILTER_DB {
-  Poduct = 'Poduct',
+  Product = 'Product',
   Bill = 'Bill',
   Revenue = 'Revenue',
   User = 'User',
   Cart = 'Cart',
   Comment = 'Comment',
 }
+
+export const OPTION_FILTER_DB = {
+  [KEY_OPTION_FILTER_DB.Product]: {
+    ...FILTER_BASE_DB,
+    keyName: 'keyName',
+  },
+  [KEY_OPTION_FILTER_DB.Bill]: {
+    ...FILTER_BASE_DB,
+    type: 'type',
+    date: 'date',
+    dateStart: 'dateStart',
+    dateEnd: 'dateEnd',
+    status: 'status',
+    idUser: 'idUser',
+  },
+  [KEY_OPTION_FILTER_DB.User]: {
+    ...FILTER_BASE_DB,
+    isAdmin: 'isAdmin',
+  },
+  [KEY_OPTION_FILTER_DB.Cart]: {
+    ...FILTER_BASE_DB,
+    date: 'date',
+  },
+  [KEY_OPTION_FILTER_DB.Comment]: {
+    ...FILTER_BASE_DB,
+    date: 'date',
+    idProduct: 'idProduct',
+  },
+  [KEY_OPTION_FILTER_DB.Revenue]: {
+    ...FILTER_BASE_DB,
+    date: 'date',
+    dateRange: 'dateRange',
+    idProduct: 'idProduct',
+  },
+};

@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(json({ limit: '20mb' }));
 
-  if (process.env.ENABLE_LMIT_DOMAIN) {
+  if (process.env.ENABLE_LIMIT_DOMAIN) {
     app.enableCors({
       origin: [
         'https://tc-store-nestjs.adaptable.app',
