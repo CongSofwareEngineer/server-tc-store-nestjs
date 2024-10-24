@@ -13,6 +13,9 @@ export class Category {
 
   @Prop()
   keyName?: string;
+
+  @Prop()
+  isShow?: boolean;
 }
 export type CategoryDocument = HydratedDocument<Category>;
 export const CategorySchema = SchemaFactory.createForClass(Category);

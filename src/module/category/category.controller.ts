@@ -5,6 +5,8 @@ import {
   Get,
   Param,
   Post,
+  Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { formatRes } from 'src/utils/function';
@@ -18,8 +20,8 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get('all')
-  async getAllUser(@Res() response): Promise<Category[]> {
-    const data = await this.categoryService.getAllType();
+  async getAllUser(@Res() response, @Query() query): Promise<Category[]> {
+    const data = await this.categoryService.getAllType(query);
     return formatRes(response, data);
   }
 
@@ -29,6 +31,21 @@ export class CategoryController {
     @Body() typeData: Category,
   ): Promise<Category> {
     const data = await this.categoryService.createCategory(typeData);
+    return formatRes(response, data);
+  }
+
+  @ApiParam({
+    name: 'Id',
+    required: true,
+    description: 'Id',
+  })
+  @Put('update/:id')
+  async updateType(
+    @Res() response,
+    @Param() param,
+    @Body() typeData: Category,
+  ): Promise<Category> {
+    const data = await this.categoryService.updateCategory(param.id, typeData);
     return formatRes(response, data);
   }
 

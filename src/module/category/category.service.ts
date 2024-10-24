@@ -10,12 +10,20 @@ export class CategoryService {
     @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
-  async getAllType(): Promise<Category[]> {
-    return this.categoryModel.find(null, { _id: 0 }).exec();
+  async getAllType(@Query() query): Promise<Category[]> {
+    const options: any = {};
+    if (query?.isShow !== undefined) {
+      options.isShow = !!query?.isShow;
+    }
+    return FunService.getFullDataByOption(this.categoryModel, options);
   }
 
   async getTypeByLimit(@Query() query): Promise<Category[]> {
-    return FunService.getDataByLimit(this.categoryModel, query);
+    return FunService.getDataByOptions(this.categoryModel, query, [
+      {
+        $match: { isShow: true },
+      },
+    ]);
   }
 
   async deleteCategory(@Param() param): Promise<Category | null> {
@@ -27,8 +35,20 @@ export class CategoryService {
       keyName: body?.keyName || 'no-key',
       lang: body?.lang || {},
       icon: body?.icon || '',
+      isShow: !!body?.isShow,
     };
 
     return FunService.create(this.categoryModel, bodyCategory);
+  }
+
+  async updateCategory(id: string, body: Category): Promise<Category> {
+    const bodyCategory: Category = {
+      keyName: body?.keyName || 'no-key',
+      lang: body?.lang || {},
+      icon: body?.icon || '',
+      isShow: !!body?.isShow,
+    };
+
+    return FunService.updateData(this.categoryModel, id, bodyCategory);
   }
 }
