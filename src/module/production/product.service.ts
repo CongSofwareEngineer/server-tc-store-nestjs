@@ -1,24 +1,41 @@
-import { Body, Injectable, Param, Query } from '@nestjs/common';
+import { Body, Inject, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Model, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
-import { KEY_OPTION_FILTER_DB, MATH_DB, PATH_IMG } from 'src/common/mongoDB';
-import {
-  getIdObject,
-  getQueryDB,
-  isObject,
-  lowercase,
-} from 'src/utils/function';
+import { MATH_DB, PATH_IMG } from 'src/common/mongoDB';
+import { getIdObject, isObject, lowercase } from 'src/utils/function';
 import { MATH_SORT } from 'src/common/app';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { decryptData } from 'src/utils/crypto';
+import { CategoryService } from '../category/category.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
+    @Inject(CategoryService) private readonly categoryService: CategoryService,
   ) {}
+
+  async deleteImgProduct(listIdProduct: string[]): Promise<void> {
+    const filter = {
+      _id: { [MATH_DB.$in]: listIdProduct },
+    };
+    const listProduct = await FunService.getFullDataByOption(
+      this.productModel,
+      filter,
+    );
+    const listId = listProduct
+      .filter((e) => {
+        if (e.imageMain) {
+          return true;
+        }
+        return false;
+      })
+      .map((e) => e.imageMain);
+    const arr = listId.map((id) => CloudinaryService.deleteImg(id));
+    await Promise.all(arr);
+  }
 
   async create(@Body() bodyEncode): Promise<Product> {
     try {
@@ -54,6 +71,7 @@ export class ProductService {
   }
 
   async deleteProductByID(@Param() param): Promise<Product | null> {
+    this.deleteImgProduct([param.id]);
     return FunService.deleteDataByID(this.productModel, getIdObject(param.id));
   }
 
@@ -61,6 +79,7 @@ export class ProductService {
     const filter = {
       id: { [MATH_DB.$in]: listId },
     };
+    this.deleteImgProduct(listId);
     return FunService.deleteManyData(this.productModel, filter);
   }
 
@@ -108,7 +127,7 @@ export class ProductService {
     return FunService.getOneData(this.productModel, { keyName });
   }
 
-  async getProductByTypeProduct(@Query() query): Promise<Product[]> {
+  async getAllProduct(@Query() query): Promise<Product[]> {
     let matchQuery: Record<string, any> = {};
     let listType: string[];
     if (query.category && lowercase(query.category) !== 'all') {

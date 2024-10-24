@@ -26,8 +26,8 @@ export class ProductionController {
   constructor(private readonly productService: ProductService) {}
 
   @Get('all')
-  async getProductByTypeProduct(@Res() res, @Query() query) {
-    const data = await this.productService.getProductByTypeProduct(query);
+  async getAllProduct(@Res() res, @Query() query) {
+    const data = await this.productService.getAllProduct(query);
     return formatRes(res, data);
   }
 

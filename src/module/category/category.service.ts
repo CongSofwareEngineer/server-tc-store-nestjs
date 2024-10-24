@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import { FunService } from 'src/utils/funcService';
+import { convertBoolean } from 'src/utils/function';
 
 @Injectable()
 export class CategoryService {
@@ -12,9 +13,10 @@ export class CategoryService {
 
   async getAllType(@Query() query): Promise<Category[]> {
     const options: any = {};
-    if (query?.isShow !== undefined) {
-      options.isShow = !!query?.isShow;
+    if (query?.isShow) {
+      options.isShow = convertBoolean(query?.isShow);
     }
+
     return FunService.getFullDataByOption(this.categoryModel, options);
   }
 

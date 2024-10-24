@@ -99,12 +99,12 @@ export class BillService {
         totalBill: Number(body.totalBill),
       };
 
-      const lsitUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
+      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
         return this.productService.updateProduct(e.idProduct, { sold: e.sold });
       });
       await Promise.all([
         this.cartService.deleteManyProduct(listIdCart),
-        lsitUpdateProductFuc,
+        listUpdateProductFuc,
       ]);
 
       return FunService.create(this.billModel, bodyTemp);

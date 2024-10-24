@@ -20,6 +20,17 @@ export function getIdObject(id: string): any {
   }
 }
 
+export function convertBoolean(value: any): boolean {
+  try {
+    if (lowercase(value) === 'true' || value === true) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+}
+
 export function isObject(value: any) {
   try {
     if (!value) {
