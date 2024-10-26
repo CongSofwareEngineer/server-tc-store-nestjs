@@ -1,9 +1,12 @@
-import { Injectable, Param, Query } from '@nestjs/common';
+import { Body, Injectable, Param, Query } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import { FunService } from 'src/utils/funcService';
-import { convertBoolean } from 'src/utils/function';
+import { convertBoolean, isObject } from 'src/utils/function';
+import { decryptData } from 'src/utils/crypto';
+import { CloudinaryService } from 'src/services/cloudinary';
+import { PATH_IMG } from 'src/common/mongoDB';
 
 @Injectable()
 export class CategoryService {
@@ -43,14 +46,28 @@ export class CategoryService {
     return FunService.create(this.categoryModel, bodyCategory);
   }
 
-  async updateCategory(id: string, body: Category): Promise<Category> {
+  async updateCategory(id: string, @Body() bodyEncode): Promise<Category> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
+    if (body?.imgOld) {
+      CloudinaryService.deleteImg(body?.imgOld);
+    }
+    let urlImg = body?.icon || '';
+    if (isObject(urlImg)) {
+      urlImg = await CloudinaryService.uploadImg(urlImg, PATH_IMG.Category);
+      urlImg = urlImg.public_id;
+    }
     const bodyCategory: Category = {
       keyName: body?.keyName || 'no-key',
       lang: body?.lang || {},
-      icon: body?.icon || '',
+      icon: urlImg,
       isShow: !!body?.isShow,
     };
+    console.log({ bodyCategory, body });
 
     return FunService.updateData(this.categoryModel, id, bodyCategory);
+    // return bodyCategory;
   }
 }

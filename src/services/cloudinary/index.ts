@@ -14,7 +14,7 @@ export class CloudinaryService {
     this.deleteImg(file.public_id);
     const result = await cloudinary.uploader.upload(file.base64, {
       folder: `tc-store/${path || PATH_IMG.Users}`,
-      public_id: `${file.name}-${moment().format('DD/MM/YYYY')}-${new Date().getTime()}`,
+      public_id: `${file.name}-${moment().format('DD-MM-YYYY')}-${new Date().getTime()}`,
       async: true,
       use_filename: true,
       type: 'upload',

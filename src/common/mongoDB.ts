@@ -15,6 +15,7 @@ export enum PATH_IMG {
   Comment = 'comment',
   Products = 'products',
   ContactMe = 'contact-me',
+  Category = 'category',
 }
 
 export const DB_NAME = 'tc-store';
