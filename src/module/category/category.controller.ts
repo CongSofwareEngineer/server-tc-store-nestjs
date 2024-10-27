@@ -26,11 +26,8 @@ export class CategoryController {
   }
 
   @Post('create')
-  async createType(
-    @Res() response,
-    @Body() typeData: Category,
-  ): Promise<Category> {
-    const data = await this.categoryService.createCategory(typeData);
+  async createType(@Res() response, @Body() body): Promise<Category> {
+    const data = await this.categoryService.createCategory(body);
     return formatRes(response, data);
   }
 

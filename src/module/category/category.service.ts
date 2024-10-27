@@ -35,14 +35,17 @@ export class CategoryService {
     return FunService.deleteDataByID(this.categoryModel, param.id);
   }
 
-  async createCategory(body: Category): Promise<Category> {
+  async createCategory(@Body() bodyEncode): Promise<Category> {
+    const body = decryptData(bodyEncode.data);
+    if (!body) {
+      return null;
+    }
     const bodyCategory: Category = {
       keyName: body?.keyName || 'no-key',
       lang: body?.lang || {},
       icon: body?.icon || '',
       isShow: !!body?.isShow,
     };
-
     return FunService.create(this.categoryModel, bodyCategory);
   }
 
@@ -65,7 +68,6 @@ export class CategoryService {
       icon: urlImg,
       isShow: !!body?.isShow,
     };
-    console.log({ bodyCategory, body });
 
     return FunService.updateData(this.categoryModel, id, bodyCategory);
     // return bodyCategory;
