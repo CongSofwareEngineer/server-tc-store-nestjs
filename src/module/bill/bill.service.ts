@@ -89,7 +89,6 @@ export class BillService {
       const bodyTemp: Bill = {
         date: new Date().getTime().toFixed(),
         addressShip: body.addressShip,
-        idUser: getIdObject(body.idUser),
         discount: body.discount || 0,
         note: body.note,
         abort: false,
@@ -98,6 +97,9 @@ export class BillService {
         status: FILTER_BILL.Processing,
         totalBill: Number(body.totalBill),
       };
+      if (body.idUser) {
+        bodyTemp.idUser = getIdObject(body.idUser);
+      }
 
       const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
         return this.productService.updateProduct(e.idProduct, { sold: e.sold });
