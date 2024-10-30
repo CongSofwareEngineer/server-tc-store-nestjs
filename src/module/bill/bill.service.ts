@@ -11,7 +11,6 @@ import { decryptData } from 'src/utils/crypto';
 import { getDateToQuery, getIdObject, getQueryDB } from 'src/utils/function';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const moment = require('moment');
 @Injectable()
 export class BillService {
   constructor(

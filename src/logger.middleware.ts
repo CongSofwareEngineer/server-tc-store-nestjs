@@ -19,9 +19,9 @@ export class LoggerMiddleware implements NestMiddleware {
         next();
       } else {
         if (req.method !== 'GET') {
-          const dataverify = AuthService.verifyAth(req.headers.authorization);
+          const dataVerify = AuthService.verifyAth(req.headers.authorization);
 
-          if (!dataverify) {
+          if (!dataVerify) {
             res.status(HttpStatus.BAD_REQUEST).send({
               error: 'Authorization expired',
               status: HttpStatus.BAD_REQUEST,

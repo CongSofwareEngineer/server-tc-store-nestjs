@@ -2,7 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import { join } from 'path';
 import { PATH_IMG } from 'src/common/mongoDB';
-import * as moment from 'moment';
+import { formatDate } from 'src/utils/momentUtils';
 
 cloudinary.config({
   api_key: '359654788484534',
@@ -14,7 +14,7 @@ export class CloudinaryService {
     this.deleteImg(file.public_id);
     const result = await cloudinary.uploader.upload(file.base64, {
       folder: `tc-store/${path || PATH_IMG.Users}`,
-      public_id: `${file.name}-${moment().format('DD-MM-YYYY')}-${new Date().getTime()}`,
+      public_id: `${file.name}-${formatDate()}-${new Date().getTime()}`,
       async: true,
       use_filename: true,
       type: 'upload',
