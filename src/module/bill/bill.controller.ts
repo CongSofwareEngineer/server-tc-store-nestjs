@@ -10,8 +10,14 @@ import {
 } from '@nestjs/common';
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { query, Response } from 'express';
 import { Bill } from './schemas/bill.schema';
 @ApiBearerAuth()
 @ApiTags('bill')
@@ -56,12 +62,35 @@ export class BillController {
     return formatRes(res, data);
   }
 
+  @ApiQuery({
+    name: 'data',
+    required: true,
+    type: String,
+  })
+  @Get('no-login/create')
+  async createNoLogin(@Res() res, @Query() query) {
+    if (!query?.data) {
+      return formatRes(res, null, true);
+    }
+    const data = await this.billService.createNoLogin(query.data);
+    return formatRes(res, data);
+  }
+
   @ApiBody({
     type: Bill,
   })
   @Post('update/:id')
   async updateBill(@Res() res, @Body() body, @Param() param) {
     const data = await this.billService.updateBill(body, param);
+    return formatRes(res, data);
+  }
+
+  @Get('check/number-phone')
+  async checkNumberPone(@Res() res, @Query() query) {
+    console.log('====================================');
+    console.log({ query });
+    console.log('====================================');
+    const data = await this.billService.createNoLogin(query?.data);
     return formatRes(res, data);
   }
 
