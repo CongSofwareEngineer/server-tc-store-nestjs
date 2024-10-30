@@ -7,8 +7,9 @@ import { ProductService } from '../production/product.service';
 import { DB_COLLECTION, KEY_OPTION_FILTER_DB } from 'src/common/mongoDB';
 import { CartService } from '../cartUser/cart.service';
 import { FILTER_BILL } from 'src/common/app';
-import { decryptData } from 'src/utils/crypto';
+import { decryptData, encryptData } from 'src/utils/crypto';
 import { getDateToQuery, getIdObject, getQueryDB } from 'src/utils/function';
+import { IsNumberString, isPhoneNumber } from 'class-validator';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 @Injectable()
@@ -107,6 +108,49 @@ export class BillService {
         this.cartService.deleteManyProduct(listIdCart),
         listUpdateProductFuc,
       ]);
+
+      return FunService.create(this.billModel, bodyTemp);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async createNoLogin(bodyEncode: string): Promise<any> {
+    try {
+      const body = decryptData(bodyEncode);
+
+      if (!body) {
+        return null;
+      }
+
+      const listBillDetail = body.listBill.map((e: any) => {
+        const itemTemp: any = {
+          _id: getIdObject(e._id),
+          amount: Number(e.amount),
+          keyName: e.keyName,
+        };
+        if (e.moreConfig) {
+          itemTemp.moreConfig = e.moreConfig;
+        }
+        return itemTemp;
+      });
+
+      const bodyTemp: Bill = {
+        date: new Date().getTime().toFixed(),
+        addressShip: body.addressShip,
+        discount: body.discount || 0,
+        note: body.note,
+        abort: false,
+        listBill: listBillDetail,
+        sdt: body?.sdt,
+        status: FILTER_BILL.Processing,
+        totalBill: Number(body.totalBill),
+      };
+
+      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
+        return this.productService.updateProduct(e.idProduct, { sold: e.sold });
+      });
+      await Promise.all(listUpdateProductFuc);
 
       return FunService.create(this.billModel, bodyTemp);
     } catch (error) {
