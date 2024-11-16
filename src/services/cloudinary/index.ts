@@ -11,7 +11,7 @@ cloudinary.config({
 });
 export class CloudinaryService {
   static async uploadImg(file: any, path = '') {
-    this.deleteImg(file.public_id);
+    this.deleteImg(file?.public_id);
     const result = await cloudinary.uploader.upload(file.base64, {
       folder: `tc-store/${path || PATH_IMG.Users}`,
       public_id: `${file.name}-${formatDate()}-${new Date().getTime()}`,
@@ -23,12 +23,15 @@ export class CloudinaryService {
     return result;
   }
 
-  static async deleteImg(publicId: string) {
+  static async deleteImg(publicId?: string) {
     try {
+      if (!publicId) {
+        return true;
+      }
       await cloudinary.uploader.destroy(publicId);
       return true;
     } catch (error) {
-      return fail;
+      return false;
     }
   }
 
