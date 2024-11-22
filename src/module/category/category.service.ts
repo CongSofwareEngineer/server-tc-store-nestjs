@@ -57,11 +57,11 @@ export class CategoryService {
     if (body?.imgOld) {
       CloudinaryService.deleteImg(body?.imgOld);
     }
-    let urlImg = body?.icon || '';
-    if (isObject(urlImg)) {
-      urlImg = await CloudinaryService.uploadImg(urlImg, PATH_IMG.Category);
-      urlImg = urlImg.public_id;
-    }
+    const urlImg = await CloudinaryService.getUrlByData(
+      body?.icon || '',
+      PATH_IMG.Category,
+    );
+
     const bodyCategory: Category = {
       keyName: body?.keyName || 'no-key',
       lang: body?.lang || {},

@@ -1,14 +1,15 @@
 import { JwtService } from '@nestjs/jwt';
+import { Types } from 'mongoose';
 import { JwtConstants } from 'src/common/app';
 
 export class AuthService {
   static generateAuth(
-    id: string,
+    id: string | Types.ObjectId,
     sdt: string,
   ): { tokenAccess: string; tokenRefresh: string } {
     return {
-      tokenAccess: this.generateAuthAccess(id, sdt),
-      tokenRefresh: this.generateAuthRefresh(id, sdt),
+      tokenAccess: this.generateAuthAccess(id.toString(), sdt),
+      tokenRefresh: this.generateAuthRefresh(id.toString(), sdt),
     };
   }
 

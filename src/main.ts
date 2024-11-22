@@ -22,13 +22,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('TC Store example')
+    .setTitle('TC Store API')
     .setDescription('The TC Store API description')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('docs', app, document);
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 3001);
 }
 bootstrap();

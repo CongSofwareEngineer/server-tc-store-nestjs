@@ -7,7 +7,7 @@ import { FunService } from 'src/utils/funcService';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { decryptData } from 'src/utils/crypto';
 import { getQueryDB } from 'src/utils/function';
-import { KEY_OPTION_FILTER_DB } from 'src/common/mongoDB';
+import { KEY_OPTION_FILTER_DB, PATH_IMG } from 'src/common/mongoDB';
 
 @Injectable()
 export class UserService {
@@ -48,9 +48,12 @@ export class UserService {
     if (!body) {
       return null;
     }
-    const dataImg = await CloudinaryService.uploadImg(body.file);
+    const dataImg = await CloudinaryService.getUrlByData(
+      body.file,
+      PATH_IMG.Users,
+    );
 
-    if (!dataImg?.public_id) {
+    if (!dataImg) {
       return null;
     }
     return FunService.updateData(this.userModel, param._id.toString(), {

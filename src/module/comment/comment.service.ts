@@ -69,16 +69,10 @@ export class CommentService {
       ...body,
     };
     if (body.listImg) {
-      const listFun = body.listImg.map((e: any) => {
-        if (isObject(e)) {
-          return CloudinaryService.uploadImg(e, PATH_IMG.Comment);
-        }
-        return e;
-      });
-      const listData = await Promise.all(listFun);
-
-      const listUrl = listData.map((e) => e.public_id);
-      dataUpdate.listImg = listUrl;
+      dataUpdate.listImg = await CloudinaryService.getUrlByData(
+        body.listImg,
+        PATH_IMG.Comment,
+      );
     }
 
     const data = await FunService.updateData(
@@ -103,12 +97,12 @@ export class CommentService {
       if (!body) {
         return null;
       }
-      const listFun = body.listImg.map((e: any) => {
-        return CloudinaryService.uploadImg(e, PATH_IMG.Comment);
-      });
-      const listData = await Promise.all(listFun);
 
-      const listUrl = listData.map((e) => e.public_id);
+      const listUrl = await CloudinaryService.getUrlByData(
+        body.listImg,
+        PATH_IMG.Comment,
+      );
+
       const bodyData: Comment = {
         date: new Date().getTime().toString(),
         listImg: listUrl,

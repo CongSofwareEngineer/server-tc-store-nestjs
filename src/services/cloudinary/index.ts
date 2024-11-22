@@ -2,6 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import { join } from 'path';
 import { PATH_IMG } from 'src/common/mongoDB';
+import { isObject } from 'src/utils/function';
 import { formatDate } from 'src/utils/momentUtils';
 
 cloudinary.config({
@@ -11,7 +12,6 @@ cloudinary.config({
 });
 export class CloudinaryService {
   static async uploadImg(file: any, path = '') {
-    this.deleteImg(file?.public_id);
     const result = await cloudinary.uploader.upload(file.base64, {
       folder: `tc-store/${path || PATH_IMG.Users}`,
       public_id: `${file.name}-${formatDate()}-${new Date().getTime()}`,
@@ -32,6 +32,35 @@ export class CloudinaryService {
       return true;
     } catch (error) {
       return false;
+    }
+  }
+
+  static async getUrlByData(data?: any, pathImg?: PATH_IMG) {
+    try {
+      if (Array.isArray(data)) {
+        const listFun = data.map((e) => {
+          if (isObject(e)) {
+            return this.uploadImg(e, pathImg);
+          }
+        });
+        const listImg = await Promise.all(listFun);
+        const listImgValid = listImg.map((e) => {
+          if (isObject(e)) {
+            return e.public_id;
+          }
+          return e;
+        });
+        return listImgValid;
+      }
+      if (isObject(data)) {
+        const dataImgMain = await CloudinaryService.uploadImg(data, pathImg);
+
+        return dataImgMain?.public_id || '';
+      }
+
+      return data;
+    } catch (error) {
+      return '';
     }
   }
 

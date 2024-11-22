@@ -16,9 +16,11 @@ import { CommentModule } from './module/comment/comment.module';
 import { MyServiceModule } from './module/my-service/myService.module';
 import { ContactMeModule } from './module/contact-me/contactMe.module';
 import { RevenueModule } from './module/revenue/revenue.module';
+import { EventsModule } from './module/socket/events.module';
 
 @Module({
   imports: [
+    EventsModule,
     MyServiceModule,
     ContactMeModule,
     AuthModule,

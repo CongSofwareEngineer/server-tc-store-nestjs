@@ -27,12 +27,13 @@ export class ProductService {
     );
     const listId = listProduct
       .filter((e) => {
-        if (e.imageMain) {
+        if (e?.imageMain) {
           return true;
         }
         return false;
       })
       .map((e) => e.imageMain);
+
     const arr = listId.map((id) => CloudinaryService.deleteImg(id));
     await Promise.all(arr);
   }
@@ -43,24 +44,14 @@ export class ProductService {
       if (!body) {
         return null;
       }
+      const [urlImgMain, listPublicIdImgMore] = await Promise.all([
+        CloudinaryService.getUrlByData(body.imageMain, PATH_IMG.Products),
+        CloudinaryService.getUrlByData(body.imageMore, PATH_IMG.Products),
+      ]);
 
-      const listImgMoreFun: any[] = body.imageMore.map((e) => {
-        return CloudinaryService.uploadImg(e, PATH_IMG.Products);
-      });
-
-      const listUrlImgMore = await Promise.all(listImgMoreFun);
-
-      const urlImgMain: any = await CloudinaryService.uploadImg(
-        body.imageMain,
-        PATH_IMG.Products,
-      );
-
-      const listPublicIdImgMore = listUrlImgMore.map((e: any) => {
-        return e?.public_id || e;
-      });
       const dataNew: Product = {
         ...body,
-        imageMain: urlImgMain.public_id,
+        imageMain: urlImgMain,
         imageMore: listPublicIdImgMore,
       };
 
@@ -75,7 +66,7 @@ export class ProductService {
     return FunService.deleteDataByID(this.productModel, getIdObject(param.id));
   }
 
-  async deleteManyProduct(listId: string[]): Promise<Product | null> {
+  async deleteManyProduct(listId: string[]): Promise<boolean> {
     const filter = {
       id: { [MATH_DB.$in]: listId },
     };
@@ -90,30 +81,24 @@ export class ProductService {
     }
     const dataBody = { ...body };
     if (body?.imageMore) {
-      const listImgMoreFun: any[] = body.imageMore.map((e) => {
-        if (isObject(e)) {
-          return CloudinaryService.uploadImg(e, PATH_IMG.Products);
-        }
-        return e;
-      });
-      const listImg = await Promise.all(listImgMoreFun);
-      const listImgValid = listImg.map((e) => {
-        if (isObject(e)) {
-          return e.public_id;
-        }
-        return e;
-      });
-      dataBody.imageMore = listImgValid;
+      dataBody.imageMore = await CloudinaryService.getUrlByData(
+        body.imageMore,
+        PATH_IMG.Products,
+      );
     }
 
     if (body?.imageMain) {
-      if (isObject(body?.imageMain)) {
-        const dataImgMain = await CloudinaryService.uploadImg(
-          body.imageMain,
-          PATH_IMG.Products,
-        );
-        dataBody.imageMain = dataImgMain.public_id;
-      }
+      dataBody.imageMain = await CloudinaryService.getUrlByData(
+        body.imageMain,
+        PATH_IMG.Products,
+      );
+    }
+
+    if (Array.isArray(body?.imageDelete)) {
+      const fncDelete = body?.imageDelete.map((e: string) =>
+        CloudinaryService.deleteImg(e),
+      );
+      Promise.all(fncDelete);
     }
 
     return FunService.updateData(this.productModel, id, dataBody);

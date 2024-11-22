@@ -17,7 +17,7 @@ export class ContactMeService {
     return FunService.getFullDataByOption(this.contactMeModel);
   }
 
-  async update(@Body() bodyEncode): Promise<ContactMe[]> {
+  async update(@Body() bodyEncode): Promise<ContactMe> {
     const body = decryptData(bodyEncode.data);
     if (!body) {
       return null;
@@ -33,7 +33,7 @@ export class ContactMeService {
   }
 
   async create(@Body() bodyEncode): Promise<ContactMe | null> {
-    let dataExited = false;
+    let dataExited: ContactMe = null;
     const body = decryptData(bodyEncode.data);
     if (!body) {
       return null;

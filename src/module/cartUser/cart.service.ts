@@ -97,7 +97,7 @@ export class CartService {
     return FunService.deleteDataByID(this.cartModel, getIdObject(id));
   }
 
-  async deleteManyProduct(listId: string[]): Promise<CartUser | null> {
+  async deleteManyProduct(listId: string[]): Promise<boolean> {
     const filter = {
       _id: { [MATH_DB.$in]: listId },
     };
