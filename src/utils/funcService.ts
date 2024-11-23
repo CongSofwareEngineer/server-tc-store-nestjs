@@ -83,7 +83,7 @@ export class FunService {
     model: Model<T>,
     id: Types.ObjectId,
     @Query() query,
-  ): Promise<T | []> {
+  ): Promise<T> {
     try {
       const pageLimitSkip = getPageLimitSkip(query);
 
@@ -94,7 +94,7 @@ export class FunService {
         .exec();
       return data;
     } catch (error) {
-      return [];
+      return null;
     }
   }
 

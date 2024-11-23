@@ -4,7 +4,7 @@ export const JwtConstants = {
   expiredRefresh: '15day',
 } as const;
 
-export const LIMIT_DATA = 20 as const;
+export const LIMIT_DATA = 20 as Number;
 
 export const MATH_SORT = {
   asc: 'asc',

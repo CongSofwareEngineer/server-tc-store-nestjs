@@ -1,7 +1,7 @@
 import { Body, Inject, Injectable, Param, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
-import { Model, Types } from 'mongoose';
+import { Model, PipelineStage, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { MATH_DB, PATH_IMG } from 'src/common/mongoDB';
 import { getIdObject, isObject, lowercase } from 'src/utils/function';
@@ -110,6 +110,15 @@ export class ProductService {
 
   async getProductByKeyName(keyName: string): Promise<Product | null> {
     return FunService.getOneData(this.productModel, { keyName });
+  }
+
+  async getInfoById(@Param() param): Promise<String> {
+    const data = await FunService.getDataByID(
+      this.productModel,
+      getIdObject(param.id),
+      {},
+    );
+    return data?.des2 || '';
   }
 
   async getAllProduct(@Query() query): Promise<Product[]> {

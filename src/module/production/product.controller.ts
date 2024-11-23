@@ -59,6 +59,17 @@ export class ProductionController {
     return formatRes(res, data);
   }
 
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'id product',
+  })
+  @Get('info-product/:id')
+  async getInfoById(@Res() res, @Param() param) {
+    const data = await this.productService.getInfoById(param);
+    return formatRes(res, data);
+  }
+
   @ApiBody({
     description: 'Create',
     required: true,

@@ -10,8 +10,9 @@ export class UploadImgService {
       if (!body) {
         return null;
       }
+      console.log({ body });
 
-      const img = CloudinaryService.uploadImg(body?.file, body?.path);
+      const img = await CloudinaryService.uploadImg(body?.file, body?.path);
       return img;
     } catch (error) {
       return null;

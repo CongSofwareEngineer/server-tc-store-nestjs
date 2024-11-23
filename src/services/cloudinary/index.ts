@@ -12,9 +12,11 @@ cloudinary.config({
 });
 export class CloudinaryService {
   static async uploadImg(file: any, path = '') {
+    let nameFile = file.name;
+    nameFile = nameFile.replace(/\.[^.]+$/, '');
     const result = await cloudinary.uploader.upload(file.base64, {
       folder: `tc-store/${path || PATH_IMG.Users}`,
-      public_id: `${file.name}-${formatDate()}-${new Date().getTime()}`,
+      public_id: `${nameFile}-${formatDate()}-${new Date().getTime()}`,
       async: true,
       use_filename: true,
       type: 'upload',
