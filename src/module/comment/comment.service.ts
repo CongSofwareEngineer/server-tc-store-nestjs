@@ -74,6 +74,9 @@ export class CommentService {
         PATH_IMG.Comment,
       );
     }
+    if (body?.listImgDelete) {
+      CloudinaryService.deleteImgByData(body?.listImgDelete);
+    }
 
     const data = await FunService.updateData(
       this.commentModel,

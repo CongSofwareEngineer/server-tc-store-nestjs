@@ -37,6 +37,33 @@ export class CloudinaryService {
     }
   }
 
+  static async deleteImgByData(data: any) {
+    try {
+      if (!data) {
+        return true;
+      }
+
+      if (Array.isArray(data)) {
+        const func = data.map((e) => {
+          if (isObject(e)) {
+            return CloudinaryService.deleteImg(e?.publicId || e?.public_id);
+          }
+          return e;
+        });
+        await Promise.all(func);
+        return true;
+      }
+      if (isObject(data)) {
+        await CloudinaryService.deleteImg(data?.publicId || data?.public_id);
+        return true;
+      }
+      await CloudinaryService.deleteImg(data);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   static async getUrlByData(data?: any, pathImg?: PATH_IMG) {
     try {
       if (Array.isArray(data)) {

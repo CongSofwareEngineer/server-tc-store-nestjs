@@ -55,7 +55,7 @@ export class CategoryService {
       return null;
     }
     if (body?.imgOld) {
-      CloudinaryService.deleteImg(body?.imgOld);
+      CloudinaryService.deleteImgByData(body?.imgOld);
     }
     const urlImg = await CloudinaryService.getUrlByData(
       body?.icon || '',

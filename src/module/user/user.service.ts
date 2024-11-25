@@ -58,7 +58,7 @@ export class UserService {
     }
 
     if (body?.publicId) {
-      CloudinaryService.deleteImg(body?.publicId);
+      CloudinaryService.deleteImgByData(body?.publicId);
     }
 
     return FunService.updateData(this.userModel, param._id.toString(), {
