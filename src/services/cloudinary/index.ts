@@ -71,6 +71,7 @@ export class CloudinaryService {
           if (isObject(e)) {
             return this.uploadImg(e, pathImg);
           }
+          return e;
         });
         const listImg = await Promise.all(listFun);
         const listImgValid = listImg.map((e) => {
