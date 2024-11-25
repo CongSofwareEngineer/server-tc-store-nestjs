@@ -48,7 +48,7 @@ export class CloudinaryService {
           if (isObject(e)) {
             return CloudinaryService.deleteImg(e?.publicId || e?.public_id);
           }
-          return e;
+          return CloudinaryService.deleteImg(e);
         });
         await Promise.all(func);
         return true;
