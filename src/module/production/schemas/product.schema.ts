@@ -70,6 +70,12 @@ export class Product {
 
   @Prop()
   weight?: string;
+
+  @Prop()
+  titleSeo?: string;
+
+  @Prop()
+  desSeo?: string;
 }
 export type ProductDocument = HydratedDocument<Product>;
 export const ProductSchema = SchemaFactory.createForClass(Product);
