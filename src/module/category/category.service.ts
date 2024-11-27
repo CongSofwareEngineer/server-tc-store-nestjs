@@ -1,12 +1,13 @@
 import { Body, Injectable, Param, Query } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, PipelineStage } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import { FunService } from 'src/utils/funcService';
 import { convertBoolean, isObject } from 'src/utils/function';
 import { decryptData } from 'src/utils/crypto';
 import { CloudinaryService } from 'src/services/cloudinary';
-import { PATH_IMG } from 'src/common/mongoDB';
+import { DB_COLLECTION, PATH_IMG } from 'src/common/mongoDB';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class CategoryService {
@@ -15,12 +16,20 @@ export class CategoryService {
   ) {}
 
   async getAllType(@Query() query): Promise<Category[]> {
-    const options: any = {};
-    if (query?.isShow) {
-      options.isShow = convertBoolean(query?.isShow);
-    }
-
-    return FunService.getFullDataByOption(this.categoryModel, options);
+    const filter: PipelineStage[] = [
+      {
+        $match: { isShow: convertBoolean(query?.isShow || true) },
+      },
+      {
+        $lookup: {
+          from: DB_COLLECTION.SubCategories,
+          localField: 'subCategories',
+          foreignField: 'keyName',
+          as: 'subCategoryData',
+        },
+      },
+    ];
+    return FunService.getDataByAggregate(this.categoryModel, query, filter);
   }
 
   async getTypeByLimit(@Query() query): Promise<Category[]> {

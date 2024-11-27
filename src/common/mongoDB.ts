@@ -4,6 +4,7 @@ export enum DB_COLLECTION {
   Comment = 'Comment',
   CartUser = 'CartUser',
   Category = 'TypeProduct',
+  SubCategories = 'SubCategories',
   Bill = 'Bill',
   ContactMe = 'ContactMe',
   MyService = 'MyService',
