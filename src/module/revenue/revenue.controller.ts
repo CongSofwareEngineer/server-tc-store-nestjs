@@ -7,9 +7,15 @@ import { ApiTags } from '@nestjs/swagger';
 export class RevenueController {
   constructor(private billService: RevenueService) {}
 
-  @Get('all')
-  async getAllRevenue(@Res() res, @Query() query) {
-    const data = await this.billService.getAllRevenue(query);
+  @Get('admin/limit')
+  async getRevenue(@Res() res, @Query() query) {
+    const data = await this.billService.getRevenue(query);
+    return formatRes(res, data);
+  }
+
+  @Get('admin/full')
+  async getFullRevenue(@Res() res, @Query() query) {
+    const data = await this.billService.getFullRevenue(query);
     return formatRes(res, data);
   }
 }
