@@ -54,6 +54,7 @@ export class CategoryService {
       lang: body?.lang || {},
       icon: body?.icon || '',
       isShow: !!body?.isShow,
+      subCategories: body?.subCategories || [],
     };
     return FunService.create(this.categoryModel, bodyCategory);
   }
@@ -76,6 +77,7 @@ export class CategoryService {
       lang: body?.lang || {},
       icon: urlImg,
       isShow: !!body?.isShow,
+      subCategories: body?.subCategories || [],
     };
 
     return FunService.updateData(this.categoryModel, id, bodyCategory);
