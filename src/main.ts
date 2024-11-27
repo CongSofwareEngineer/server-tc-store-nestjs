@@ -13,6 +13,7 @@ async function bootstrap() {
       origin: [
         'https://tc-store-nestjs.adaptable.app',
         'https://tcstore.vercel.app',
+        'http://localhost:3016',
       ],
     });
   } else {
