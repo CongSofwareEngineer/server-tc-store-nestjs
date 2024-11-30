@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Model, PipelineStage, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
-import { MATH_DB, PATH_IMG } from 'src/common/mongoDB';
+import { DEFAULT_SIZE_SHOES, MATH_DB, PATH_IMG } from 'src/common/mongoDB';
 import { getIdObject, isObject, lowercase } from 'src/utils/function';
 import { MATH_SORT } from 'src/common/app';
 import { CloudinaryService } from 'src/services/cloudinary';
@@ -21,10 +21,7 @@ export class ProductService {
     const filter = {
       _id: { [MATH_DB.$in]: listIdProduct },
     };
-    const listProduct = await FunService.getFullDataByOption(
-      this.productModel,
-      filter,
-    );
+    const listProduct = await FunService.getFullDataByOption(this.productModel, filter);
     const listId = listProduct
       .filter((e) => {
         if (e?.imageMain) {
@@ -80,24 +77,17 @@ export class ProductService {
       return null;
     }
     const dataBody = { ...body };
+
     if (body?.imageMore) {
-      dataBody.imageMore = await CloudinaryService.getUrlByData(
-        body.imageMore,
-        PATH_IMG.Products,
-      );
+      dataBody.imageMore = await CloudinaryService.getUrlByData(body.imageMore, PATH_IMG.Products);
     }
 
     if (body?.imageMain) {
-      dataBody.imageMain = await CloudinaryService.getUrlByData(
-        body.imageMain,
-        PATH_IMG.Products,
-      );
+      dataBody.imageMain = await CloudinaryService.getUrlByData(body.imageMain, PATH_IMG.Products);
     }
 
     if (Array.isArray(body?.imageDelete)) {
-      const fncDelete = body?.imageDelete.map((e: string) =>
-        CloudinaryService.deleteImg(e),
-      );
+      const fncDelete = body?.imageDelete.map((e: string) => CloudinaryService.deleteImg(e));
       Promise.all(fncDelete);
     }
 
@@ -113,11 +103,7 @@ export class ProductService {
   }
 
   async getInfoById(@Param() param): Promise<String> {
-    const data = await FunService.getDataByID(
-      this.productModel,
-      getIdObject(param.id),
-      {},
-    );
+    const data = await FunService.getDataByID(this.productModel, getIdObject(param.id), {});
     return data?.des2 || '';
   }
 
@@ -129,9 +115,71 @@ export class ProductService {
       listType = listType.map((e) => lowercase(e));
       matchQuery.category = { [MATH_DB.$in]: listType };
     }
+    console.log({ query });
 
     if (query.name) {
       matchQuery.name = { [MATH_DB.$regex]: new RegExp(query.name, 'i') };
+    }
+
+    const dataFilter = await FunService.getSortDataByAggregate(
+      this.productModel,
+      query,
+      [
+        {
+          $match: matchQuery,
+        },
+        {
+          $project: {
+            cost: 0,
+          },
+        },
+      ],
+      {
+        price: query.sort ? (query.sort === MATH_SORT.asc ? 1 : -1) : 1,
+      },
+    );
+
+    return dataFilter;
+  }
+
+  async getAllProductShoes(@Query() query): Promise<Product[]> {
+    const matchQuery: Record<string, any> = {
+      category: 'shoes',
+    };
+    let listQuerySize: string[] = [];
+
+    if (query.name) {
+      matchQuery.name = { [MATH_DB.$regex]: new RegExp(query.name, 'i') };
+    }
+
+    if (query.maxPrice) {
+      matchQuery.price = { [MATH_DB.$lte]: Number(query.maxPrice) };
+    }
+
+    if (query.minPrice) {
+      matchQuery.price = {
+        ...matchQuery.price,
+        [MATH_DB.$gte]: Number(query.minPrice),
+      };
+    }
+
+    if (query?.minSize || query?.maxSize) {
+      const minSize = Number(query?.minSize) || DEFAULT_SIZE_SHOES.Shoes.minSize;
+      const maxSize = Number(query?.maxSize) || DEFAULT_SIZE_SHOES.Shoes.maxSize;
+
+      for (let index = DEFAULT_SIZE_SHOES.Shoes.minSize; index <= DEFAULT_SIZE_SHOES.Shoes.maxSize; index++) {
+        if (index >= minSize && index <= maxSize) {
+          listQuerySize.push(`shoesSize${index}`);
+        }
+      }
+    }
+
+    if (listQuerySize.length > 0) {
+      matchQuery.subCategories = {
+        [MATH_DB.$elemMatch]: {
+          [MATH_DB.$in]: listQuerySize,
+        },
+      };
     }
 
     const dataFilter = await FunService.getSortDataByAggregate(

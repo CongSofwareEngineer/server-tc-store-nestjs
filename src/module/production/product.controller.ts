@@ -1,22 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { formatRes } from 'src/utils/function';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiParam,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 //hostname/product/Method
 @ApiBearerAuth()
@@ -28,6 +13,12 @@ export class ProductionController {
   @Get('all')
   async getAllProduct(@Res() res, @Query() query) {
     const data = await this.productService.getAllProduct(query);
+    return formatRes(res, data);
+  }
+
+  @Get('all/shoes')
+  async getAllProductShoes(@Res() res, @Query() query) {
+    const data = await this.productService.getAllProductShoes(query);
     return formatRes(res, data);
   }
 

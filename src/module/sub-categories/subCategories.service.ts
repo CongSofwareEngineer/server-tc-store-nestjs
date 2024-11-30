@@ -59,10 +59,7 @@ export class SubCategoriesService {
     if (body?.imgOld) {
       CloudinaryService.deleteImgByData(body?.imgOld);
     }
-    const urlImg = await CloudinaryService.getUrlByData(
-      body?.icon || '',
-      PATH_IMG.Category,
-    );
+    const urlImg = await CloudinaryService.getUrlByData(body?.icon || '', PATH_IMG.Category);
 
     const bodyCategory: SubCategories = {
       keyName: body?.keyName || 'no-key',

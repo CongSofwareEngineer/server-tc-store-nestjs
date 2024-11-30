@@ -22,9 +22,13 @@ export enum PATH_IMG {
 export const DB_NAME = 'tc-store';
 
 export enum MATH_DB {
+  $all = '$all',
   $in = '$in',
   $gt = '$gt',
+  // >=
   $gte = '$gte',
+  // <=
+  $lte = '$lte',
   $lt = '$lt',
   $nor = '$nor',
   $and = '$and',
@@ -32,6 +36,7 @@ export enum MATH_DB {
   $where = '$where',
   $MergeObjects = '$mergeObjects',
   $regex = '$regex',
+  $elemMatch = '$elemMatch',
 }
 
 const FILTER_BASE_DB = {
@@ -80,5 +85,16 @@ export const OPTION_FILTER_DB = {
     date: 'date',
     dateRange: 'dateRange',
     idProduct: 'idProduct',
+  },
+};
+
+export const DEFAULT_SIZE_SHOES = {
+  Shoes: {
+    minSize: 29,
+    maxSize: 45,
+  },
+  Price: {
+    min: 100000,
+    max: 5000000,
   },
 };
