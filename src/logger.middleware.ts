@@ -15,7 +15,7 @@ export class LoggerMiddleware implements NestMiddleware {
       console.log({ token: req.headers.authorization });
       console.log({ url: req.originalUrl });
 
-      if (req.originalUrl === '/user/login') {
+      if (req.originalUrl === '/user/login' || req.originalUrl === '/user/register') {
         next();
       } else {
         if (req.method !== 'GET') {

@@ -79,6 +79,9 @@ export class Product {
 
   @Prop()
   desSeo?: string;
+
+  @Prop({ type: Object })
+  attributes?: { [key: string]: any };
 }
 export type ProductDocument = HydratedDocument<Product>;
 export const ProductSchema = SchemaFactory.createForClass(Product);
