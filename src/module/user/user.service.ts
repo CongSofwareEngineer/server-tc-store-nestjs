@@ -30,9 +30,7 @@ export class UserService {
   async getUserInAdmin(@Query() query): Promise<User[]> {
     const queryBase = getQueryDB(query, KEY_OPTION_FILTER_DB.User);
 
-    const data = await FunService.getDataByAggregate(this.userModel, query, [
-      queryBase,
-    ]);
+    const data = await FunService.getDataByAggregate(this.userModel, query, [queryBase]);
     return data;
   }
 
@@ -40,18 +38,12 @@ export class UserService {
     return FunService.getDataByLimit(this.userModel, query);
   }
 
-  async updateAvatarUser(
-    @Param() param,
-    @Body() bodyEncode,
-  ): Promise<User | null> {
+  async updateAvatarUser(@Param() param, @Body() bodyEncode): Promise<User | null> {
     const body = decryptData(bodyEncode.data);
     if (!body) {
       return null;
     }
-    const dataImg = await CloudinaryService.getUrlByData(
-      body.file,
-      PATH_IMG.Users,
-    );
+    const dataImg = await CloudinaryService.getUrlByData(body.file, PATH_IMG.Users);
 
     if (!dataImg) {
       return null;

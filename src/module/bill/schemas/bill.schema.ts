@@ -77,7 +77,7 @@ export class Bill {
   listBill?: {
     _id?: Types.ObjectId;
     amount?: number;
-    moreConfig?: Record<string, any>;
+    configBill?: Record<string, any>;
     keyName?: string;
     idCart?: string;
   }[];

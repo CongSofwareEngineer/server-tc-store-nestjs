@@ -52,6 +52,7 @@ export class BillService {
           note: { $first: '$note' },
           sdt: { $first: '$sdt' },
           status: { $first: '$status' },
+          configBill: { $first: '$configBill' },
           listBill: {
             $push: '$listBill',
           },
@@ -64,7 +65,7 @@ export class BillService {
     return pipeline;
   }
 
-  async create(@Body() bodyEncode): Promise<any> {
+  async create(@Body() bodyEncode): Promise<Bill> {
     try {
       const body = decryptData(bodyEncode.data);
       if (!body) {
@@ -79,8 +80,8 @@ export class BillService {
           amount: Number(e.amount),
           keyName: e.keyName,
         };
-        if (e.moreConfig) {
-          itemTemp.moreConfig = e.moreConfig;
+        if (e.configBill) {
+          itemTemp.configBill = e.configBill;
         }
         return itemTemp;
       });
@@ -96,6 +97,7 @@ export class BillService {
         status: FILTER_BILL.Processing,
         totalBill: Number(body.totalBill),
       };
+
       if (body.idUser) {
         bodyTemp.idUser = getIdObject(body.idUser);
       }
@@ -103,10 +105,7 @@ export class BillService {
       const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
         return this.productService.updateProduct(e.idProduct, { sold: e.sold });
       });
-      await Promise.all([
-        this.cartService.deleteManyProduct(listIdCart),
-        listUpdateProductFuc,
-      ]);
+      await Promise.all([this.cartService.deleteManyProduct(listIdCart), listUpdateProductFuc]);
 
       return FunService.create(this.billModel, bodyTemp);
     } catch (error) {
@@ -177,11 +176,7 @@ export class BillService {
       queryMore.$match[`date`] = getDateToQuery(query?.date);
     }
     pipeline.push(queryMore);
-    const data = await FunService.getDataByAggregate(
-      this.billModel,
-      query,
-      pipeline,
-    );
+    const data = await FunService.getDataByAggregate(this.billModel, query, pipeline);
     return data;
   }
 
@@ -192,11 +187,7 @@ export class BillService {
 
     pipeline.push(queryMore);
 
-    const data = await FunService.getDataByAggregate(
-      this.billModel,
-      query,
-      pipeline,
-    );
+    const data = await FunService.getDataByAggregate(this.billModel, query, pipeline);
     return data;
   }
 
@@ -206,10 +197,7 @@ export class BillService {
 
     pipeline.push(queryMore);
 
-    const data = await FunService.getFullDataByAggregate(
-      this.billModel,
-      pipeline,
-    );
+    const data = await FunService.getFullDataByAggregate(this.billModel, pipeline);
     return data;
   }
 
@@ -221,25 +209,15 @@ export class BillService {
     return FunService.deleteDataByID(this.billModel, getIdObject(id));
   }
 
-  async getBillByIDUser(
-    @Query() query,
-    idUser: Types.ObjectId,
-  ): Promise<Bill[]> {
+  async getBillByIDUser(@Query() query, idUser: Types.ObjectId): Promise<Bill[]> {
     const pipeline = this.getBaseQueryBill();
-    const queryBase: PipelineStage = getQueryDB(
-      query,
-      KEY_OPTION_FILTER_DB.Bill,
-    );
+    const queryBase: PipelineStage = getQueryDB(query, KEY_OPTION_FILTER_DB.Bill);
 
     queryBase.$match['idUser'] = getIdObject(idUser?.toString());
 
     pipeline.push(queryBase);
 
-    const data = await FunService.getDataByAggregate(
-      this.billModel,
-      query,
-      pipeline,
-    );
+    const data = await FunService.getDataByAggregate(this.billModel, query, pipeline);
 
     return data;
   }
