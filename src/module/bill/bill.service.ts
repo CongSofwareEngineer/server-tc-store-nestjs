@@ -98,14 +98,15 @@ export class BillService {
         totalBill: Number(body.totalBill),
       };
 
+      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
+        return this.productService.updateProductFromBill(e);
+      });
+
       if (body.idUser) {
         bodyTemp.idUser = getIdObject(body.idUser);
       }
 
-      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
-        return this.productService.updateProduct(e.idProduct, { sold: e.sold });
-      });
-      await Promise.all([this.cartService.deleteManyProduct(listIdCart), listUpdateProductFuc]);
+      await Promise.all([this.cartService.deleteManyProduct(listIdCart), ...listUpdateProductFuc]);
 
       return FunService.create(this.billModel, bodyTemp);
     } catch (error) {
@@ -113,7 +114,7 @@ export class BillService {
     }
   }
 
-  async createNoLogin(bodyEncode: string): Promise<any> {
+  async createNoLogin(bodyEncode: string): Promise<Bill> {
     try {
       const body = decryptData(bodyEncode);
 
@@ -127,8 +128,8 @@ export class BillService {
           amount: Number(e.amount),
           keyName: e.keyName,
         };
-        if (e.moreConfig) {
-          itemTemp.moreConfig = e.moreConfig;
+        if (e.configBill) {
+          itemTemp.configBill = e.configBill;
         }
         return itemTemp;
       });
@@ -144,13 +145,15 @@ export class BillService {
         status: FILTER_BILL.Processing,
         totalBill: Number(body.totalBill),
       };
+      console.log({ bodyTemp });
+      return bodyTemp;
 
-      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
-        return this.productService.updateProduct(e.idProduct, { sold: e.sold });
-      });
-      await Promise.all(listUpdateProductFuc);
+      // const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
+      //   return this.productService.updateProduct(e.idProduct, { sold: e.sold });
+      // });
+      // await Promise.all(listUpdateProductFuc);
 
-      return FunService.create(this.billModel, bodyTemp);
+      // return FunService.create(this.billModel, bodyTemp);
     } catch (error) {
       return null;
     }

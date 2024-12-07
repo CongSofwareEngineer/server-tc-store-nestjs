@@ -4,11 +4,12 @@ import { Product } from './schemas/product.schema';
 import { Model, PipelineStage, Types } from 'mongoose';
 import { FunService } from 'src/utils/funcService';
 import { DEFAULT_SIZE_SHOES, MATH_DB, PATH_IMG } from 'src/common/mongoDB';
-import { getIdObject, isObject, lowercase } from 'src/utils/function';
+import { cloneData, getIdObject, isObject, lowercase } from 'src/utils/function';
 import { MATH_SORT } from 'src/common/app';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { decryptData } from 'src/utils/crypto';
 import { CategoryService } from '../category/category.service';
+import { log } from 'console';
 
 @Injectable()
 export class ProductService {
@@ -94,6 +95,61 @@ export class ProductService {
     return FunService.updateData(this.productModel, id, dataBody);
   }
 
+  async updateProductFromBill(data: { [key: string]: any }): Promise<void> {
+    const item = await FunService.findDataByID(this.productModel, getIdObject(data.idProduct));
+
+    switch (data.category) {
+      case 'shoes':
+        let sizeObj = item.attributes.sizes.find((s: any) => Number(s.size) === Number(data.configBill.size));
+        let indexSizeObj = item.attributes.sizes.findIndex((s: any) => Number(s.size) === Number(data.configBill.size));
+
+        let colorObj = sizeObj.colors.find((c) => c.color === data.configBill.color);
+        colorObj.amount -= data.sold;
+        colorObj.sold += data.sold;
+
+        if (Number(colorObj.amount) < 0) {
+          throw new Error('error update');
+        }
+
+        const sizes = cloneData(item.attributes.sizes);
+        sizes[indexSizeObj] = sizeObj;
+
+        await FunService.updateData(this.productModel, getIdObject(data.idProduct), {
+          'attributes.sizes': sizes,
+          sold: data.sold,
+        });
+
+        break;
+
+      default:
+        if (item.amount < data.sold) {
+          throw new Error('error update');
+        }
+        await FunService.updateData(this.productModel, getIdObject(data.idProduct), {
+          sold: data.sold,
+        });
+
+        break;
+    }
+
+    // const body = decryptData(bodyEncode.data);
+    // if (!body) {
+    //   return null;
+    // }
+    // const dataBody = { ...body };
+    // if (body?.imageMore) {
+    //   dataBody.imageMore = await CloudinaryService.getUrlByData(body.imageMore, PATH_IMG.Products);
+    // }
+    // if (body?.imageMain) {
+    //   dataBody.imageMain = await CloudinaryService.getUrlByData(body.imageMain, PATH_IMG.Products);
+    // }
+    // if (Array.isArray(body?.imageDelete)) {
+    //   const fncDelete = body?.imageDelete.map((e: string) => CloudinaryService.deleteImg(e));
+    //   Promise.all(fncDelete);
+    // }
+    // return FunService.updateData(this.productModel, id, dataBody);
+  }
+
   async getProductByID(id: string): Promise<Product | null> {
     return FunService.findDataByID(this.productModel, id);
   }
@@ -115,7 +171,6 @@ export class ProductService {
       listType = listType.map((e) => lowercase(e));
       matchQuery.category = { [MATH_DB.$in]: listType };
     }
-    console.log({ query });
 
     if (query.name) {
       matchQuery.name = { [MATH_DB.$regex]: new RegExp(query.name, 'i') };
@@ -146,7 +201,6 @@ export class ProductService {
     const matchQuery: Record<string, any> = {
       category: 'shoes',
     };
-    let listQuerySize: string[] = [];
 
     if (query.name) {
       matchQuery.name = { [MATH_DB.$regex]: new RegExp(query.name, 'i') };
@@ -163,24 +217,23 @@ export class ProductService {
       };
     }
 
+    if (query.sex) {
+      matchQuery['attributes.sex'] = {
+        [MATH_DB.$in]: query.sex.split(','),
+      };
+    }
+
     if (query?.minSize || query?.maxSize) {
       const minSize = Number(query?.minSize) || DEFAULT_SIZE_SHOES.Shoes.minSize;
       const maxSize = Number(query?.maxSize) || DEFAULT_SIZE_SHOES.Shoes.maxSize;
 
-      for (let index = DEFAULT_SIZE_SHOES.Shoes.minSize; index <= DEFAULT_SIZE_SHOES.Shoes.maxSize; index++) {
-        if (index >= minSize && index <= maxSize) {
-          listQuerySize.push(`shoesSize${index}`);
-        }
-      }
-    }
-
-    if (listQuerySize.length > 0) {
-      matchQuery.subCategories = {
-        [MATH_DB.$elemMatch]: {
-          [MATH_DB.$in]: listQuerySize,
+      matchQuery['attributes.sizes'] = {
+        $elemMatch: {
+          size: { $gte: String(minSize), $lte: String(maxSize) }, // Ensure `size` is treated as a string if stored as such
         },
       };
     }
+    console.log({ query, matchQuery });
 
     const dataFilter = await FunService.getSortDataByAggregate(
       this.productModel,

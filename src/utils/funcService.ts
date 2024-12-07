@@ -15,10 +15,7 @@ export class FunService {
     }
   }
 
-  static async deleteDataByID<T>(
-    model: Model<T>,
-    id: Types.ObjectId,
-  ): Promise<T | null> {
+  static async deleteDataByID<T>(model: Model<T>, id: Types.ObjectId): Promise<T | null> {
     try {
       if (!Types.ObjectId.isValid(id)) {
         null;
@@ -43,12 +40,10 @@ export class FunService {
     }
   }
 
-  static async findDataByID<T>(
-    model: Model<T>,
-    id: string | Types.ObjectId,
-  ): Promise<T | null> {
+  static async findDataByID<T>(model: Model<T>, id: string | Types.ObjectId): Promise<T | null> {
     try {
-      return model.findById(id).exec();
+      const data = await model.findById(id).exec();
+      return data;
     } catch (error) {
       return null;
     }
@@ -68,10 +63,7 @@ export class FunService {
     }
   }
 
-  static async getOneData<T>(
-    model: Model<T>,
-    param: QueryOptions,
-  ): Promise<T | null> {
+  static async getOneData<T>(model: Model<T>, param: QueryOptions): Promise<T | null> {
     try {
       return model.findOne(param).exec();
     } catch (error) {
@@ -79,30 +71,18 @@ export class FunService {
     }
   }
 
-  static async getDataByID<T>(
-    model: Model<T>,
-    id: Types.ObjectId,
-    @Query() query,
-  ): Promise<T> {
+  static async getDataByID<T>(model: Model<T>, id: Types.ObjectId, @Query() query): Promise<T> {
     try {
       const pageLimitSkip = getPageLimitSkip(query);
 
-      const data = await model
-        .findById(id)
-        .skip(Number(pageLimitSkip.skip))
-        .limit(Number(pageLimitSkip.limit))
-        .exec();
+      const data = await model.findById(id).skip(Number(pageLimitSkip.skip)).limit(Number(pageLimitSkip.limit)).exec();
       return data;
     } catch (error) {
       return null;
     }
   }
 
-  static async getDataByListID<T>(
-    model: Model<T>,
-    listId: string[],
-    @Query() query,
-  ): Promise<T[]> {
+  static async getDataByListID<T>(model: Model<T>, listId: string[], @Query() query): Promise<T[]> {
     try {
       const pageLimitSkip = getPageLimitSkip(query);
 
@@ -142,11 +122,7 @@ export class FunService {
     }
   }
 
-  static async getDataByAggregate<T>(
-    model: Model<T>,
-    @Query() query,
-    pipelineStage?: PipelineStage[],
-  ): Promise<T[]> {
+  static async getDataByAggregate<T>(model: Model<T>, @Query() query, pipelineStage?: PipelineStage[]): Promise<T[]> {
     try {
       const pageLimitSkip = getPageLimitSkip(query);
       const data = await model
@@ -182,10 +158,7 @@ export class FunService {
     }
   }
 
-  static async getFullDataByAggregate<T>(
-    model: Model<T>,
-    pipelineStage?: PipelineStage[],
-  ): Promise<T[]> {
+  static async getFullDataByAggregate<T>(model: Model<T>, pipelineStage?: PipelineStage[]): Promise<T[]> {
     try {
       const data = await model.aggregate(pipelineStage).exec();
       return data;
@@ -217,10 +190,7 @@ export class FunService {
     }
   }
 
-  static async getFullDataByID<T>(
-    model: Model<T>,
-    id: string | Types.ObjectId,
-  ): Promise<T> {
+  static async getFullDataByID<T>(model: Model<T>, id: string | Types.ObjectId): Promise<T> {
     try {
       return model.findById(id).exec();
     } catch (error) {
@@ -228,11 +198,7 @@ export class FunService {
     }
   }
 
-  static async getDataByLimit<T>(
-    model: Model<T>,
-    @Query() query,
-    querySort?: FilterQuery<T>,
-  ): Promise<T[]> {
+  static async getDataByLimit<T>(model: Model<T>, @Query() query, querySort?: FilterQuery<T>): Promise<T[]> {
     try {
       const pageLimitSkip = getPageLimitSkip(query);
       const data = await model
@@ -247,11 +213,7 @@ export class FunService {
     }
   }
 
-  static async updateData<T>(
-    model: Model<T>,
-    id: string,
-    body: any,
-  ): Promise<T> {
+  static async updateData<T>(model: Model<T>, id: string, body: any): Promise<T> {
     try {
       const data = await model.findByIdAndUpdate(id, body).exec();
       return data;

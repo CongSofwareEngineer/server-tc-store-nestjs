@@ -66,11 +66,7 @@ export class CartService {
           $sort: { date: -1 },
         },
       ];
-      const data = await FunService.getDataByAggregate(
-        this.cartModel,
-        query,
-        arrFilter,
-      );
+      const data = await FunService.getDataByAggregate(this.cartModel, query, arrFilter);
       return data;
     } catch (error) {
       return null;
@@ -83,7 +79,7 @@ export class CartService {
       return null;
     }
     const bodyTemp: CartUser = {
-      moreConfig: body?.moreConfig || {},
+      configBill: body?.configBill || {},
       date: new Date().getTime().toFixed(),
       idUser: body?.idUser,
       amount: Number(body?.amount),

@@ -27,7 +27,7 @@ export class CartUser {
   exp?: number;
 
   @Prop({ type: Object })
-  moreConfig?: { [key: string]: any };
+  configBill?: { [key: string]: any };
 
   @Prop()
   name?: string;
