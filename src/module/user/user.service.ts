@@ -66,6 +66,11 @@ export class UserService {
     return FunService.updateData(this.userModel, param._id.toString(), body);
   }
 
+  async updateUserFormServer(idUser: string, body: { [key: string]: any }): Promise<User | null> {
+    const data = await FunService.updateData(this.userModel, idUser, body);
+    return data;
+  }
+
   async login(@Body() bodyEncode): Promise<User | null> {
     try {
       const body = decryptData(bodyEncode?.data);

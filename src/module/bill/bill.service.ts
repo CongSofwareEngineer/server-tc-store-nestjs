@@ -9,6 +9,7 @@ import { CartService } from '../cartUser/cart.service';
 import { FILTER_BILL } from 'src/common/app';
 import { decryptData } from 'src/utils/crypto';
 import { getDateToQuery, getIdObject, getQueryDB } from 'src/utils/function';
+import { UserService } from '../user/user.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 @Injectable()
@@ -17,6 +18,7 @@ export class BillService {
     @InjectModel(Bill.name) private readonly billModel: Model<Bill>,
     @Inject(ProductService) private readonly productService: ProductService,
     @Inject(CartService) private readonly cartService: CartService,
+    @Inject(UserService) private readonly userService: UserService,
   ) {}
 
   getBaseQueryBill() {
@@ -52,7 +54,6 @@ export class BillService {
           note: { $first: '$note' },
           sdt: { $first: '$sdt' },
           status: { $first: '$status' },
-          configBill: { $first: '$configBill' },
           listBill: {
             $push: '$listBill',
           },
@@ -73,6 +74,8 @@ export class BillService {
       }
 
       const listIdCart: string[] = [];
+      const listFunc: any[] = [];
+
       const listBillDetail = body.listBill.map((e) => {
         listIdCart.push(e.idCart);
         const itemTemp: any = {
@@ -97,16 +100,22 @@ export class BillService {
         status: FILTER_BILL.Processing,
         totalBill: Number(body.totalBill),
       };
+      listFunc.push(this.cartService.deleteManyProduct(listIdCart));
 
-      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
-        return this.productService.updateProductFromBill(e);
+      body.listNewSoldProduct.forEach((e: any) => {
+        listFunc.push(this.productService.updateProductFromBill(e));
       });
 
       if (body.idUser) {
         bodyTemp.idUser = getIdObject(body.idUser);
+        const dataUpdateUser = {
+          exp: body.expUser,
+        };
+
+        listFunc.push(this.userService.updateUserFormServer(body.idUser, dataUpdateUser));
       }
 
-      await Promise.all([this.cartService.deleteManyProduct(listIdCart), ...listUpdateProductFuc]);
+      await Promise.all([listFunc]);
 
       return FunService.create(this.billModel, bodyTemp);
     } catch (error) {
@@ -145,15 +154,13 @@ export class BillService {
         status: FILTER_BILL.Processing,
         totalBill: Number(body.totalBill),
       };
-      console.log({ bodyTemp });
-      return bodyTemp;
 
-      // const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
-      //   return this.productService.updateProduct(e.idProduct, { sold: e.sold });
-      // });
-      // await Promise.all(listUpdateProductFuc);
+      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
+        return this.productService.updateProduct(e.idProduct, { sold: e.sold });
+      });
+      await Promise.all(listUpdateProductFuc);
 
-      // return FunService.create(this.billModel, bodyTemp);
+      return FunService.create(this.billModel, bodyTemp);
     } catch (error) {
       return null;
     }
