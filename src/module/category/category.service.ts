@@ -11,9 +11,7 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class CategoryService {
-  constructor(
-    @InjectModel(Category.name) private categoryModel: Model<Category>,
-  ) {}
+  constructor(@InjectModel(Category.name) private categoryModel: Model<Category>) {}
 
   async getAllType(@Query() query): Promise<Category[]> {
     const filter: PipelineStage[] = [
@@ -54,7 +52,6 @@ export class CategoryService {
       lang: body?.lang || {},
       icon: body?.icon || '',
       isShow: !!body?.isShow,
-      subCategories: body?.subCategories || [],
     };
     return FunService.create(this.categoryModel, bodyCategory);
   }
@@ -67,17 +64,13 @@ export class CategoryService {
     if (body?.imgOld) {
       CloudinaryService.deleteImgByData(body?.imgOld);
     }
-    const urlImg = await CloudinaryService.getUrlByData(
-      body?.icon || '',
-      PATH_IMG.Category,
-    );
+    const urlImg = await CloudinaryService.getUrlByData(body?.icon || '', PATH_IMG.Category);
 
     const bodyCategory: Category = {
       keyName: body?.keyName || 'no-key',
       lang: body?.lang || {},
       icon: urlImg,
       isShow: !!body?.isShow,
-      subCategories: body?.subCategories || [],
     };
 
     return FunService.updateData(this.categoryModel, id, bodyCategory);

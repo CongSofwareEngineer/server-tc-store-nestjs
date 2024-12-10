@@ -1,11 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-import { SubCategories } from 'src/module/sub-categories/schemas/subCategories.schema';
+import { HydratedDocument, Types } from 'mongoose';
 
 @Schema({ versionKey: false })
-export class Category extends SubCategories {
+export class Category {
+  _id?: Types.ObjectId;
+
   @Prop()
-  subCategories?: string[];
+  icon?: string;
+
+  @Prop({ type: Object })
+  lang?: { [key: string]: string };
+
+  @Prop()
+  keyName?: string;
+
+  @Prop()
+  isShow?: boolean;
 }
 export type CategoryDocument = HydratedDocument<Category>;
 export const CategorySchema = SchemaFactory.createForClass(Category);
