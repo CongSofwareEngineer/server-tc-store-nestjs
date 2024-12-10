@@ -69,9 +69,6 @@ export class Product {
   category?: string;
 
   @Prop()
-  subCategories?: string[];
-
-  @Prop()
   weight?: string;
 
   @Prop()

@@ -106,15 +106,6 @@ export class BillService {
         listFunc.push(this.productService.updateProductFromBill(e));
       });
 
-      if (body.idUser) {
-        bodyTemp.idUser = getIdObject(body.idUser);
-        const dataUpdateUser = {
-          exp: body.expUser,
-        };
-
-        listFunc.push(this.userService.updateUserFormServer(body.idUser, dataUpdateUser));
-      }
-
       await Promise.all([listFunc]);
 
       return FunService.create(this.billModel, bodyTemp);
@@ -125,42 +116,48 @@ export class BillService {
 
   async createNoLogin(bodyEncode: string): Promise<Bill> {
     try {
-      const body = decryptData(bodyEncode);
+      try {
+        const body = decryptData(bodyEncode);
+        if (!body) {
+          return null;
+        }
 
-      if (!body) {
+        const listFunc: any[] = [];
+
+        const listBillDetail = body.listBill.map((e) => {
+          const itemTemp: any = {
+            _id: getIdObject(e._id),
+            amount: Number(e.amount),
+            keyName: e.keyName,
+          };
+          if (e.configBill) {
+            itemTemp.configBill = e.configBill;
+          }
+          return itemTemp;
+        });
+
+        const bodyTemp: Bill = {
+          date: new Date().getTime().toFixed(),
+          addressShip: body.addressShip,
+          discount: body.discount || 0,
+          note: body.note,
+          abort: false,
+          listBill: listBillDetail,
+          sdt: body?.sdt,
+          status: FILTER_BILL.Processing,
+          totalBill: Number(body.totalBill),
+        };
+
+        body.listNewSoldProduct.forEach((e: any) => {
+          listFunc.push(this.productService.updateProductFromBill(e));
+        });
+
+        await Promise.all([listFunc]);
+
+        return FunService.create(this.billModel, bodyTemp);
+      } catch (error) {
         return null;
       }
-
-      const listBillDetail = body.listBill.map((e: any) => {
-        const itemTemp: any = {
-          _id: getIdObject(e._id),
-          amount: Number(e.amount),
-          keyName: e.keyName,
-        };
-        if (e.configBill) {
-          itemTemp.configBill = e.configBill;
-        }
-        return itemTemp;
-      });
-
-      const bodyTemp: Bill = {
-        date: new Date().getTime().toFixed(),
-        addressShip: body.addressShip,
-        discount: body.discount || 0,
-        note: body.note,
-        abort: false,
-        listBill: listBillDetail,
-        sdt: body?.sdt,
-        status: FILTER_BILL.Processing,
-        totalBill: Number(body.totalBill),
-      };
-
-      const listUpdateProductFuc = body.listNewSoldProduct.map((e: any) => {
-        return this.productService.updateProduct(e.idProduct, { sold: e.sold });
-      });
-      await Promise.all(listUpdateProductFuc);
-
-      return FunService.create(this.billModel, bodyTemp);
     } catch (error) {
       return null;
     }
@@ -168,10 +165,32 @@ export class BillService {
 
   async updateBill(@Body() bodyEncode, @Param() param): Promise<Bill> {
     const body = decryptData(bodyEncode.data);
-    if (!body) {
+    const listFuc: Promise<any>[] = [];
+
+    if (!body || !FILTER_BILL[body?.status]) {
       return null;
     }
-    return FunService.updateData(this.billModel, param.id, body);
+
+    listFuc.push(
+      FunService.updateData(this.billModel, param.id, {
+        status: body.status,
+      }),
+    );
+
+    if (body.idUser && body.status === FILTER_BILL.DeliverySuccess) {
+      const user = await this.userService.getUserByID(body.idUser);
+      if (user?.exp) {
+        const dataUpdate = {
+          exp: user.exp + body.expUser,
+        };
+
+        listFuc.push(this.userService.updateUserFormServer(body.idUser, dataUpdate));
+      }
+    }
+
+    const [dataBill] = await Promise.all(listFuc);
+
+    return dataBill;
   }
 
   async getAllBill(@Query() query): Promise<Bill[]> {
@@ -193,7 +212,6 @@ export class BillService {
   async getAllBillAdmin(@Query() query): Promise<Bill[]> {
     const pipeline = this.getBaseQueryBill();
     const queryMore = getQueryDB(query, KEY_OPTION_FILTER_DB.Bill);
-    console.log({ queryMore, query });
 
     pipeline.push(queryMore);
 

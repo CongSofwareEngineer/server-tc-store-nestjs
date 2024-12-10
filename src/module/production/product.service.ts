@@ -131,23 +131,6 @@ export class ProductService {
 
         break;
     }
-
-    // const body = decryptData(bodyEncode.data);
-    // if (!body) {
-    //   return null;
-    // }
-    // const dataBody = { ...body };
-    // if (body?.imageMore) {
-    //   dataBody.imageMore = await CloudinaryService.getUrlByData(body.imageMore, PATH_IMG.Products);
-    // }
-    // if (body?.imageMain) {
-    //   dataBody.imageMain = await CloudinaryService.getUrlByData(body.imageMain, PATH_IMG.Products);
-    // }
-    // if (Array.isArray(body?.imageDelete)) {
-    //   const fncDelete = body?.imageDelete.map((e: string) => CloudinaryService.deleteImg(e));
-    //   Promise.all(fncDelete);
-    // }
-    // return FunService.updateData(this.productModel, id, dataBody);
   }
 
   async getProductByID(id: string): Promise<Product | null> {

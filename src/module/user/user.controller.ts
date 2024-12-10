@@ -1,26 +1,9 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-  Res,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Res, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { formatRes } from 'src/utils/function';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import {
-  ApiBody,
-  ApiParam,
-  ApiTags,
-  ApiQuery,
-  ApiUnauthorizedResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiTags, ApiQuery, ApiUnauthorizedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CloudinaryService } from 'src/services/cloudinary';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 @ApiBearerAuth()
@@ -64,7 +47,7 @@ export class UserController {
   })
   @Get('detail/:_id')
   async getUserByID(@Res() response, @Param() params): Promise<User | null> {
-    const data = await this.userService.getUserByID(params);
+    const data = await this.userService.getUserByID(params._id);
     return formatRes(response, data);
   }
 
@@ -115,14 +98,8 @@ export class UserController {
     type: Object,
   })
   @Post('login/refresh')
-  async loginRefresh(
-    @Res() response,
-    @Body() createUserDto,
-  ): Promise<User | null> {
-    const data = await this.userService.loginRefresh(
-      createUserDto.sdt,
-      createUserDto.pass,
-    );
+  async loginRefresh(@Res() response, @Body() createUserDto): Promise<User | null> {
+    const data = await this.userService.loginRefresh(createUserDto.sdt, createUserDto.pass);
     return formatRes(response, data);
   }
 
@@ -130,11 +107,7 @@ export class UserController {
     type: User,
   })
   @Post('update/:_id')
-  async updateUser(
-    @Res() response,
-    @Body() body,
-    @Param() param,
-  ): Promise<User | null> {
+  async updateUser(@Res() response, @Body() body, @Param() param): Promise<User | null> {
     const data = await this.userService.updateUser(param, body);
     return formatRes(response, data);
   }
@@ -144,11 +117,7 @@ export class UserController {
   })
   @Post('update-avatar/:_id')
   @UseInterceptors(AnyFilesInterceptor())
-  async updateAvatarUser(
-    @Res() response,
-    @Body() body,
-    @Param() param,
-  ): Promise<User | null> {
+  async updateAvatarUser(@Res() response, @Body() body, @Param() param): Promise<User | null> {
     const data = await this.userService.updateAvatarUser(param, body);
     return formatRes(response, data);
   }

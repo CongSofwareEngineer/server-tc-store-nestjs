@@ -18,7 +18,6 @@ import { ContactMeModule } from './module/contact-me/contactMe.module';
 import { RevenueModule } from './module/revenue/revenue.module';
 import { EventsModule } from './module/socket/events.module';
 import { UploadImgModule } from './module/uploadImg/uploadImg.moduls';
-import { SubCategoriesModule } from './module/sub-categories/subCategories.module';
 
 @Module({
   imports: [
@@ -32,7 +31,6 @@ import { SubCategoriesModule } from './module/sub-categories/subCategories.modul
     ProductModule,
     UserModule,
     CategoryModule,
-    SubCategoriesModule,
     BillModule,
     RevenueModule,
     CommentModule,

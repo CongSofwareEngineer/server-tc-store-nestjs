@@ -18,8 +18,8 @@ export class UserService {
       sdt: sdt,
     });
   }
-  async getUserByID(@Param() params): Promise<User> {
-    return FunService.findDataByID(this.userModel, params._id);
+  async getUserByID(id: string): Promise<User> {
+    return FunService.findDataByID(this.userModel, id);
   }
 
   async getAllUser(): Promise<User[]> {

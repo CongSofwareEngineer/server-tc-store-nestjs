@@ -1,22 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { BillService } from './bill.service';
 import { formatRes } from 'src/utils/function';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiParam,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { query, Response } from 'express';
 import { Bill } from './schemas/bill.schema';
 @ApiBearerAuth()
@@ -87,9 +72,6 @@ export class BillController {
 
   @Get('check/number-phone')
   async checkNumberPone(@Res() res, @Query() query) {
-    console.log('====================================');
-    console.log({ query });
-    console.log('====================================');
     const data = await this.billService.createNoLogin(query?.data);
     return formatRes(res, data);
   }
